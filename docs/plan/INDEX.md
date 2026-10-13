@@ -1,0 +1,41 @@
+# Plan index
+
+- header.md: AI Agent Master Plan v2 — Passive Bot Detection (SIH1672)
+- misc_1.md: Table of contents
+- section_0.md: 0. Agent operating manual
+- section_1.md: 1. Project summary and fixed decisions
+- section_2.md: 2. Repository layout
+- section_3.md: 3. Conventions, tooling and Windows environment
+- section_4.md: 4. Canonical data schemas
+- section_5.md: 5. Dataset inventory and data strategy
+- section_6.md: 6. Phase overview and milestones
+- phase_0.md: Phase 0 — Scaffolding and handoff system
+- phase_1.md: Phase 1 — Dataset access, inventory and audit (mouse)
+- phase_2.md: Phase 2 — Mouse model
+- phase_3.md: Phase 3 — Keyboard model and desktop fusion
+- phase_4.md: Phase 4 — Environment rule layer
+- phase_5.md: Phase 5 — Scoring backend
+- phase_6.md: Phase 6 — Browser SDK
+- phase_7.md: Phase 7 — Mock portal, step-up challenge, bot simulator, desktop end-to-end
+- phase_8.md: Phase 8 — Mobile extension (decision gate)
+- phase_9.md: Phase 9 — Dashboard, privacy, accessibility
+- phase_10.md: Phase 10 — Final evaluation, documentation, release
+- appendix_a.md: Appendix A — Feature specifications
+- appendix_b.md: Appendix B — API contract
+- appendix_c.md: Appendix C — Config files
+- appendix_d.md: Appendix D — Synthetic bot generator specifications
+- appendix_e.md: Appendix E — Evaluation protocol
+- appendix_f.md: Appendix F — Templates
+- misc_26.md: Task table
+- misc_27.md: Blockers
+- misc_28.md: Human checkpoints pending
+- misc_29.md: Results index (files under results/)
+- misc_30.md: Current task
+- misc_31.md: Done in this task so far
+- misc_32.md: Exact next step
+- misc_33.md: Files touched (uncommitted or recently changed)
+- misc_34.md: Commands to run first
+- misc_35.md: Known problems / gotchas
+- misc_36.md: Dataset / long-job state
+- misc_37.md: Questions for the human (if BLOCKED)
+- appendix_g.md: Appendix G — Agent files and scripts
