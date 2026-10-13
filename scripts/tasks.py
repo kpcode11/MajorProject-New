@@ -107,19 +107,32 @@ def fingerprint() -> None:
 
 def train_mouse(stage: str, max_sessions: int | None) -> None:
     """Build the requested mouse training stage."""
-    if stage != "features":
-        raise ValueError("train-mouse currently supports only --stage features")
-    run(
-        [
-            str(require_environment(PACKAGES[0])),
-            str(ROOT / "scripts" / "build_mouse_features.py"),
-            "--input-root",
-            str(ROOT / "data" / "interim"),
-            "--output-root",
-            str(ROOT / "data" / "processed" / "mouse_features"),
-            *([] if max_sessions is None else ["--max-sessions", str(max_sessions)]),
-        ]
-    )
+    interpreter = require_environment(PACKAGES[0])
+    if stage == "features":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "build_mouse_features.py"),
+                "--input-root",
+                str(ROOT / "data" / "interim"),
+                "--output-root",
+                str(ROOT / "data" / "processed" / "mouse_features"),
+                *([] if max_sessions is None else ["--max-sessions", str(max_sessions)]),
+            ]
+        )
+    elif stage == "baselines":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "run_mouse_baselines.py"),
+                "--input-root",
+                str(ROOT / "data" / "processed" / "mouse_features"),
+                "--output",
+                str(ROOT / "results" / "mouse" / "baselines.csv"),
+            ]
+        )
+    else:
+        raise ValueError("train-mouse supports --stage features or --stage baselines")
 
 
 def main() -> int:
