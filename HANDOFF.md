@@ -1,6 +1,6 @@
 # Handoff
 
-**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** phase-3-keyboard  |  **Last commit:** 0ae687d
+**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** main  |  **Last commit:** pending
 
 ## Current task
 
@@ -54,7 +54,7 @@ All passed. Windows pytest cache warnings are pre-existing and harmless.
 - Real final keyboard metrics require a bounded feature-shard run and
   sufficient human and bot groups.
 - K3 must remain evaluation-only.
-- Work is on the dedicated `phase-3-keyboard` branch.
+- Phase 3 is merged into `main`; the next task is Phase 4 on `main`.
 
 ## Questions for the human (P3-08)
 

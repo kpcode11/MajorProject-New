@@ -1,6 +1,6 @@
 # Progress
 
-**Current phase:** 3  |  **Branch:** phase-3-keyboard  |  **Last updated:** 2026-10-14  |  **Last agent/tool:** Copilot
+**Current phase:** 4  |  **Branch:** main  |  **Last updated:** 2026-10-14  |  **Last agent/tool:** Copilot
 
 ## Task table
 
