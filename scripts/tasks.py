@@ -164,9 +164,20 @@ def train_mouse(stage: str, max_sessions: int | None) -> None:
                 str(ROOT / "results" / "mouse"),
             ]
         )
+    elif stage == "onnx":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "export_mouse_onnx.py"),
+                "--input-root",
+                str(ROOT / "data" / "processed" / "mouse_features"),
+                "--output-dir",
+                str(ROOT / "backend" / "models" / "mouse-v1"),
+            ]
+        )
     else:
         raise ValueError(
-            "train-mouse supports --stage features, baselines, hparams, ablations, or shap"
+            "train-mouse supports --stage features, baselines, hparams, ablations, shap, or onnx"
         )
 
 
