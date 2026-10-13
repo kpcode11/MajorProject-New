@@ -18,6 +18,7 @@ IMPLEMENTED = (
     "data-audit",
     "fingerprint",
     "train-mouse",
+    "keyboard-privacy",
 )
 PLANNED = ("train-keyboard", "train-touch", "eval-all", "serve", "demo", "loadtest")
 
@@ -123,6 +124,19 @@ def train_keyboard(max_participants: int | None) -> None:
     )
 
 
+def keyboard_privacy() -> None:
+    """Scan all generated keyboard shards for prohibited content."""
+    interpreter = require_environment(PACKAGES[0])
+    run(
+        [
+            str(interpreter),
+            str(ROOT / "scripts" / "scan_keyboard_privacy.py"),
+            "--input-root",
+            str(ROOT / "data" / "interim" / "aalto_keystrokes"),
+        ]
+    )
+
+
 def train_mouse(stage: str, max_sessions: int | None) -> None:
     """Build the requested mouse training stage."""
     interpreter = require_environment(PACKAGES[0])
@@ -222,6 +236,8 @@ def main() -> int:
             fingerprint()
         elif command == "train-keyboard":
             train_keyboard(args.max_participants)
+        elif command == "keyboard-privacy":
+            keyboard_privacy()
         elif command == "train-mouse":
             train_mouse(args.stage, args.max_sessions)
         else:

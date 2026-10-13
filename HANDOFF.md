@@ -1,38 +1,34 @@
 # Handoff
 
-**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** f6e6db5
+**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** phase-3-keyboard  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P3-03 — keyboard privacy scan
+- ID: P3-04 — keyboard features
 - State: ready to start.
 
 ## Done in the previous task
 
-- Added `ml/src/botguard_ml/loaders/aalto_keystrokes.py`.
-- Streams one participant TSV at a time and supports deterministic seeded
-  participant sampling.
-- Converts each sentence with at least 10 key events into a canonical
-  keyboard window.
-- Maps source key identities to coarse `key_class` values in memory and
-  excludes sentence text, typed text, key identity, and keystroke identity
-  from output.
-- Writes per-participant Parquet shards and resumable `_state.json` progress.
-- Counts malformed participants instead of aborting the complete batch.
-- Added `scripts/build_keyboard_events.py` and wired
-  `python scripts/tasks.py train-keyboard`.
-- Added fixture coverage and a real one-participant smoke test.
+- Added `ml/src/botguard_ml/privacy.py` to scan every keyboard Parquet shard
+  in batches.
+- Rejects prohibited columns including sentence text, user input, letters,
+  key codes, keystroke IDs, typed text, and generic text columns.
+- Added `scripts/scan_keyboard_privacy.py`.
+- Added `python scripts/tasks.py keyboard-privacy`.
+- Added safe and unsafe fixture tests.
+- Validated one real generated Aalto shard: 1 shard and 661 rows scanned.
 
 ## Exact next step
 
-- Add a privacy scan that reads every produced keyboard shard and fails if it
-  contains typed text, sentences, key identities, or other prohibited columns.
+- Implement text-agnostic keyboard features from Appendix A.3, including
+  dwell, flight/inter-key intervals, variability, burstiness, pause, and
+  correction-free timing features.
 
-## Files touched in P3-02
+## Files touched in P3-03
 
-- `ml/src/botguard_ml/loaders/aalto_keystrokes.py`
-- `ml/tests/test_aalto_keystrokes.py`
-- `scripts/build_keyboard_events.py`
+- `ml/src/botguard_ml/privacy.py`
+- `ml/tests/test_privacy.py`
+- `scripts/scan_keyboard_privacy.py`
 - `scripts/tasks.py`
 - `PROGRESS.md`
 
@@ -40,20 +36,17 @@
 
 - `python scripts/tasks.py test-fast`
 - `python scripts/tasks.py lint`
-- Real Aalto one-participant smoke test: 13 windows, 661 events
+- Real Aalto loader plus privacy-scan smoke test
 
 All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
-- The local Aalto copy is approximately 18.85 GB; do not process all
-  participants without an explicit bounded run.
-- The dataset root supports both the configured top-level path and its nested
-  `Keystrokes` directory layout.
-- The loader output is intentionally human-only (`label=0`); synthetic bot
-  windows are a later task.
-- Work is on `phase-2-mouse-model`.
+- Do not use source sentence, user input, letter, key code, or keystroke ID
+  fields as keyboard model features.
+- Keyboard shards are human-only until the synthetic generators task.
+- Work is now on the dedicated `phase-3-keyboard` branch.
 
-## Questions for the human (P3-03)
+## Questions for the human (P3-04)
 
 - None.
