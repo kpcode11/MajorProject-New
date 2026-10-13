@@ -1,11 +1,11 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** a6a0bfa
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 31e0ecc
 
 ## Current task
 
-- ID: P1-02 — write observed dataset cards
-- State: done — awaiting commit; P1-03 is next.
+- ID: P1-03 — load Bournemouth mouse sessions
+- State: done — awaiting commit; P1-04 is next.
 
 ## Done in this task so far
 
@@ -16,11 +16,11 @@
 - P0-05 added the cross-platform task runner and status script in `9534e33`.
 - P0-06 added the Windows Python CI workflow in `63a2c00`.
 - P0-07 completed Phase 0 and created this branch in `015cc73`.
-- P1-01 added the safe inventory command in `a6a0bfa`.
+- P1-01 added the safe inventory command in `a6a0bfa`; P1-02 documented observed datasets in `31e0ecc`.
 
 ## Exact next step
 
-- Commit P1-02, then inspect one observed Bournemouth session structure for the P1-03 loader fixture.
+- Commit P1-03, then inspect one IEEE JSON session for the P1-04 loader fixture.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -35,6 +35,7 @@
 - `README.md` — project scope, current status, and development commands.
 - `scripts/inventory.py` — bounded inventory command; first Bournemouth report saved.
 - `docs/datasets/*.md` — observed cards for Bournemouth, IEEE blog bots, and CaptchaSolve30k.
+- `ml/src/botguard_ml/loaders/web_bot_detection.py` — streaming phase-1/phase-2 loader; smoke shard validated.
 
 ## Commands to run first
 
@@ -49,6 +50,6 @@
 
 - No dataset operation has started.
 
-## Questions for the human (P1-02)
+## Questions for the human (P1-03)
 
 - None.
