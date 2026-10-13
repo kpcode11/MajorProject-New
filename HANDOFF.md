@@ -1,10 +1,10 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** d0a28c7
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 72bef69
 
 ## Current task
 
-- ID: P1-08 — dataset availability decisions
+- ID: P1-09 — mouse data audit
 - State: ready to start.
 
 ## Done in this task so far
@@ -21,11 +21,12 @@
 - P1-04 implemented the IEEE blog-bots loader and fixture tests in `c8c43c9`.
 - P1-05 implemented the CaptchaSolve30k streaming loader and decoder tests in `6aeab38`.
 - P1-06 implemented canonical mouse-event windowing and focused tests in `d0a28c7`.
-- P1-07 cloned DELBOT-Mouse shallowly, inspected its 4.6 MB archive, and added a streaming loader and dataset card; commit is pending.
+- P1-07 cloned DELBOT-Mouse shallowly, inspected its 4.6 MB archive, and added a streaming loader and dataset card in `72bef69`.
+- P1-08 recorded dataset availability decisions; commit is pending.
 
 ## Exact next step
 
-- Record BeCAPTCHA-Mouse, CMU, UL-Keystroke, and DELBOT availability outcomes in `docs/decision_log.md`, then commit as `P1-08: record dataset availability decisions`.
+- Implement `data-audit` outputs for canonical mouse shards, with counts, timing distributions, coordinate ranges, and missing-value rates.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -61,6 +62,6 @@
 
 - No dataset operation has started.
 
-## Questions for the human (P1-07)
+## Questions for the human (P1-09)
 
 - None.
