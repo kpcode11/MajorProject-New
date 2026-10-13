@@ -4,7 +4,7 @@
 
 ## Current task
 
-- ID: P1-10 — mouse exploratory analysis
+- ID: P1-11 — dataset fingerprint test
 - State: ready to start.
 
 ## Done in this task so far
@@ -24,10 +24,11 @@
 - P1-07 cloned DELBOT-Mouse shallowly, inspected its 4.6 MB archive, and added a streaming loader and dataset card in `72bef69`.
 - P1-08 recorded dataset availability decisions in `04e249c`.
 - P1-09 added the incremental `data-audit` command and focused tests in `a4a3bd5`.
+- P1-10 added and ran the bounded EDA script; commit is pending.
 
 ## Exact next step
 
-- Implement the mouse EDA script, save trajectories/speed/timing figures under `results/mouse/eda/`, and validate it on available canonical shards.
+- Implement the human-only cross-dataset fingerprint experiment with scale-invariant window features, save `results/mouse/fingerprint.json`, and validate it on available shards.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -50,6 +51,7 @@
 - `ml/src/botguard_ml/loaders/delbot_mouse.py` and `ml/tests/test_delbot_mouse.py` — DELBOT archive loader and coverage.
 - `docs/datasets/delbot_mouse.md` — DELBOT dataset card.
 - `scripts/data_audit.py` and `scripts/test_data_audit.py` — incremental audit implementation and coverage.
+- `ml/notebooks/01_mouse_eda.py` and `results/mouse/eda/` — bounded EDA script and generated figures.
 
 ## Commands to run first
 
@@ -64,6 +66,6 @@
 
 - No dataset operation has started.
 
-## Questions for the human (P1-10)
+## Questions for the human (P1-11)
 
 - None.
