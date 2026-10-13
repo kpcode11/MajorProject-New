@@ -1,11 +1,11 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 31e0ecc
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 94d15f4
 
 ## Current task
 
-- ID: P1-03 — load Bournemouth mouse sessions
-- State: done — awaiting commit; P1-04 is next.
+- ID: P1-05 — load CaptchaSolve30k sessions
+- State: ready to start.
 
 ## Done in this task so far
 
@@ -17,10 +17,12 @@
 - P0-06 added the Windows Python CI workflow in `63a2c00`.
 - P0-07 completed Phase 0 and created this branch in `015cc73`.
 - P1-01 added the safe inventory command in `a6a0bfa`; P1-02 documented observed datasets in `31e0ecc`.
+- P1-03 added and committed the streaming Bournemouth loader in `94d15f4`.
+- P1-04 implemented the IEEE blog-bots loader and fixture tests; commit is pending.
 
 ## Exact next step
 
-- Commit P1-03, then inspect one IEEE JSON session for the P1-04 loader fixture.
+- Inspect one CaptchaSolve30k file and its README, then implement the streaming decoder and fixture test.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -36,6 +38,8 @@
 - `scripts/inventory.py` — bounded inventory command; first Bournemouth report saved.
 - `docs/datasets/*.md` — observed cards for Bournemouth, IEEE blog bots, and CaptchaSolve30k.
 - `ml/src/botguard_ml/loaders/web_bot_detection.py` — streaming phase-1/phase-2 loader; smoke shard validated.
+- `ml/src/botguard_ml/loaders/ieee_blog_bots.py` — to be added for the current task.
+- `ml/tests/test_ieee_blog_bots.py` and `ml/tests/fixtures/ieee_session.json` — IEEE loader coverage.
 
 ## Commands to run first
 
@@ -50,6 +54,6 @@
 
 - No dataset operation has started.
 
-## Questions for the human (P1-03)
+## Questions for the human (P1-05)
 
 - None.

@@ -10,7 +10,7 @@
 - Time units and sampling rate: Documented as Unix timestamps; timestamp unit and sampling rate are not stated.
 - Coordinate space: Mouse `x,y` coordinates; unit and viewport metadata are not stated.
 - Known quirks: The dataset is small; bot filenames and `bot_info` expose class labels. Click metadata includes target text and CSS classes, so loaders must discard content fields.
-- Loader module and version: Pending P1-04.
-- Canonical output shards: Pending P1-04.
+- Loader module and version: `ml/src/botguard_ml/loaders/ieee_blog_bots.py`; P1-04.
+- Canonical output shards: Parquet `mouse_events` rows, with one session processed at a time.
 - Used for: External mouse test domain and held-out bot-type experiments.
 - Memory/disk notes: Individual JSON sessions are small; process one session at a time.

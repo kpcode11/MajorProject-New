@@ -1,6 +1,6 @@
 # Progress
 
-**Current phase:** 0  |  **Branch:** main  |  **Last updated:** 2026-10-13  |  **Last agent/tool:** Codex
+**Current phase:** 1  |  **Branch:** phase-1-dataset-audit  |  **Last updated:** 2026-10-13  |  **Last agent/tool:** Codex
 
 ## Task table
 
@@ -15,8 +15,8 @@
 | P0-07 | 0 | README and phase-1 branch | DONE | 015cc73 | Phase 0 commands pass; Phase 1 branch created. |
 | P1-01 | 1 | Safe dataset inventory | DONE | a6a0bfa | Bounded report saved for Bournemouth; fast tests pass. |
 | P1-02 | 1 | Dataset inventory cards | DONE | 31e0ecc | Cards use only locally observed formats and documentation. |
-| P1-03 | 1 | Web bot-detection loader | DONE | pending | Streams both observed phase formats; parser and smoke conversion pass. |
-| P1-04 | 1 | IEEE blog-bots loader | TODO | | |
+| P1-03 | 1 | Web bot-detection loader | DONE | 94d15f4 | Streams both observed phase formats; parser and smoke conversion pass. |
+| P1-04 | 1 | IEEE blog-bots loader | DONE | pending | Streams train/test sessions, preserves move/click/scroll events, and passes fixture and real-data smoke tests. |
 | P1-05 | 1 | CaptchaSolve30k loader | TODO | | |
 | P1-06 | 1 | Windowing | TODO | | |
 | P1-07 | 1 | DELBOT acquisition and loader | TODO | | |
