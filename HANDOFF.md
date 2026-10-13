@@ -1,27 +1,34 @@
 # Handoff
 
-**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** phase-3-keyboard  |  **Last commit:** fdad7d8
+**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** phase-3-keyboard  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P3-09 — keyboard ONNX export
+- ID: P3-10 — desktop fusion
 - State: ready to start.
 
-## Done in P3-08
+## Done in P3-09
 
-- Checked the configured dataset root and found no BB-MAS data.
-- Confirmed `ul_keystroke_repo` remains a placeholder with `repo_only` status.
-- Recorded the single-human-source limitation in the Aalto dataset card and
-  Phase 3 plan. No unsupported second-source loader was added.
+- Added `export_keyboard_onnx()` with median imputation, standard scaling, and
+  Logistic Regression.
+- Excluded K3 training rows and recorded that policy in `metadata.json`.
+- Added `scripts/export_keyboard_onnx.py` and the
+  `train-keyboard --stage onnx` task.
+- Added native-vs-ONNX parity and metadata tests.
+- Declared `skl2onnx` directly in the ML package dependencies.
 
 ## Exact next step
 
-- Inspect the existing mouse ONNX export and keyboard model pipeline, then add
-  a keyboard ONNX export with metadata and parity coverage.
+- Inspect the mouse and keyboard evaluation outputs, then implement pseudo-
+  session score-level fusion with explicit missing-modality behavior.
 
-## Files touched in P3-08
+## Files touched in P3-09
 
-- `docs/datasets/aalto_keystrokes.md`
+- `ml/src/botguard_ml/export_onnx.py`
+- `ml/tests/test_keyboard_onnx.py`
+- `scripts/export_keyboard_onnx.py`
+- `ml/pyproject.toml`
+- `scripts/tasks.py`
 - `docs/plan/phase_3.md`
 - `PROGRESS.md`
 

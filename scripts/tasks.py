@@ -146,8 +146,19 @@ def train_keyboard(stage: str, max_participants: int | None) -> None:
                 str(ROOT / "results" / "keyboard" / "evaluation.csv"),
             ]
         )
+    elif stage == "onnx":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "export_keyboard_onnx.py"),
+                "--input",
+                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+                "--output-dir",
+                str(ROOT / "backend" / "models" / "keyboard-v1"),
+            ]
+        )
     else:
-        raise ValueError("train-keyboard supports --stage events, features, or evaluate")
+        raise ValueError("train-keyboard supports --stage events, features, evaluate, or onnx")
 
 
 def keyboard_privacy() -> None:

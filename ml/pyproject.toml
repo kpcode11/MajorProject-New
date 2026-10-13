@@ -19,6 +19,7 @@ dependencies = [
     "optuna",
     "onnxruntime",
     "onnxmltools",
+    "skl2onnx",
 ]
 
 [project.optional-dependencies]
