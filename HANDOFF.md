@@ -4,10 +4,10 @@
 
 ## Current task
 
-- ID: P3-11 — keyboard and fusion model card
+- ID: P4-01 — environment signal schema
 - State: ready to start.
 
-## Done in P3-10
+## Done in P3-11
 
 - Added `export_keyboard_onnx()` with median imputation, standard scaling, and
   Logistic Regression.
@@ -22,12 +22,14 @@
 - Added explicit missing-modality behavior and fusion metadata output.
 - Added tests for mouse-only, keyboard-only, both, neither, pairing, and
   result labeling.
+- Updated the model card with keyboard and fusion scope, privacy, data-source,
+  synthetic-bot, pseudo-session, and missing-modality limitations.
 
 ## Exact next step
 
-- Update the model card with keyboard, fusion, and pseudo-session limitations.
+- Start Phase 4 by defining the privacy-safe environment signal schema.
 
-## Files touched in P3-10
+## Files touched in P3-11
 
 - `ml/src/botguard_ml/export_onnx.py`
 - `ml/tests/test_keyboard_onnx.py`
@@ -36,6 +38,7 @@
 - `scripts/tasks.py`
 - `ml/src/botguard_ml/fuse.py`
 - `ml/tests/test_fuse.py`
+- `docs/model_card.md`
 - `docs/plan/phase_3.md`
 - `PROGRESS.md`
 

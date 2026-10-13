@@ -108,3 +108,35 @@ generation, grouped evaluation, calibration, SHAP explanation, ONNX export,
 and parity tests. Production deployment remains blocked on complete source
 data, real evaluation results, human review, and the later backend risk-policy
 and privacy work.
+
+## Keyboard behaviour model
+
+The keyboard component estimates whether a privacy-safe typing-timing window
+resembles the human or synthetic bot classes used in the research pipeline.
+It uses Logistic Regression with median imputation and standard scaling, and
+exports an ONNX artifact with an explicit feature order and metadata. The
+pipeline stores coarse key classes and timing-derived features only; typed
+sentences, user input, key identities, and keystroke identifiers are not
+persisted.
+
+Aalto provides the current human source. It is a prescribed typing test, not
+ordinary browsing behaviour, and no second human keyboard source is configured
+locally. K1-K4 are documented synthetic timing generators; K3 is held out
+from training and used only for evaluation. Keyboard results must include
+grouped splits, per-generator recall, speed-tercile results, human
+false-positive rates, and uncertainty intervals.
+
+## Desktop score fusion
+
+Fusion is evaluated as a pseudo-session experiment: mouse and keyboard
+windows are paired within the same class using a fixed seed. These pairings
+are simulated, not observations from the same real session. The comparison
+includes mouse-only, keyboard-only, the average of calibrated probabilities,
+noisy-OR, and a Logistic Regression stacker trained on a validation split.
+Missing modalities are omitted from the fusion calculation; absence is never
+treated as evidence of bot activity. Fusion metadata labels results as
+`pseudo-session evaluation (simulated pairing)`.
+
+The keyboard and fusion components remain research-stage. Human review,
+complete source-data evaluation, calibration checks, privacy review, and the
+later backend risk policy are required before any deployment decision.

@@ -14,7 +14,7 @@
 - [x] **P3-08** Optional second human source for FPR: no usable SU-AIS BB-MAS or `ul_keystroke_repo` data is configured locally, so the keyboard evaluation records the single-human-source limitation and adds no unsupported loader.
 - [x] **P3-09** Export ONNX plus metadata to `backend/models/keyboard-<version>/`; add the parity test.
 - [x] **P3-10** Fusion (`fuse.py`): build **pseudo-sessions** by pairing a mouse window set with a keyboard window set of the **same class** (human with human, bot with bot) using a fixed seed. Compare mouse-only, keyboard-only, average of calibrated probabilities, noisy-OR, and a logistic-regression stacker trained on a validation split. Implement the missing-modality policy (only available modalities are fused; absent is never treated as bot) with tests for: mouse only, keyboard only, both, neither. Save `backend/models/fusion-<version>/metadata.json`. Label all fusion results "pseudo-session evaluation (simulated pairing)".
-- [ ] **P3-11** Update `docs/model_card.md` with keyboard and fusion sections and the limitations: human data come from a typing test with prescribed sentences; bots are synthetic; fusion is evaluated on simulated pairings.
+- [x] **P3-11** Update `docs/model_card.md` with keyboard and fusion sections and the limitations: human data come from a typing test with prescribed sentences; bots are synthetic; fusion is evaluated on simulated pairings.
 
 ### Acceptance criteria
 
