@@ -1,6 +1,6 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 94d15f4
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** c8c43c9
 
 ## Current task
 
@@ -18,7 +18,7 @@
 - P0-07 completed Phase 0 and created this branch in `015cc73`.
 - P1-01 added the safe inventory command in `a6a0bfa`; P1-02 documented observed datasets in `31e0ecc`.
 - P1-03 added and committed the streaming Bournemouth loader in `94d15f4`.
-- P1-04 implemented the IEEE blog-bots loader and fixture tests; commit is pending.
+- P1-04 implemented the IEEE blog-bots loader and fixture tests in `c8c43c9`.
 
 ## Exact next step
 
