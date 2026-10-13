@@ -44,7 +44,7 @@
 | P3-04 | 3 | Keyboard features | DONE | 85c7e5b | Added text-agnostic Appendix A.3 timing, variability, burst, pause, autocorrelation, and integrity features with tests. |
 | P3-05 | 3 | Synthetic keyboard bots | DONE | e7006fa | Added deterministic K1 constant, K2 uniform, K3 training-human-fitted mimic, and K4 burst generators with tests. |
 | P3-06 | 3 | Keyboard feature shards | DONE | d748e0a | Added human and configurable K1/K2/K4 feature shards with participant/generator split groups and K3 holdout enforcement. |
-| P3-07 | 3 | Keyboard evaluation | TODO | | |
+| P3-07 | 3 | Keyboard evaluation | DONE | pending | Added grouped keyboard evaluation with K3 holdout, per-generator reports, speed terciles, human FPR, and bootstrap CIs. |
 | P3-08 | 3 | Optional second keyboard source | TODO | | |
 | P3-09 | 3 | Keyboard ONNX export | TODO | | |
 | P3-10 | 3 | Desktop fusion | TODO | | |

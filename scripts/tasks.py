@@ -18,9 +18,10 @@ IMPLEMENTED = (
     "data-audit",
     "fingerprint",
     "train-mouse",
+    "train-keyboard",
     "keyboard-privacy",
 )
-PLANNED = ("train-keyboard", "train-touch", "eval-all", "serve", "demo", "loadtest")
+PLANNED = ("train-touch", "eval-all", "serve", "demo", "loadtest")
 
 
 def package_python(package: Path) -> Path:
@@ -134,8 +135,19 @@ def train_keyboard(stage: str, max_participants: int | None) -> None:
                 str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
             ]
         )
+    elif stage == "evaluate":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "evaluate_keyboard.py"),
+                "--input",
+                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+                "--output",
+                str(ROOT / "results" / "keyboard" / "evaluation.csv"),
+            ]
+        )
     else:
-        raise ValueError("train-keyboard supports --stage events or features")
+        raise ValueError("train-keyboard supports --stage events, features, or evaluate")
 
 
 def keyboard_privacy() -> None:
