@@ -69,6 +69,8 @@ privacy-scan task will enforce this rule.
 
 - This is a typing-test dataset with prescribed sentences, not ordinary
   browsing behaviour.
+- No second human keyboard source is currently available in the configured
+  dataset root, so keyboard false-positive estimates rely on Aalto alone.
 - It contains human typing only; bot labels must come from the documented
   synthetic generators, not from the source data.
 - The source README reports logging/display problems for some keystrokes.
