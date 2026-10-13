@@ -1,6 +1,6 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 6aeab38
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** d0a28c7
 
 ## Current task
 
@@ -20,7 +20,7 @@
 - P1-03 added and committed the streaming Bournemouth loader in `94d15f4`.
 - P1-04 implemented the IEEE blog-bots loader and fixture tests in `c8c43c9`.
 - P1-05 implemented the CaptchaSolve30k streaming loader and decoder tests in `6aeab38`.
-- P1-06 implemented canonical mouse-event windowing and focused tests; commit is pending.
+- P1-06 implemented canonical mouse-event windowing and focused tests in `d0a28c7`.
 
 ## Exact next step
 
