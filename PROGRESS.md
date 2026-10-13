@@ -28,7 +28,7 @@
 | P2-01 | 2 | Mouse trajectory segmentation | DONE | ad62ff1 | Pause and click/down/up splits; min_points and min_path_px filters; focused tests pass. |
 | P2-02 | 2 | Mouse feature extraction | DONE | pending | Appendix A.2 segment features, window aggregation, hand-computed tests, and Hypothesis invariants. |
 | P2-03 | 2 | Mouse feature shards | DONE | pending | Resumable canonical-Parquet feature shards, schema, metadata, and train-mouse CLI. |
-| P2-04 | 2 | Leakage-safe split utilities | TODO | | |
+| P2-04 | 2 | Leakage-safe split utilities | DONE | pending | Added grouped, cross-phase, cross-dataset, and leave-one-bot-type-out splits with group-isolation tests. |
 | P2-05 | 2 | Mouse baselines | TODO | | |
 | P2-06 | 2 | LightGBM optimisation | TODO | | |
 | P2-07 | 2 | Session score aggregation | TODO | | |

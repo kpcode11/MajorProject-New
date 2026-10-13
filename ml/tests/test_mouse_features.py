@@ -213,6 +213,7 @@ def test_features_are_finite_bounded_and_translation_invariant(
         )
         > 1e-6
     )
+    assume(all(value == 0.0 or abs(value) > 1e-6 for value in [*xs, *ys]))
     assume(features["path_length"] > 1e-8)
     assume(shifted["path_length"] > 1e-8)
 

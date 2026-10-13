@@ -1,36 +1,35 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** 53c535b
+**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P2-04 — leakage-safe split utilities
+- ID: P2-05 — mouse baselines
 - State: ready to start.
 
 ## Done in the previous task
 
-- Added `botguard_ml.features.shards` to stream canonical Parquet events,
-  extract window features, and write one resumable feature shard per source.
-- Added stable metadata columns: `dataset`, `domain`, `session_id`,
-  `subject_id`, `split_group`, `label`, and `bot_type`.
-- Added `mouse_features.schema.json` and `_state.json` tracking under
-  `data/processed/mouse_features/`.
-- Added `python scripts/tasks.py train-mouse --stage features
-  --max-sessions N`.
-- Added focused shard and resumability tests.
+- Implemented leakage-safe split utilities in
+  `ml/src/botguard_ml/splits.py`.
+- `grouped_split` creates deterministic group-level train/test partitions.
+- `cross_phase_split` holds out a requested domain/phase.
+- `cross_dataset_split` holds out a requested dataset.
+- `leave_one_bot_type_out` holds out only the requested bot type.
+- All strategies validate required feature metadata and reject empty or
+  overlapping group partitions.
+- Added tests asserting complete coverage and disjoint `split_group` values.
 
 ## Exact next step
 
-- Implement `grouped_split`, `cross_phase_split`, `cross_dataset_split`, and
-  `leave_one_bot_type_out` in `ml/src/botguard_ml/splits.py`.
-- Add tests proving no `split_group` occurs in more than one split.
+- Implement identical-split mouse baselines: majority class, scaled Logistic
+  Regression, Random Forest, and LightGBM.
+- Save results under `results/mouse/baselines.csv`.
 
-## Files touched in P2-03
+## Files touched in P2-04
 
-- `ml/src/botguard_ml/features/shards.py`
-- `ml/tests/test_mouse_shards.py`
-- `scripts/build_mouse_features.py`
-- `scripts/tasks.py`
+- `ml/src/botguard_ml/splits.py`
+- `ml/tests/test_splits.py`
+- `ml/tests/test_mouse_features.py`
 - `docs/plan/phase_2.md`
 - `PROGRESS.md`
 
@@ -38,10 +37,8 @@
 
 - `python scripts/tasks.py test-fast`
 - `python scripts/tasks.py lint`
-- `python scripts/tasks.py train-mouse --stage features --max-sessions 1`
 
-All passed. The smoke shard was removed after validation. Windows pytest cache
-warnings are pre-existing and harmless.
+All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
@@ -54,6 +51,6 @@ warnings are pre-existing and harmless.
 
 - No generated feature shards remain in the worktree.
 
-## Questions for the human (P2-04)
+## Questions for the human (P2-05)
 
 - None.
