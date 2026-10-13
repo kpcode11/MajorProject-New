@@ -1,0 +1,121 @@
+dataset: ieee_blog_bots
+path: C:\Users\KESHAV\Downloads\datasets\Comparative Activity Patterns of Human Users and Hierarchical Bots on a Blog Platform
+exists: True
+readme.md (2.0 KB)
+[dir] test
+  bot_Fallible_00.json (3.0 KB)
+  bot_Fallible_01.json (2.0 KB)
+  bot_Fallible_02.json (22.0 KB)
+  bot_Fallible_03.json (5.0 KB)
+  bot_Fallible_04.json (36.0 KB)
+  bot_Fallible_05.json (37.0 KB)
+  bot_Fallible_06.json (18.0 KB)
+  bot_Fallible_07.json (12.0 KB)
+  bot_Fallible_08.json (1.0 KB)
+  bot_Fallible_09.json (58.0 KB)
+  bot_Fallible_10.json (7.0 KB)
+  bot_Fallible_11.json (7.0 KB)
+  bot_Humanish_00.json (3.0 KB)
+  bot_Humanish_01.json (25.0 KB)
+  bot_Humanish_02.json (2.0 KB)
+  bot_Humanish_03.json (9.0 KB)
+  bot_Humanish_04.json (3.0 KB)
+  bot_Humanish_05.json (3.0 KB)
+  bot_Humanish_06.json (3.0 KB)
+  bot_Humanish_07.json (13.0 KB)
+  bot_Humanish_08.json (20.0 KB)
+  bot_Humanish_09.json (6.0 KB)
+  bot_Humanish_10.json (34.0 KB)
+  bot_Humanish_11.json (8.0 KB)
+  bot_Mimic_00.json (4.0 KB)
+  bot_Mimic_01.json (13.0 KB)
+  bot_Mimic_02.json (19.0 KB)
+  bot_Mimic_03.json (16.0 KB)
+  bot_Mimic_04.json (14.0 KB)
+  bot_Mimic_05.json (17.0 KB)
+  bot_Mimic_06.json (2.0 KB)
+  bot_Mimic_07.json (6.0 KB)
+  bot_Mimic_08.json (9.0 KB)
+  bot_Mimic_09.json (7.0 KB)
+  bot_Mimic_10.json (13.0 KB)
+  bot_Mimic_11.json (6.0 KB)
+  bot_Mimic_12.json (1.0 KB)
+  bot_Naive_00.json (1.0 KB)
+  bot_Naive_01.json (1.0 KB)
+  bot_Naive_02.json (6.0 KB)
+  bot_Naive_03.json (1.0 KB)
+  human_00.json (23.0 KB)
+  human_01.json (56.0 KB)
+  human_02.json (34.0 KB)
+  human_03.json (24.0 KB)
+  human_04.json (27.0 KB)
+  human_05.json (47.0 KB)
+  human_06.json (22.0 KB)
+  human_07.json (12.0 KB)
+  human_08.json (4.0 KB)
+  human_09.json (6.0 KB)
+  human_10.json (49.0 KB)
+  human_11.json (13.0 KB)
+  human_12.json (49.0 KB)
+  human_13.json (29.0 KB)
+  human_14.json (37.0 KB)
+  human_15.json (49.0 KB)
+  human_16.json (51.0 KB)
+  human_17.json (24.0 KB)
+  human_18.json (34.0 KB)
+  human_19.json (55.0 KB)
+  human_20.json (39.0 KB)
+  human_21.json (52.0 KB)
+  human_22.json (56.0 KB)
+  human_23.json (61.0 KB)
+  human_24.json (73.0 KB)
+  human_25.json (21.0 KB)
+  human_26.json (38.0 KB)
+  human_27.json (49.0 KB)
+  human_28.json (58.0 KB)
+  human_29.json (5.0 KB)
+  human_30.json (10.0 KB)
+  human_31.json (2.0 KB)
+[dir] train
+  bot_Fallible_00.json (14.0 KB)
+  bot_Fallible_01.json (20.0 KB)
+  bot_Fallible_02.json (10.0 KB)
+  bot_Fallible_03.json (7.0 KB)
+... tree output capped at 80 entries ...
+
+by extension:
+.json: 156 files, 2.0 MB
+.md: 1 files, 2.0 KB
+
+largest files:
+73.0 KB human_24.json
+71.0 KB human_11.json
+61.0 KB human_08.json
+61.0 KB human_23.json
+58.0 KB human_28.json
+58.0 KB bot_Fallible_09.json
+56.0 KB human_22.json
+56.0 KB human_01.json
+55.0 KB human_19.json
+52.0 KB human_21.json
+
+--- first lines of readme.md ---
+# Human vs. Bot Activity Dataset (Blog Platform)
+
+This dataset contains fine-grained user interaction data from a blog platform, featuring both real human users and four distinct tiers of automated agents (bots). It is designed research and development in:
+- Behavioural analysis
+- Pattern recognition
+
+--- first lines of bot_Fallible_00.json ---
+{"bot_info": {"bot_id": 4, "bot_name": "FallibleBot", "session_timestamp": 1762797073134}, "mouse_movements": [{"x": 874, "y": 201, "timestamp": 1762797142806}, {"x": 896, "y": 184, "timestamp": 1762797142841}, {"x": 918, "y": 166, "timestamp": 1762797142872}, {"x": 941, "y": 148, "timestamp": 17627
+
+
+
+
+
+--- first lines of bot_Fallible_01.json ---
+{"bot_info": {"bot_id": 4, "bot_name": "FallibleBot", "session_timestamp": 1762802867604}, "mouse_movements": [{"x": 683, "y": 384, "timestamp": 1762802957999}, {"x": 730, "y": 351, "timestamp": 1762802958023}, {"x": 776, "y": 318, "timestamp": 1762802958054}, {"x": 799, "y": 301, "timestamp": 17628
+
+
+
+

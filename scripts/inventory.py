@@ -43,6 +43,7 @@ def inventory(key: str) -> str:
         raise KeyError(f"unknown dataset key: {key}")
     base = base_root / datasets[key]
     lines = [f"dataset: {key}", f"path: {base}", f"exists: {base.exists()}"]
+    tree_lines: list[str] = []
     stats: collections.defaultdict[str, list[int]] = collections.defaultdict(lambda: [0, 0])
     biggest: list[tuple[int, pathlib.Path]] = []
     samples: list[pathlib.Path] = []
@@ -51,12 +52,13 @@ def inventory(key: str) -> str:
         try:
             entries = list(os.scandir(directory))[:200]
         except OSError as error:
-            lines.append(f"cannot list {directory}: {error}")
+            tree_lines.append(f"cannot list {directory}: {error}")
             return
         for entry in entries:
             path = pathlib.Path(entry.path)
             if entry.is_dir(follow_symlinks=False):
-                lines.append(f"{'  ' * depth}[dir] {entry.name}")
+                if len(tree_lines) < 80:
+                    tree_lines.append(f"{'  ' * depth}[dir] {entry.name}")
                 if depth < 2:
                     walk(path, depth + 1)
                 continue
@@ -65,11 +67,15 @@ def inventory(key: str) -> str:
             stats[ext][0] += 1
             stats[ext][1] += size
             biggest.append((size, path))
-            lines.append(f"{'  ' * depth}{entry.name} ({human_size(size)})")
+            if len(tree_lines) < 80:
+                tree_lines.append(f"{'  ' * depth}{entry.name} ({human_size(size)})")
             if size < 5_000_000 and ext in TEXT_EXTENSIONS and len(samples) < 3:
                 samples.append(path)
 
     walk(base, 0)
+    lines.extend(tree_lines)
+    if len(tree_lines) >= 80:
+        lines.append("... tree output capped at 80 entries ...")
     lines.append("\nby extension:")
     lines.extend(f"{ext or '(none)'}: {count} files, {human_size(total)}" for ext, (count, total) in sorted(stats.items()))
     lines.append("\nlargest files:")
