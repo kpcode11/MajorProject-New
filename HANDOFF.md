@@ -1,6 +1,6 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Cursor  |  **Branch:** phase-2-mouse-model  |  **Last commit:** pending P2-01
+**Updated:** 2026-10-13  |  **By:** Cursor  |  **Branch:** phase-2-mouse-model  |  **Last commit:** ad62ff1
 
 ## Current task
 
