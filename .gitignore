@@ -1,0 +1,55 @@
+# Python environments and generated Python files
+.venv/
+**/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node tooling
+node_modules/
+dist/
+coverage/
+
+# Secrets and machine-local configuration
+.env
+.env.*
+!.env.example
+config/datasets.local.yaml
+
+# Data, run logs, and generated model/evaluation artifacts
+data/*
+!data/README.md
+!data/fixtures/
+!data/fixtures/**
+!data/raw_cache/
+!data/raw_cache/.gitkeep
+!data/interim/
+!data/interim/.gitkeep
+!data/processed/
+!data/processed/.gitkeep
+logs/*
+!logs/.gitkeep
+results/*
+!results/mouse/
+!results/mouse/.gitkeep
+!results/keyboard/
+!results/keyboard/.gitkeep
+!results/touch/
+!results/touch/.gitkeep
+!results/fusion/
+!results/fusion/.gitkeep
+!results/system/
+!results/system/.gitkeep
+*.parquet
+*.zip
+*.onnx
+
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
