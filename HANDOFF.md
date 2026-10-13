@@ -4,7 +4,7 @@
 
 ## Current task
 
-- ID: P1-09 — mouse data audit
+- ID: P1-10 — mouse exploratory analysis
 - State: ready to start.
 
 ## Done in this task so far
@@ -23,10 +23,11 @@
 - P1-06 implemented canonical mouse-event windowing and focused tests in `d0a28c7`.
 - P1-07 cloned DELBOT-Mouse shallowly, inspected its 4.6 MB archive, and added a streaming loader and dataset card in `72bef69`.
 - P1-08 recorded dataset availability decisions in `04e249c`.
+- P1-09 added the incremental `data-audit` command and focused tests; commit is pending.
 
 ## Exact next step
 
-- Implement `data-audit` outputs for canonical mouse shards, with counts, timing distributions, coordinate ranges, and missing-value rates.
+- Implement the mouse EDA script, save trajectories/speed/timing figures under `results/mouse/eda/`, and validate it on available canonical shards.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -48,6 +49,7 @@
 - `ml/src/botguard_ml/features/windowing.py` and `ml/tests/test_windowing.py` — canonical mouse windowing and coverage.
 - `ml/src/botguard_ml/loaders/delbot_mouse.py` and `ml/tests/test_delbot_mouse.py` — DELBOT archive loader and coverage.
 - `docs/datasets/delbot_mouse.md` — DELBOT dataset card.
+- `scripts/data_audit.py` and `scripts/test_data_audit.py` — incremental audit implementation and coverage.
 
 ## Commands to run first
 
@@ -62,6 +64,6 @@
 
 - No dataset operation has started.
 
-## Questions for the human (P1-09)
+## Questions for the human (P1-10)
 
 - None.

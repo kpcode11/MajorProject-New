@@ -21,7 +21,7 @@
 | P1-06 | 1 | Windowing | DONE | d0a28c7 | Adds 10-second/5-second overlapping windows, exact duplicate removal, sorting, and minimum move filtering. |
 | P1-07 | 1 | DELBOT acquisition and loader | DONE | 72bef69 | Shallow clone succeeded; archive inspected and streamed directly with two bounded samples extracted for inspection. |
 | P1-08 | 1 | Dataset availability decisions | DONE | pending | Recorded unavailable BeCAPTCHA/CMU, repo-only UL-Keystroke, and obtained DELBOT outcomes. |
-| P1-09 | 1 | Mouse data audit | TODO | | |
+| P1-09 | 1 | Mouse data audit | DONE | pending | Adds incremental Parquet audits with JSON/Markdown reports and focused coverage. |
 | P1-10 | 1 | Mouse exploratory analysis | TODO | | |
 | P1-11 | 1 | Dataset-fingerprint test | TODO | | |
 | P1-12 | 1 | Data manifest | TODO | | |

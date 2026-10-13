@@ -10,8 +10,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = (ROOT / "ml", ROOT / "backend")
-IMPLEMENTED = ("setup", "lint", "test", "test-fast", "status")
-PLANNED = ("data-audit", "train-mouse", "train-keyboard", "train-touch", "eval-all", "serve", "demo", "loadtest")
+IMPLEMENTED = ("setup", "lint", "test", "test-fast", "status", "data-audit")
+PLANNED = ("train-mouse", "train-keyboard", "train-touch", "eval-all", "serve", "demo", "loadtest")
 
 
 def package_python(package: Path) -> Path:
@@ -66,6 +66,20 @@ def status() -> None:
     run([sys.executable, str(ROOT / "scripts" / "status.py")])
 
 
+def data_audit() -> None:
+    """Create bounded audit reports for canonical mouse Parquet shards."""
+    run(
+        [
+            str(require_environment(PACKAGES[0])),
+            str(ROOT / "scripts" / "data_audit.py"),
+            "--input-root",
+            str(ROOT / "data" / "interim"),
+            "--output-root",
+            str(ROOT / "results" / "mouse"),
+        ]
+    )
+
+
 def main() -> int:
     """Parse a task command and dispatch it."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -80,6 +94,8 @@ def main() -> int:
             test_fast() if command == "test-fast" else test()
         elif command == "status":
             status()
+        elif command == "data-audit":
+            data_audit()
         else:
             print(f"{command}: not implemented yet")
     except (RuntimeError, subprocess.CalledProcessError) as error:
