@@ -45,7 +45,7 @@
 | P3-05 | 3 | Synthetic keyboard bots | DONE | e7006fa | Added deterministic K1 constant, K2 uniform, K3 training-human-fitted mimic, and K4 burst generators with tests. |
 | P3-06 | 3 | Keyboard feature shards | DONE | d748e0a | Added human and configurable K1/K2/K4 feature shards with participant/generator split groups and K3 holdout enforcement. |
 | P3-07 | 3 | Keyboard evaluation | DONE | 695a6a8 | Added grouped keyboard evaluation with K3 holdout, per-generator reports, speed terciles, human FPR, and bootstrap CIs. |
-| P3-08 | 3 | Optional second keyboard source | DONE | pending | No usable BB-MAS or UL repository data is configured; recorded the single-human-source limitation without adding an unsupported loader. |
+| P3-08 | 3 | Optional second keyboard source | DONE | fdad7d8 | No usable BB-MAS or UL repository data is configured; recorded the single-human-source limitation without adding an unsupported loader. |
 | P3-09 | 3 | Keyboard ONNX export | TODO | | |
 | P3-10 | 3 | Desktop fusion | TODO | | |
 | P3-11 | 3 | Keyboard and fusion model card | TODO | | |
