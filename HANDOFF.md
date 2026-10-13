@@ -1,54 +1,43 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** ac133fe
+**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P2-13 — mouse model card
+- ID: P3-01 — Aalto inventory and card
 - State: ready to start.
 
 ## Done in the previous task
 
-- Added LightGBM ONNX export in `ml/src/botguard_ml/export_onnx.py`.
-- Added model metadata containing feature order, version, manifest hash,
-  imputation strategy, seed, and Git commit.
-- Added ONNX Runtime prediction helper.
-- Added `scripts/export_mouse_onnx.py`.
-- Added `train-mouse --stage onnx`.
-- Added native-vs-ONNX parity testing at `1e-4` tolerance.
+- Added `docs/model_card.md` with the mouse model summary, input and feature
+  construction, grouped evaluation protocol, intended use, limitations,
+  privacy boundaries, and deployment status.
+- Explicitly documented that complete source shards and final real-data metrics
+  are unavailable, so no unsupported metric is claimed.
+- Marked P2-13 complete in the phase plan and progress ledger.
 
 ## Exact next step
 
-- Write the mouse section of `docs/model_card.md`, including limitations,
-  dataset constraints, evaluation status, and deployment boundaries.
+- Inventory the Aalto keystroke dataset safely, record its availability and
+  licence/format facts, and write its dataset card without loading large files
+  into memory.
 
-## Files touched in P2-12
+## Files touched in P2-13
 
-- `ml/src/botguard_ml/export_onnx.py`
-- `ml/tests/test_export_onnx.py`
-- `scripts/export_mouse_onnx.py`
-- `scripts/tasks.py`
+- `docs/model_card.md`
 - `docs/plan/phase_2.md`
 - `PROGRESS.md`
 
 ## Validation
 
-- `python scripts/tasks.py test-fast`
-- `python scripts/tasks.py lint`
-- Focused ONNX parity test
-
-All passed. Windows pytest cache warnings are pre-existing and harmless.
+- Documentation-only change; no test run required.
 
 ## Known problems / gotchas
 
-- Full feature shards are not currently present, so no production ONNX
-  artifact was generated or committed.
-- Run `python scripts/tasks.py train-mouse --stage onnx` after feature shards
-  exist to generate `backend/models/mouse-v1/model.onnx`.
-- The exporter stores median imputation as metadata; consumers must apply the
-  same feature order and imputation before ONNX inference.
+- The model card deliberately reports no final model metric because complete
+  feature shards are unavailable.
 - Work is on `phase-2-mouse-model`.
 
-## Questions for the human (P2-13)
+## Questions for the human (P3-01)
 
 - None.

@@ -16,7 +16,7 @@
 - [x] **P2-10** Ablations: feature groups (kinematics, geometry, timing, click); with/without shortcut features (`n_points`, `duration_ms`, `dt_mean`, `dt_mode_fraction`).
 - [x] **P2-11** SHAP summary and a function returning top-3 contributing features per scored window.
 - [x] **P2-12** Export ONNX to `backend/models/mouse-<version>/model.onnx` and `metadata.json` (feature order, version, data manifest hash, metrics, calibration parameters, git commit). Add the ONNX-vs-native parity test (tolerance 1e-4).
-- [ ] **P2-13** Write the mouse section of `docs/model_card.md`, including limitations: small sample sizes, bots created by dataset authors, game-task domain for CaptchaSolve30k, no live human validation.
+- [x] **P2-13** Write the mouse section of `docs/model_card.md`, including limitations: small sample sizes, bots created by dataset authors, game-task domain for CaptchaSolve30k, no live human validation.
 
 ### Acceptance criteria
 
