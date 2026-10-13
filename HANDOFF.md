@@ -4,7 +4,7 @@
 
 ## Current task
 
-- ID: P1-11 — dataset fingerprint test
+- ID: P1-12 — data manifest
 - State: ready to start.
 
 ## Done in this task so far
@@ -25,10 +25,11 @@
 - P1-08 recorded dataset availability decisions in `04e249c`.
 - P1-09 added the incremental `data-audit` command and focused tests in `a4a3bd5`.
 - P1-10 added and ran the bounded EDA script in `44974f9`.
+- P1-11 added the pairwise human-only fingerprint experiment; commit is pending.
 
 ## Exact next step
 
-- Implement the human-only cross-dataset fingerprint experiment with scale-invariant window features, save `results/mouse/fingerprint.json`, and validate it on available shards.
+- Update `data/manifest.json` with source metadata and hashes according to the manifest rules, then validate and commit as `P1-12: add data manifest`.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -52,6 +53,7 @@
 - `docs/datasets/delbot_mouse.md` — DELBOT dataset card.
 - `scripts/data_audit.py` and `scripts/test_data_audit.py` — incremental audit implementation and coverage.
 - `ml/notebooks/01_mouse_eda.py` and `results/mouse/eda/` — bounded EDA script and generated figures.
+- `scripts/dataset_fingerprint.py` and `results/mouse/fingerprint.json` — human-only fingerprint experiment and current insufficient-data report.
 
 ## Commands to run first
 
@@ -66,6 +68,6 @@
 
 - No dataset operation has started.
 
-## Questions for the human (P1-11)
+## Questions for the human (P1-12)
 
 - None.

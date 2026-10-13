@@ -7,10 +7,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = (ROOT / "ml", ROOT / "backend")
-IMPLEMENTED = ("setup", "lint", "test", "test-fast", "status", "data-audit")
+IMPLEMENTED = ("setup", "lint", "test", "test-fast", "status", "data-audit", "fingerprint")
 PLANNED = ("train-mouse", "train-keyboard", "train-touch", "eval-all", "serve", "demo", "loadtest")
 
 
@@ -53,7 +52,10 @@ def lint() -> None:
 def test() -> None:
     """Run the complete test suites for both Python packages."""
     for package in PACKAGES:
-        run([str(require_environment(package)), "-m", "pytest", "-q", "-x", "--maxfail=3"], cwd=package)
+        run(
+            [str(require_environment(package)), "-m", "pytest", "-q", "-x", "--maxfail=3"],
+            cwd=package,
+        )
 
 
 def test_fast() -> None:
@@ -80,6 +82,20 @@ def data_audit() -> None:
     )
 
 
+def fingerprint() -> None:
+    """Run the human-only cross-dataset fingerprint experiment."""
+    run(
+        [
+            str(require_environment(PACKAGES[0])),
+            str(ROOT / "scripts" / "dataset_fingerprint.py"),
+            "--input-root",
+            str(ROOT / "data" / "interim"),
+            "--output",
+            str(ROOT / "results" / "mouse" / "fingerprint.json"),
+        ]
+    )
+
+
 def main() -> int:
     """Parse a task command and dispatch it."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -96,6 +112,8 @@ def main() -> int:
             status()
         elif command == "data-audit":
             data_audit()
+        elif command == "fingerprint":
+            fingerprint()
         else:
             print(f"{command}: not implemented yet")
     except (RuntimeError, subprocess.CalledProcessError) as error:
