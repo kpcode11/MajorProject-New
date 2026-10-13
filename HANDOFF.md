@@ -1,34 +1,32 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** 5226d47
+**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P2-08 — model calibration
+- ID: P2-09 — mouse evaluation
 - State: ready to start.
 
 ## Done in the previous task
 
-- Added session-level score aggregation in
-  `ml/src/botguard_ml/aggregation.py`.
-- Compared mean, mean of the top three windows, maximum, and a small learned
-  logistic aggregator.
-- Aggregation is evaluated on a grouped session validation split; the learned
-  aggregator is fitted only on training sessions.
-- Added `scripts/compare_mouse_aggregation.py`, which writes the comparison
-  CSV under `results/mouse/`.
-- Added hand-computed aggregation tests and validation-session accounting tests.
+- Added grouped three-way calibration in `ml/src/botguard_ml/calibrate.py`.
+- Calibration groups are never used for fitting the raw model or evaluation.
+- Supports isotonic regression and Platt logistic scaling.
+- Reports raw and calibrated Brier scores plus reliability-bin records.
+- Added `scripts/calibrate_mouse_scores.py` for reproducible JSON output.
+- Added tests for both calibration methods and partition accounting.
 
 ## Exact next step
 
-- Implement calibration using a separate calibration split, with isotonic or
-  Platt scaling, reliability-curve data, and Brier score output.
+- Implement Appendix E evaluation: in-distribution, cross-phase,
+  cross-dataset, leave-one-bot-type-out, human-FPR stress test, and grouped
+  bootstrap confidence intervals under `results/mouse/`.
 
-## Files touched in P2-07
+## Files touched in P2-08
 
-- `ml/src/botguard_ml/aggregation.py`
-- `ml/tests/test_aggregation.py`
-- `scripts/compare_mouse_aggregation.py`
+- `ml/src/botguard_ml/calibrate.py`
+- `ml/tests/test_calibrate.py`
+- `scripts/calibrate_mouse_scores.py`
 - `docs/plan/phase_2.md`
 - `PROGRESS.md`
 
@@ -41,8 +39,8 @@ All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
-- Aggregation comparison requires a table containing window scores in a
-  `score` column and canonical session metadata.
+- Calibration requires a score table with `score`, `label`, and `split_group`
+  columns.
 - Git marks this workspace safe in the local user's global Git configuration
   due to a sandbox ownership mismatch.
 - Work is on `phase-2-mouse-model`, created from completed Phase 1
@@ -50,8 +48,8 @@ All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Dataset / long-job state
 
-- No generated feature shards or score tables remain in the worktree.
+- No generated score tables remain in the worktree.
 
-## Questions for the human (P2-08)
+## Questions for the human (P2-09)
 
 - None.

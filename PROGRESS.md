@@ -32,7 +32,7 @@
 | P2-05 | 2 | Mouse baselines | DONE | pending | Added majority, scaled Logistic Regression, Random Forest, and LightGBM on one grouped split with CSV output. |
 | P2-06 | 2 | LightGBM optimisation | DONE | pending | Added time-boxed Optuna search with stratified grouped CV on training groups only and JSON output. |
 | P2-07 | 2 | Session score aggregation | DONE | pending | Added mean, top-k mean, max, and learned logistic aggregation comparison on validation sessions. |
-| P2-08 | 2 | Model calibration | TODO | | |
+| P2-08 | 2 | Model calibration | DONE | pending | Added separate grouped calibration split with isotonic/Platt scaling, reliability data, and Brier scores. |
 | P2-09 | 2 | Mouse evaluation | TODO | | |
 | P2-10 | 2 | Mouse ablations | TODO | | |
 | P2-11 | 2 | Mouse SHAP explanations | TODO | | |

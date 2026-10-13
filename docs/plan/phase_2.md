@@ -11,7 +11,7 @@
 - [x] **P2-05** Baselines on identical splits: majority class, Logistic Regression (scaled), Random Forest, LightGBM. Save `results/mouse/baselines.csv`.
 - [x] **P2-06** Hyperparameter search for LightGBM (Optuna; default 30 trials, time-boxed) with **grouped** CV on training data only. Save `results/mouse/hparams.json`.
 - [x] **P2-07** Session-level aggregation: define how window scores combine into a session or request score (mean, mean of top-k, max, small learned aggregator). Choose using validation data only; save the comparison.
-- [ ] **P2-08** Calibration (isotonic or Platt) on a separate calibration split; reliability curve and Brier score.
+- [x] **P2-08** Calibration (isotonic or Platt) on a separate calibration split; reliability curve and Brier score.
 - [ ] **P2-09** Evaluation (Appendix E): in-distribution, cross-phase, cross-dataset (Bournemouth -> IEEE), held-out bot types, plus the **human-FPR stress test on CaptchaSolve30k** (share of windows/sessions flagged at the chosen thresholds, by game type). Group bootstrap CIs. Save tables and figures under `results/mouse/`.
 - [ ] **P2-10** Ablations: feature groups (kinematics, geometry, timing, click); with/without shortcut features (`n_points`, `duration_ms`, `dt_mean`, `dt_mode_fraction`).
 - [ ] **P2-11** SHAP summary and a function returning top-3 contributing features per scored window.
