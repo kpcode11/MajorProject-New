@@ -41,7 +41,7 @@
 | P3-01 | 3 | Aalto inventory and card | DONE | b1f2b28 | Corrected full inventory counts and documented Aalto format, terms, size, and participant-streaming access. |
 | P3-02 | 3 | Aalto keyboard loader | DONE | f6e6db5 | Added seeded participant streaming, sentence windows, privacy-safe key classes, Parquet shards, malformed counts, and resumable state. |
 | P3-03 | 3 | Keyboard privacy scan | DONE | 4b8342d | Added Parquet-wide prohibited-column scan, CLI/task integration, fixture rejection tests, and real-shard validation. |
-| P3-04 | 3 | Keyboard features | DONE | pending | Added text-agnostic Appendix A.3 timing, variability, burst, pause, autocorrelation, and integrity features with tests. |
+| P3-04 | 3 | Keyboard features | DONE | 85c7e5b | Added text-agnostic Appendix A.3 timing, variability, burst, pause, autocorrelation, and integrity features with tests. |
 | P3-05 | 3 | Synthetic keyboard bots | TODO | | |
 | P3-06 | 3 | Keyboard feature shards | TODO | | |
 | P3-07 | 3 | Keyboard evaluation | TODO | | |
