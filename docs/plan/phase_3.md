@@ -9,7 +9,7 @@
 - [ ] **P3-03** Add a test that scans every produced keyboard shard and fails if any column contains key identities, typed text or sentences.
 - [x] **P3-04** Implement text-agnostic keyboard features (Appendix A.3) with unit tests (for example constant-interval input gives `dwell_cv` near 0).
 - [x] **P3-05** Implement synthetic bot generators K1, K2, K3, K4 (Appendix D.1) in `synthetic/keyboard.py`, parameters fitted on **training participants only**, deterministic by seed, with statistical tests.
-- [ ] **P3-06** Build keyboard feature shards: human windows plus synthetic bot windows at configurable prevalence. Splits grouped by participant (humans) and by generator + seed block (bots); hold out K3 entirely.
+- [x] **P3-06** Build keyboard feature shards: human windows plus synthetic bot windows at configurable prevalence. Splits grouped by participant (humans) and by generator + seed block (bots); hold out K3 entirely.
 - [ ] **P3-07** Train and evaluate with the Phase 2 protocol (baselines, tuning, calibration, bootstrap CIs). Report **per-generator** recall incl. K3, results by typist speed tercile, and the human FPR at the chosen thresholds.
 - [ ] **P3-08** Optional second human source for FPR: if the human obtains SU-AIS BB-MAS (Section 5.5) or if the `ul_keystroke_repo` contains usable data, add a loader and report human FPR on it. Otherwise record "single human source" as a limitation.
 - [ ] **P3-09** Export ONNX plus metadata to `backend/models/keyboard-<version>/`; add the parity test.

@@ -106,22 +106,36 @@ def fingerprint() -> None:
     )
 
 
-def train_keyboard(max_participants: int | None) -> None:
+def train_keyboard(stage: str, max_participants: int | None) -> None:
     """Build the privacy-safe Aalto keyboard event shards."""
     interpreter = require_environment(PACKAGES[0])
-    run(
-        [
-            str(interpreter),
-            str(ROOT / "scripts" / "build_keyboard_events.py"),
-            "--output-root",
-            str(ROOT / "data" / "interim" / "aalto_keystrokes"),
-            *(
-                []
-                if max_participants is None
-                else ["--max-participants", str(max_participants)]
-            ),
-        ]
-    )
+    if stage == "events":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "build_keyboard_events.py"),
+                "--output-root",
+                str(ROOT / "data" / "interim" / "aalto_keystrokes"),
+                *(
+                    []
+                    if max_participants is None
+                    else ["--max-participants", str(max_participants)]
+                ),
+            ]
+        )
+    elif stage == "features":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "build_keyboard_features.py"),
+                "--input-root",
+                str(ROOT / "data" / "interim" / "aalto_keystrokes"),
+                "--output",
+                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+            ]
+        )
+    else:
+        raise ValueError("train-keyboard supports --stage events or features")
 
 
 def keyboard_privacy() -> None:
@@ -235,7 +249,7 @@ def main() -> int:
         elif command == "fingerprint":
             fingerprint()
         elif command == "train-keyboard":
-            train_keyboard(args.max_participants)
+            train_keyboard(args.stage, args.max_participants)
         elif command == "keyboard-privacy":
             keyboard_privacy()
         elif command == "train-mouse":
