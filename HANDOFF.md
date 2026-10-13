@@ -4,7 +4,7 @@
 
 ## Current task
 
-- ID: P1-05 — load CaptchaSolve30k sessions
+- ID: P1-06 — implement mouse windowing
 - State: ready to start.
 
 ## Done in this task so far
@@ -19,10 +19,11 @@
 - P1-01 added the safe inventory command in `a6a0bfa`; P1-02 documented observed datasets in `31e0ecc`.
 - P1-03 added and committed the streaming Bournemouth loader in `94d15f4`.
 - P1-04 implemented the IEEE blog-bots loader and fixture tests in `c8c43c9`.
+- P1-05 implemented the CaptchaSolve30k streaming loader and decoder tests; commit is pending.
 
 ## Exact next step
 
-- Inspect one CaptchaSolve30k file and its README, then implement the streaming decoder and fixture test.
+- Inspect the feature/windowing conventions, implement 10-second windows with 5-second hop and minimum move filtering, then add focused tests.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -40,6 +41,7 @@
 - `ml/src/botguard_ml/loaders/web_bot_detection.py` — streaming phase-1/phase-2 loader; smoke shard validated.
 - `ml/src/botguard_ml/loaders/ieee_blog_bots.py` — to be added for the current task.
 - `ml/tests/test_ieee_blog_bots.py` and `ml/tests/fixtures/ieee_session.json` — IEEE loader coverage.
+- `ml/src/botguard_ml/loaders/captchasolve30k.py` and `ml/tests/test_captchasolve30k.py` — CaptchaSolve30k loader and decoder coverage.
 
 ## Commands to run first
 
@@ -54,6 +56,6 @@
 
 - No dataset operation has started.
 
-## Questions for the human (P1-05)
+## Questions for the human (P1-06)
 
 - None.
