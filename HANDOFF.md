@@ -1,52 +1,50 @@
 # Handoff
 
-**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** phase-3-keyboard  |  **Last commit:** 4b8342d
+**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** phase-3-keyboard  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P3-04 — keyboard features
+- ID: P3-05 — synthetic keyboard bots
 - State: ready to start.
 
 ## Done in the previous task
 
-- Added `ml/src/botguard_ml/privacy.py` to scan every keyboard Parquet shard
-  in batches.
-- Rejects prohibited columns including sentence text, user input, letters,
-  key codes, keystroke IDs, typed text, and generic text columns.
-- Added `scripts/scan_keyboard_privacy.py`.
-- Added `python scripts/tasks.py keyboard-privacy`.
-- Added safe and unsafe fixture tests.
-- Validated one real generated Aalto shard: 1 shard and 661 rows scanned.
+- Added `ml/src/botguard_ml/features/keyboard.py`.
+- Implemented text-agnostic Appendix A.3 features:
+  dwell and flight distributions, typing speed, down-down intervals,
+  rollover, burst and pause structure, lag-1 flight autocorrelation,
+  dwell-flight correlation, interval regularity, and safe missing values for
+  SDK-only fields.
+- Added feature schema validation and focused hand-computed tests.
 
 ## Exact next step
 
-- Implement text-agnostic keyboard features from Appendix A.3, including
-  dwell, flight/inter-key intervals, variability, burstiness, pause, and
-  correction-free timing features.
+- Implement deterministic synthetic keyboard generators K1, K2, K3, and K4
+  from Appendix D.1, fitting K3 parameters only from training participants and
+  keeping K3 held out from training evaluation.
 
-## Files touched in P3-03
+## Files touched in P3-04
 
-- `ml/src/botguard_ml/privacy.py`
-- `ml/tests/test_privacy.py`
-- `scripts/scan_keyboard_privacy.py`
-- `scripts/tasks.py`
+- `ml/src/botguard_ml/features/keyboard.py`
+- `ml/tests/test_keyboard_features.py`
+- `docs/plan/phase_3.md`
 - `PROGRESS.md`
 
 ## Validation
 
 - `python scripts/tasks.py test-fast`
 - `python scripts/tasks.py lint`
-- Real Aalto loader plus privacy-scan smoke test
 
 All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
-- Do not use source sentence, user input, letter, key code, or keystroke ID
-  fields as keyboard model features.
-- Keyboard shards are human-only until the synthetic generators task.
-- Work is now on the dedicated `phase-3-keyboard` branch.
+- Features accept canonical timing and coarse `key_class` only; do not add
+  text or key identities.
+- The Aalto loader produces human-only windows. Synthetic bot labels belong
+  to the next task.
+- Work is on the dedicated `phase-3-keyboard` branch.
 
-## Questions for the human (P3-04)
+## Questions for the human (P3-05)
 
 - None.
