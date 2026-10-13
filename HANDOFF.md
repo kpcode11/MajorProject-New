@@ -1,6 +1,6 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 44974f9
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 20af833
 
 ## Current task
 
@@ -25,7 +25,7 @@
 - P1-08 recorded dataset availability decisions in `04e249c`.
 - P1-09 added the incremental `data-audit` command and focused tests in `a4a3bd5`.
 - P1-10 added and ran the bounded EDA script in `44974f9`.
-- P1-11 added the pairwise human-only fingerprint experiment; commit is pending.
+- P1-11 added the pairwise human-only fingerprint experiment in `20af833`.
 
 ## Exact next step
 
