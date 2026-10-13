@@ -1,33 +1,34 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** b132069
+**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P2-11 — mouse SHAP explanations
+- ID: P2-12 — mouse ONNX export
 - State: ready to start.
 
 ## Done in the previous task
 
-- Added feature-group ablations in `ml/src/botguard_ml/ablations.py` for
-  kinematics, geometry, timing, and click features.
-- Added shortcut-inclusive and shortcut-exclusive configurations.
-- Every configuration uses the same deterministic grouped split and Logistic
-  Regression evaluator.
-- Added `scripts/run_mouse_ablations.py`, writing
-  `results/mouse/ablations.csv`.
-- Added focused ablation coverage and group-count tests.
+- Added LightGBM SHAP explanations in `ml/src/botguard_ml/explanations.py`.
+- Added `shap_summary` with mean signed and absolute contributions.
+- Added `top_contributing_features`, returning the top three contributors for
+  every scored window by absolute SHAP magnitude.
+- Added `scripts/run_mouse_shap.py`, writing
+  `results/mouse/shap_summary.csv` and
+  `results/mouse/shap_top_features.json`.
+- Added `train-mouse --stage shap`.
+- Added focused tests for ranking and summary output.
 
 ## Exact next step
 
-- Add a SHAP summary workflow and a helper returning the top three contributing
-  features for each scored window.
+- Export the mouse model to `backend/models/mouse-<version>/model.onnx` with
+  metadata, then add native-vs-ONNX parity coverage.
 
-## Files touched in P2-10
+## Files touched in P2-11
 
-- `ml/src/botguard_ml/ablations.py`
-- `ml/tests/test_ablations.py`
-- `scripts/run_mouse_ablations.py`
+- `ml/src/botguard_ml/explanations.py`
+- `ml/tests/test_explanations.py`
+- `scripts/run_mouse_shap.py`
 - `scripts/tasks.py`
 - `docs/plan/phase_2.md`
 - `PROGRESS.md`
@@ -36,22 +37,22 @@
 
 - `python scripts/tasks.py test-fast`
 - `python scripts/tasks.py lint`
+- LightGBM plus SHAP integration smoke test
 
 All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
-- Ablation execution requires generated feature shards under
+- SHAP execution requires generated feature shards under
   `data/processed/mouse_features/`.
-- Git marks this workspace safe in the local user's global Git configuration
-  due to a sandbox ownership mismatch.
-- Work is on `phase-2-mouse-model`, created from completed Phase 1
-  (`phase-1-dataset-audit`).
+- SHAP currently explains the fixed LightGBM baseline configuration, not
+  unavailable optimized parameters.
+- Work is on `phase-2-mouse-model`.
 
 ## Dataset / long-job state
 
-- No generated ablation tables remain in the worktree.
+- No generated SHAP reports remain in the worktree.
 
-## Questions for the human (P2-11)
+## Questions for the human (P2-12)
 
 - None.

@@ -35,7 +35,7 @@
 | P2-08 | 2 | Model calibration | DONE | pending | Added separate grouped calibration split with isotonic/Platt scaling, reliability data, and Brier scores. |
 | P2-09 | 2 | Mouse evaluation | DONE | pending | Added Appendix E score evaluation, split modes, group bootstrap CIs, and human-FPR-by-game reporting. |
 | P2-10 | 2 | Mouse ablations | DONE | b132069 | Added kinematics, geometry, timing, click, and shortcut-inclusive/exclusive ablations on one grouped split. |
-| P2-11 | 2 | Mouse SHAP explanations | TODO | | |
+| P2-11 | 2 | Mouse SHAP explanations | DONE | pending | Added LightGBM SHAP summary and top-contributor reports per scored window. |
 | P2-12 | 2 | Mouse ONNX export | TODO | | |
 | P2-13 | 2 | Mouse model-card section | TODO | | |
 | P3-01 | 3 | Aalto inventory and card | TODO | | |
