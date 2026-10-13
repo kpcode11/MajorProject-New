@@ -105,6 +105,24 @@ def fingerprint() -> None:
     )
 
 
+def train_keyboard(max_participants: int | None) -> None:
+    """Build the privacy-safe Aalto keyboard event shards."""
+    interpreter = require_environment(PACKAGES[0])
+    run(
+        [
+            str(interpreter),
+            str(ROOT / "scripts" / "build_keyboard_events.py"),
+            "--output-root",
+            str(ROOT / "data" / "interim" / "aalto_keystrokes"),
+            *(
+                []
+                if max_participants is None
+                else ["--max-participants", str(max_participants)]
+            ),
+        ]
+    )
+
+
 def train_mouse(stage: str, max_sessions: int | None) -> None:
     """Build the requested mouse training stage."""
     interpreter = require_environment(PACKAGES[0])
@@ -202,6 +220,8 @@ def main() -> int:
             data_audit()
         elif command == "fingerprint":
             fingerprint()
+        elif command == "train-keyboard":
+            train_keyboard(args.max_participants)
         elif command == "train-mouse":
             train_mouse(args.stage, args.max_sessions)
         else:

@@ -1,56 +1,59 @@
 # Handoff
 
-**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** b1f2b28
+**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P3-02 — Aalto keyboard loader
+- ID: P3-03 — keyboard privacy scan
 - State: ready to start.
 
 ## Done in the previous task
 
-- Inventoried the configured Aalto dataset without loading it into memory.
-- Corrected `scripts/inventory.py` so aggregate file counts and sizes cover
-  all directory entries while printed tree output remains capped.
-- Confirmed 168,593 participant files, one metadata file, one README, and
-  approximately 18.85 GB on disk.
-- Read the supplied README and recorded its citation, non-commercial
-  attribution terms, tab-separated format, timestamp units, and known logging
-  caveat.
-- Added `docs/datasets/aalto_keystrokes.md` with the dataset card and the
-  participant-streaming/privacy processing decision.
+- Added `ml/src/botguard_ml/loaders/aalto_keystrokes.py`.
+- Streams one participant TSV at a time and supports deterministic seeded
+  participant sampling.
+- Converts each sentence with at least 10 key events into a canonical
+  keyboard window.
+- Maps source key identities to coarse `key_class` values in memory and
+  excludes sentence text, typed text, key identity, and keystroke identity
+  from output.
+- Writes per-participant Parquet shards and resumable `_state.json` progress.
+- Counts malformed participants instead of aborting the complete batch.
+- Added `scripts/build_keyboard_events.py` and wired
+  `python scripts/tasks.py train-keyboard`.
+- Added fixture coverage and a real one-participant smoke test.
 
 ## Exact next step
 
-- Implement `ml/src/botguard_ml/loaders/aalto_keystrokes.py` to stream seeded
-  participant files, create sentence windows with at least 10 events, map
-  key identity to `key_class` in memory, and write progress-aware Parquet
-  shards without retaining text or key identities.
+- Add a privacy scan that reads every produced keyboard shard and fails if it
+  contains typed text, sentences, key identities, or other prohibited columns.
 
-## Files touched in P3-01
+## Files touched in P3-02
 
-- `scripts/inventory.py`
-- `docs/datasets/inventory_aalto_keystrokes.txt`
-- `docs/datasets/aalto_keystrokes.md`
+- `ml/src/botguard_ml/loaders/aalto_keystrokes.py`
+- `ml/tests/test_aalto_keystrokes.py`
+- `scripts/build_keyboard_events.py`
+- `scripts/tasks.py`
 - `PROGRESS.md`
 
 ## Validation
 
-- `python scripts/inventory.py aalto_keystrokes`
 - `python scripts/tasks.py test-fast`
 - `python scripts/tasks.py lint`
+- Real Aalto one-participant smoke test: 13 windows, 661 events
 
 All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
-- The local Aalto copy is extracted and approximately 18.85 GB; never
-  concatenate participant files or load the metadata table wholesale.
-- Raw `SENTENCE`, `USER_INPUT`, `LETTER`, `KEYCODE`, and `KEYSTROKE_ID` must
-  not enter canonical keyboard shards.
-- The configured branch remains `phase-2-mouse-model`; do not switch branches
-  without explicit instruction.
+- The local Aalto copy is approximately 18.85 GB; do not process all
+  participants without an explicit bounded run.
+- The dataset root supports both the configured top-level path and its nested
+  `Keystrokes` directory layout.
+- The loader output is intentionally human-only (`label=0`); synthetic bot
+  windows are a later task.
+- Work is on `phase-2-mouse-model`.
 
-## Questions for the human (P3-02)
+## Questions for the human (P3-03)
 
 - None.
