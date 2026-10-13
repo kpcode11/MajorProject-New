@@ -9,8 +9,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = (ROOT / "ml", ROOT / "backend")
-IMPLEMENTED = ("setup", "lint", "test", "test-fast", "status", "data-audit", "fingerprint")
-PLANNED = ("train-mouse", "train-keyboard", "train-touch", "eval-all", "serve", "demo", "loadtest")
+IMPLEMENTED = (
+    "setup",
+    "lint",
+    "test",
+    "test-fast",
+    "status",
+    "data-audit",
+    "fingerprint",
+    "train-mouse",
+)
+PLANNED = ("train-keyboard", "train-touch", "eval-all", "serve", "demo", "loadtest")
 
 
 def package_python(package: Path) -> Path:
@@ -96,11 +105,31 @@ def fingerprint() -> None:
     )
 
 
+def train_mouse(stage: str, max_sessions: int | None) -> None:
+    """Build the requested mouse training stage."""
+    if stage != "features":
+        raise ValueError("train-mouse currently supports only --stage features")
+    run(
+        [
+            str(require_environment(PACKAGES[0])),
+            str(ROOT / "scripts" / "build_mouse_features.py"),
+            "--input-root",
+            str(ROOT / "data" / "interim"),
+            "--output-root",
+            str(ROOT / "data" / "processed" / "mouse_features"),
+            *([] if max_sessions is None else ["--max-sessions", str(max_sessions)]),
+        ]
+    )
+
+
 def main() -> int:
     """Parse a task command and dispatch it."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=(*IMPLEMENTED, *PLANNED))
-    command = parser.parse_args().command
+    parser.add_argument("--stage", default="features")
+    parser.add_argument("--max-sessions", type=int, default=None)
+    args = parser.parse_args()
+    command = args.command
     try:
         if command == "setup":
             setup()
@@ -114,6 +143,8 @@ def main() -> int:
             data_audit()
         elif command == "fingerprint":
             fingerprint()
+        elif command == "train-mouse":
+            train_mouse(args.stage, args.max_sessions)
         else:
             print(f"{command}: not implemented yet")
     except (RuntimeError, subprocess.CalledProcessError) as error:

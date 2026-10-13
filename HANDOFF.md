@@ -1,39 +1,36 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** e5213db
+**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P2-03 — mouse feature shards
+- ID: P2-04 — leakage-safe split utilities
 - State: ready to start.
 
 ## Done in the previous task
 
-- P2-02 implements the Appendix A.2 mouse feature set in
-  `ml/src/botguard_ml/features/mouse.py`.
-- Segment features cover kinematics, geometry, timing, and click-related
-  measurements, with explicit formula/unit documentation.
-- Window features aggregate segment values by mean, sample standard deviation,
-  and maximum, and include configurable shortcut features plus window timing.
-- Added hand-computed examples and Hypothesis tests for finite outputs,
-  bounded straightness, and translation invariance.
-- P2-01 segmentation defaults remain in
-  `ml/configs/mouse_features.yaml`.
+- Added `botguard_ml.features.shards` to stream canonical Parquet events,
+  extract window features, and write one resumable feature shard per source.
+- Added stable metadata columns: `dataset`, `domain`, `session_id`,
+  `subject_id`, `split_group`, `label`, and `bot_type`.
+- Added `mouse_features.schema.json` and `_state.json` tracking under
+  `data/processed/mouse_features/`.
+- Added `python scripts/tasks.py train-mouse --stage features
+  --max-sessions N`.
+- Added focused shard and resumability tests.
 
 ## Exact next step
 
-- Implement `python scripts/tasks.py train-mouse --stage features
-  --max-sessions N` to stream canonical mouse windows, extract features, and
-  write resumable shards under `data/processed/mouse_features/` plus
-  `mouse_features.schema.json`.
-- Include `dataset`, `domain`, `session_id`, `subject_id`, `split_group`,
-  `label`, and `bot_type` in every feature row.
+- Implement `grouped_split`, `cross_phase_split`, `cross_dataset_split`, and
+  `leave_one_bot_type_out` in `ml/src/botguard_ml/splits.py`.
+- Add tests proving no `split_group` occurs in more than one split.
 
-## Files touched in P2-02
+## Files touched in P2-03
 
-- `ml/src/botguard_ml/features/mouse.py`
-- `ml/tests/test_mouse_features.py`
-- `ml/configs/mouse_features.yaml`
+- `ml/src/botguard_ml/features/shards.py`
+- `ml/tests/test_mouse_shards.py`
+- `scripts/build_mouse_features.py`
+- `scripts/tasks.py`
 - `docs/plan/phase_2.md`
 - `PROGRESS.md`
 
@@ -41,9 +38,10 @@
 
 - `python scripts/tasks.py test-fast`
 - `python scripts/tasks.py lint`
-- Focused mouse feature and segmentation tests
+- `python scripts/tasks.py train-mouse --stage features --max-sessions 1`
 
-All passed. Windows pytest cache warnings are pre-existing and harmless.
+All passed. The smoke shard was removed after validation. Windows pytest cache
+warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
@@ -51,13 +49,11 @@ All passed. Windows pytest cache warnings are pre-existing and harmless.
   due to a sandbox ownership mismatch.
 - Work is on `phase-2-mouse-model`, created from completed Phase 1
   (`phase-1-dataset-audit`).
-- Avoid asserting translation invariance for subnormal-scale paths: adding a
-  translation can round away a displacement smaller than float precision.
 
 ## Dataset / long-job state
 
-- No dataset operation has started for P2-03.
+- No generated feature shards remain in the worktree.
 
-## Questions for the human (P2-03)
+## Questions for the human (P2-04)
 
 - None.
