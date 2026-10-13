@@ -1,37 +1,34 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** 056d501
+**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P2-07 — session score aggregation
+- ID: P2-08 — model calibration
 - State: ready to start.
 
 ## Done in the previous task
 
-- Added time-boxed Optuna LightGBM optimisation in
-  `ml/src/botguard_ml/hparams.py`.
-- Uses the same deterministic grouped holdout split as the baselines.
-- Runs stratified grouped cross-validation only on training groups.
-- Default search budget is 30 trials and 600 seconds.
-- Persists best parameters, CV ROC-AUC, completed trials, group counts,
-  feature order, and split metadata to `results/mouse/hparams.json`.
-- Added `scripts/run_mouse_hparams.py` and
-  `python scripts/tasks.py train-mouse --stage hparams`.
+- Added session-level score aggregation in
+  `ml/src/botguard_ml/aggregation.py`.
+- Compared mean, mean of the top three windows, maximum, and a small learned
+  logistic aggregator.
+- Aggregation is evaluated on a grouped session validation split; the learned
+  aggregator is fitted only on training sessions.
+- Added `scripts/compare_mouse_aggregation.py`, which writes the comparison
+  CSV under `results/mouse/`.
+- Added hand-computed aggregation tests and validation-session accounting tests.
 
 ## Exact next step
 
-- Implement session-level aggregation comparisons for window scores:
-  mean, mean of top-k, max, and a small learned aggregator.
-- Select the aggregation method using validation data only and save the
-  comparison under `results/mouse/`.
+- Implement calibration using a separate calibration split, with isotonic or
+  Platt scaling, reliability-curve data, and Brier score output.
 
-## Files touched in P2-06
+## Files touched in P2-07
 
-- `ml/src/botguard_ml/hparams.py`
-- `ml/tests/test_hparams.py`
-- `scripts/run_mouse_hparams.py`
-- `scripts/tasks.py`
+- `ml/src/botguard_ml/aggregation.py`
+- `ml/tests/test_aggregation.py`
+- `scripts/compare_mouse_aggregation.py`
 - `docs/plan/phase_2.md`
 - `PROGRESS.md`
 
@@ -44,8 +41,8 @@ All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
-- Hyperparameter execution requires generated feature shards under
-  `data/processed/mouse_features/`.
+- Aggregation comparison requires a table containing window scores in a
+  `score` column and canonical session metadata.
 - Git marks this workspace safe in the local user's global Git configuration
   due to a sandbox ownership mismatch.
 - Work is on `phase-2-mouse-model`, created from completed Phase 1
@@ -53,8 +50,8 @@ All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Dataset / long-job state
 
-- No generated feature shards remain in the worktree.
+- No generated feature shards or score tables remain in the worktree.
 
-## Questions for the human (P2-07)
+## Questions for the human (P2-08)
 
 - None.
