@@ -17,7 +17,7 @@
 - [x] **P1-09** Implement `python scripts/tasks.py data-audit` producing `results/mouse/audit_<key>.json` and `.md`: counts per label, bot type, subject and domain; window counts; events-per-second and sampling-interval distributions; coordinate ranges; missing-value rates.
 - [x] **P1-10** EDA notebook or script `ml/notebooks/01_mouse_eda.py` saving figures to `results/mouse/eda/`: sample trajectories (human vs each bot type), speed profiles, sampling-interval histograms, per dataset.
 - [x] **P1-11** **Dataset-fingerprint test:** train a small classifier to predict `dataset/domain` from scale-invariant window features of **human-only** windows. Report accuracy per pair. High accuracy means datasets are easy to tell apart, so cross-dataset results must be read with care. Save to `results/mouse/fingerprint.json`.
-- [ ] **P1-12** Update `data/manifest.json` (Section 4.5 rules for hashing) and commit.
+- [x] **P1-12** Update `data/manifest.json` (Section 4.5 rules for hashing) and commit.
 
 ### Acceptance criteria
 

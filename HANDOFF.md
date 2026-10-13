@@ -4,7 +4,7 @@
 
 ## Current task
 
-- ID: P1-12 — data manifest
+- ID: P2-01 — mouse trajectory segmentation
 - State: ready to start.
 
 ## Done in this task so far
@@ -26,10 +26,11 @@
 - P1-09 added the incremental `data-audit` command and focused tests in `a4a3bd5`.
 - P1-10 added and ran the bounded EDA script in `44974f9`.
 - P1-11 added the pairwise human-only fingerprint experiment in `20af833`.
+- P1-12 generated `data/manifest.json` from 427 observed source files; commit is pending.
 
 ## Exact next step
 
-- Update `data/manifest.json` with source metadata and hashes according to the manifest rules, then validate and commit as `P1-12: add data manifest`.
+- Implement mouse trajectory segmentation using the approved window/segment rules, then add focused tests.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -54,6 +55,7 @@
 - `scripts/data_audit.py` and `scripts/test_data_audit.py` — incremental audit implementation and coverage.
 - `ml/notebooks/01_mouse_eda.py` and `results/mouse/eda/` — bounded EDA script and generated figures.
 - `scripts/dataset_fingerprint.py` and `results/mouse/fingerprint.json` — human-only fingerprint experiment and current insufficient-data report.
+- `data/manifest.json` — source metadata and bounded hashes for observed dataset files.
 
 ## Commands to run first
 
@@ -68,6 +70,6 @@
 
 - No dataset operation has started.
 
-## Questions for the human (P1-12)
+## Questions for the human (P2-01)
 
 - None.

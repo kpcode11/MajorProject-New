@@ -24,7 +24,7 @@
 | P1-09 | 1 | Mouse data audit | DONE | a4a3bd5 | Adds incremental Parquet audits with JSON/Markdown reports and focused coverage. |
 | P1-10 | 1 | Mouse exploratory analysis | DONE | 44974f9 | Adds bounded trajectory, speed, and sampling-interval figures per canonical dataset. |
 | P1-11 | 1 | Dataset-fingerprint test | DONE | 20af833 | Adds human-only scale-invariant pairwise classification; current report honestly records insufficient data. |
-| P1-12 | 1 | Data manifest | TODO | | |
+| P1-12 | 1 | Data manifest | DONE | pending | Records observed source files, metadata, licence notes, and full/first-1-MiB SHA-256 hashes. |
 | P2-01 | 2 | Mouse trajectory segmentation | TODO | | |
 | P2-02 | 2 | Mouse feature extraction | TODO | | |
 | P2-03 | 2 | Mouse feature shards | TODO | | |
