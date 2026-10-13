@@ -4,7 +4,7 @@
 
 ## Current task
 
-- ID: P1-06 — implement mouse windowing
+- ID: P1-07 — DELBOT-Mouse acquisition and loader
 - State: ready to start.
 
 ## Done in this task so far
@@ -20,10 +20,11 @@
 - P1-03 added and committed the streaming Bournemouth loader in `94d15f4`.
 - P1-04 implemented the IEEE blog-bots loader and fixture tests in `c8c43c9`.
 - P1-05 implemented the CaptchaSolve30k streaming loader and decoder tests in `6aeab38`.
+- P1-06 implemented canonical mouse-event windowing and focused tests; commit is pending.
 
 ## Exact next step
 
-- Inspect the feature/windowing conventions, implement 10-second windows with 5-second hop and minimum move filtering, then add focused tests.
+- Check whether DELBOT-Mouse can be acquired safely with a shallow clone; if unavailable or too large, document the skip and continue.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -42,6 +43,7 @@
 - `ml/src/botguard_ml/loaders/ieee_blog_bots.py` — to be added for the current task.
 - `ml/tests/test_ieee_blog_bots.py` and `ml/tests/fixtures/ieee_session.json` — IEEE loader coverage.
 - `ml/src/botguard_ml/loaders/captchasolve30k.py` and `ml/tests/test_captchasolve30k.py` — CaptchaSolve30k loader and decoder coverage.
+- `ml/src/botguard_ml/features/windowing.py` and `ml/tests/test_windowing.py` — canonical mouse windowing and coverage.
 
 ## Commands to run first
 
@@ -56,6 +58,6 @@
 
 - No dataset operation has started.
 
-## Questions for the human (P1-06)
+## Questions for the human (P1-07)
 
 - None.

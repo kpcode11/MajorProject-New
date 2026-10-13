@@ -18,7 +18,7 @@
 | P1-03 | 1 | Web bot-detection loader | DONE | 94d15f4 | Streams both observed phase formats; parser and smoke conversion pass. |
 | P1-04 | 1 | IEEE blog-bots loader | DONE | c8c43c9 | Streams train/test sessions, preserves move/click/scroll events, and passes fixture and real-data smoke tests. |
 | P1-05 | 1 | CaptchaSolve30k loader | DONE | 6aeab38 | Streams JSONL sessions, prefers observed tickInputs, includes the 9-byte decoder, and passes fixture and real-session smoke tests. |
-| P1-06 | 1 | Windowing | TODO | | |
+| P1-06 | 1 | Windowing | DONE | pending | Adds 10-second/5-second overlapping windows, exact duplicate removal, sorting, and minimum move filtering. |
 | P1-07 | 1 | DELBOT acquisition and loader | TODO | | |
 | P1-08 | 1 | Dataset availability decisions | TODO | | |
 | P1-09 | 1 | Mouse data audit | TODO | | |
