@@ -13,8 +13,8 @@
 | P0-05 | 0 | Task runner and status script | DONE | 9534e33 | setup, lint, test, test-fast, status, and placeholders validated. |
 | P0-06 | 0 | Python CI workflow | DONE | 63a2c00 | Windows Python 3.14 workflow YAML validated locally. |
 | P0-07 | 0 | README and phase-1 branch | DONE | 015cc73 | Phase 0 commands pass; Phase 1 branch created. |
-| P1-01 | 1 | Safe dataset inventory | DONE | pending | Bounded report saved for Bournemouth; fast tests pass. |
-| P1-02 | 1 | Dataset inventory cards | TODO | | |
+| P1-01 | 1 | Safe dataset inventory | DONE | a6a0bfa | Bounded report saved for Bournemouth; fast tests pass. |
+| P1-02 | 1 | Dataset inventory cards | DONE | pending | Cards use only locally observed formats and documentation. |
 | P1-03 | 1 | Web bot-detection loader | TODO | | |
 | P1-04 | 1 | IEEE blog-bots loader | TODO | | |
 | P1-05 | 1 | CaptchaSolve30k loader | TODO | | |

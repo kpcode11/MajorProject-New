@@ -1,11 +1,11 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 015cc73
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** a6a0bfa
 
 ## Current task
 
-- ID: P1-01 — implement safe dataset inventory
-- State: done — awaiting commit; P1-02 is next.
+- ID: P1-02 — write observed dataset cards
+- State: done — awaiting commit; P1-03 is next.
 
 ## Done in this task so far
 
@@ -16,10 +16,11 @@
 - P0-05 added the cross-platform task runner and status script in `9534e33`.
 - P0-06 added the Windows Python CI workflow in `63a2c00`.
 - P0-07 completed Phase 0 and created this branch in `015cc73`.
+- P1-01 added the safe inventory command in `a6a0bfa`.
 
 ## Exact next step
 
-- Commit P1-01, then run inventories for IEEE and CaptchaSolve30k and inspect their documentation for P1-02.
+- Commit P1-02, then inspect one observed Bournemouth session structure for the P1-03 loader fixture.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -33,6 +34,7 @@
 - `.github/workflows/ci.yml` — Windows Python 3.14 setup, lint, and fast-test workflow.
 - `README.md` — project scope, current status, and development commands.
 - `scripts/inventory.py` — bounded inventory command; first Bournemouth report saved.
+- `docs/datasets/*.md` — observed cards for Bournemouth, IEEE blog bots, and CaptchaSolve30k.
 
 ## Commands to run first
 
@@ -47,6 +49,6 @@
 
 - No dataset operation has started.
 
-## Questions for the human (P1-01)
+## Questions for the human (P1-02)
 
 - None.
