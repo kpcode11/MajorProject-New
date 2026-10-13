@@ -142,8 +142,21 @@ def train_mouse(stage: str, max_sessions: int | None) -> None:
                 str(ROOT / "results" / "mouse" / "hparams.json"),
             ]
         )
+    elif stage == "ablations":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "run_mouse_ablations.py"),
+                "--input-root",
+                str(ROOT / "data" / "processed" / "mouse_features"),
+                "--output",
+                str(ROOT / "results" / "mouse" / "ablations.csv"),
+            ]
+        )
     else:
-        raise ValueError("train-mouse supports --stage features, baselines, or hparams")
+        raise ValueError(
+            "train-mouse supports --stage features, baselines, hparams, or ablations"
+        )
 
 
 def main() -> int:

@@ -1,35 +1,34 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** 53963e4
+**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P2-10 — mouse ablations
+- ID: P2-11 — mouse SHAP explanations
 - State: ready to start.
 
 ## Done in the previous task
 
-- Added score evaluation utilities in `ml/src/botguard_ml/eval/__init__.py`.
-- Supports in-distribution, cross-phase, cross-dataset, and
-  leave-one-bot-type-out splits.
-- Reports ROC-AUC, PR-AUC, Brier score, 1% human-FPR bot recall,
-  confusion counts, row/group counts, and group-bootstrap 95% CIs.
-- Added CaptchaSolve30k human-FPR-by-game-type reporting.
-- Added `scripts/evaluate_mouse.py` for CSV evaluation output.
-- Insufficient-data splits are reported honestly rather than producing
-  invented metrics.
+- Added feature-group ablations in `ml/src/botguard_ml/ablations.py` for
+  kinematics, geometry, timing, and click features.
+- Added shortcut-inclusive and shortcut-exclusive configurations.
+- Every configuration uses the same deterministic grouped split and Logistic
+  Regression evaluator.
+- Added `scripts/run_mouse_ablations.py`, writing
+  `results/mouse/ablations.csv`.
+- Added focused ablation coverage and group-count tests.
 
 ## Exact next step
 
-- Implement feature-group and shortcut-feature ablations for kinematics,
-  geometry, timing, click features, and with/without shortcut columns.
-- Save comparable results under `results/mouse/`.
+- Add a SHAP summary workflow and a helper returning the top three contributing
+  features for each scored window.
 
-## Files touched in P2-09
+## Files touched in P2-10
 
-- `ml/src/botguard_ml/eval/__init__.py`
-- `ml/tests/test_eval.py`
-- `scripts/evaluate_mouse.py`
+- `ml/src/botguard_ml/ablations.py`
+- `ml/tests/test_ablations.py`
+- `scripts/run_mouse_ablations.py`
+- `scripts/tasks.py`
 - `docs/plan/phase_2.md`
 - `PROGRESS.md`
 
@@ -42,8 +41,8 @@ All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
-- Evaluation consumes precomputed score tables; it does not invent scores when
-  model outputs or datasets are unavailable.
+- Ablation execution requires generated feature shards under
+  `data/processed/mouse_features/`.
 - Git marks this workspace safe in the local user's global Git configuration
   due to a sandbox ownership mismatch.
 - Work is on `phase-2-mouse-model`, created from completed Phase 1
@@ -51,8 +50,8 @@ All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Dataset / long-job state
 
-- No generated evaluation tables remain in the worktree.
+- No generated ablation tables remain in the worktree.
 
-## Questions for the human (P2-10)
+## Questions for the human (P2-11)
 
 - None.

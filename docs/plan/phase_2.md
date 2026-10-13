@@ -13,7 +13,7 @@
 - [x] **P2-07** Session-level aggregation: define how window scores combine into a session or request score (mean, mean of top-k, max, small learned aggregator). Choose using validation data only; save the comparison.
 - [x] **P2-08** Calibration (isotonic or Platt) on a separate calibration split; reliability curve and Brier score.
 - [x] **P2-09** Evaluation (Appendix E): in-distribution, cross-phase, cross-dataset (Bournemouth -> IEEE), held-out bot types, plus the **human-FPR stress test on CaptchaSolve30k** (share of windows/sessions flagged at the chosen thresholds, by game type). Group bootstrap CIs. Save tables and figures under `results/mouse/`.
-- [ ] **P2-10** Ablations: feature groups (kinematics, geometry, timing, click); with/without shortcut features (`n_points`, `duration_ms`, `dt_mean`, `dt_mode_fraction`).
+- [x] **P2-10** Ablations: feature groups (kinematics, geometry, timing, click); with/without shortcut features (`n_points`, `duration_ms`, `dt_mean`, `dt_mode_fraction`).
 - [ ] **P2-11** SHAP summary and a function returning top-3 contributing features per scored window.
 - [ ] **P2-12** Export ONNX to `backend/models/mouse-<version>/model.onnx` and `metadata.json` (feature order, version, data manifest hash, metrics, calibration parameters, git commit). Add the ONNX-vs-native parity test (tolerance 1e-4).
 - [ ] **P2-13** Write the mouse section of `docs/model_card.md`, including limitations: small sample sizes, bots created by dataset authors, game-task domain for CaptchaSolve30k, no live human validation.

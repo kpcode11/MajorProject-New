@@ -34,7 +34,7 @@
 | P2-07 | 2 | Session score aggregation | DONE | pending | Added mean, top-k mean, max, and learned logistic aggregation comparison on validation sessions. |
 | P2-08 | 2 | Model calibration | DONE | pending | Added separate grouped calibration split with isotonic/Platt scaling, reliability data, and Brier scores. |
 | P2-09 | 2 | Mouse evaluation | DONE | pending | Added Appendix E score evaluation, split modes, group bootstrap CIs, and human-FPR-by-game reporting. |
-| P2-10 | 2 | Mouse ablations | TODO | | |
+| P2-10 | 2 | Mouse ablations | DONE | pending | Added kinematics, geometry, timing, click, and shortcut-inclusive/exclusive ablations on one grouped split. |
 | P2-11 | 2 | Mouse SHAP explanations | TODO | | |
 | P2-12 | 2 | Mouse ONNX export | TODO | | |
 | P2-13 | 2 | Mouse model-card section | TODO | | |
