@@ -1,33 +1,36 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** f99752a
+**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P2-06 — LightGBM optimisation
+- ID: P2-07 — session score aggregation
 - State: ready to start.
 
 ## Done in the previous task
 
-- Added reproducible mouse baselines in `ml/src/botguard_ml/baselines.py`:
-  majority class, scaled Logistic Regression, Random Forest, and LightGBM.
-- All models use the same deterministic grouped train/test split.
-- Metrics include accuracy, balanced accuracy, ROC-AUC, sample counts, and
-  train/test group counts.
-- Added `scripts/run_mouse_baselines.py` and
-  `python scripts/tasks.py train-mouse --stage baselines`.
-- Results are written to `results/mouse/baselines.csv`.
+- Added time-boxed Optuna LightGBM optimisation in
+  `ml/src/botguard_ml/hparams.py`.
+- Uses the same deterministic grouped holdout split as the baselines.
+- Runs stratified grouped cross-validation only on training groups.
+- Default search budget is 30 trials and 600 seconds.
+- Persists best parameters, CV ROC-AUC, completed trials, group counts,
+  feature order, and split metadata to `results/mouse/hparams.json`.
+- Added `scripts/run_mouse_hparams.py` and
+  `python scripts/tasks.py train-mouse --stage hparams`.
 
 ## Exact next step
 
-- Implement a time-boxed Optuna LightGBM search with grouped cross-validation
-  on training groups only and save `results/mouse/hparams.json`.
+- Implement session-level aggregation comparisons for window scores:
+  mean, mean of top-k, max, and a small learned aggregator.
+- Select the aggregation method using validation data only and save the
+  comparison under `results/mouse/`.
 
-## Files touched in P2-05
+## Files touched in P2-06
 
-- `ml/src/botguard_ml/baselines.py`
-- `ml/tests/test_baselines.py`
-- `scripts/run_mouse_baselines.py`
+- `ml/src/botguard_ml/hparams.py`
+- `ml/tests/test_hparams.py`
+- `scripts/run_mouse_hparams.py`
 - `scripts/tasks.py`
 - `docs/plan/phase_2.md`
 - `PROGRESS.md`
@@ -41,7 +44,7 @@ All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
-- Baseline execution requires generated feature shards under
+- Hyperparameter execution requires generated feature shards under
   `data/processed/mouse_features/`.
 - Git marks this workspace safe in the local user's global Git configuration
   due to a sandbox ownership mismatch.
@@ -52,6 +55,6 @@ All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 - No generated feature shards remain in the worktree.
 
-## Questions for the human (P2-06)
+## Questions for the human (P2-07)
 
 - None.
