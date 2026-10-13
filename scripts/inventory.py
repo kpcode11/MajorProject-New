@@ -50,27 +50,28 @@ def inventory(key: str) -> str:
 
     def walk(directory: pathlib.Path, depth: int) -> None:
         try:
-            entries = list(os.scandir(directory))[:200]
+            entries = os.scandir(directory)
         except OSError as error:
             tree_lines.append(f"cannot list {directory}: {error}")
             return
-        for entry in entries:
-            path = pathlib.Path(entry.path)
-            if entry.is_dir(follow_symlinks=False):
+        with entries:
+            for entry in entries:
+                path = pathlib.Path(entry.path)
+                if entry.is_dir(follow_symlinks=False):
+                    if len(tree_lines) < 80:
+                        tree_lines.append(f"{'  ' * depth}[dir] {entry.name}")
+                    if depth < 2:
+                        walk(path, depth + 1)
+                    continue
+                size = entry.stat(follow_symlinks=False).st_size
+                ext = path.suffix.lower()
+                stats[ext][0] += 1
+                stats[ext][1] += size
+                biggest.append((size, path))
                 if len(tree_lines) < 80:
-                    tree_lines.append(f"{'  ' * depth}[dir] {entry.name}")
-                if depth < 2:
-                    walk(path, depth + 1)
-                continue
-            size = entry.stat(follow_symlinks=False).st_size
-            ext = path.suffix.lower()
-            stats[ext][0] += 1
-            stats[ext][1] += size
-            biggest.append((size, path))
-            if len(tree_lines) < 80:
-                tree_lines.append(f"{'  ' * depth}{entry.name} ({human_size(size)})")
-            if size < 5_000_000 and ext in TEXT_EXTENSIONS and len(samples) < 3:
-                samples.append(path)
+                    tree_lines.append(f"{'  ' * depth}{entry.name} ({human_size(size)})")
+                if size < 5_000_000 and ext in TEXT_EXTENSIONS and len(samples) < 3:
+                    samples.append(path)
 
     walk(base, 0)
     lines.extend(tree_lines)

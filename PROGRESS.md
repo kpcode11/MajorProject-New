@@ -38,7 +38,7 @@
 | P2-11 | 2 | Mouse SHAP explanations | DONE | e8e7ef2 | Added LightGBM SHAP summary and top-contributor reports per scored window. |
 | P2-12 | 2 | Mouse ONNX export | DONE | ac133fe | Added LightGBM ONNX export, metadata, CLI stage, and native-vs-ONNX parity test. |
 | P2-13 | 2 | Mouse model-card section | DONE | 2c59e4c | Documented model scope, inputs, evaluation status, limitations, privacy, and deployment boundaries. |
-| P3-01 | 3 | Aalto inventory and card | TODO | | |
+| P3-01 | 3 | Aalto inventory and card | DONE | pending | Corrected full inventory counts and documented Aalto format, terms, size, and participant-streaming access. |
 | P3-02 | 3 | Aalto keyboard loader | TODO | | |
 | P3-03 | 3 | Keyboard privacy scan | TODO | | |
 | P3-04 | 3 | Keyboard features | TODO | | |

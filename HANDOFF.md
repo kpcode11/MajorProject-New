@@ -1,43 +1,56 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** 2c59e4c
+**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** phase-2-mouse-model  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P3-01 — Aalto inventory and card
+- ID: P3-02 — Aalto keyboard loader
 - State: ready to start.
 
 ## Done in the previous task
 
-- Added `docs/model_card.md` with the mouse model summary, input and feature
-  construction, grouped evaluation protocol, intended use, limitations,
-  privacy boundaries, and deployment status.
-- Explicitly documented that complete source shards and final real-data metrics
-  are unavailable, so no unsupported metric is claimed.
-- Marked P2-13 complete in the phase plan and progress ledger.
+- Inventoried the configured Aalto dataset without loading it into memory.
+- Corrected `scripts/inventory.py` so aggregate file counts and sizes cover
+  all directory entries while printed tree output remains capped.
+- Confirmed 168,593 participant files, one metadata file, one README, and
+  approximately 18.85 GB on disk.
+- Read the supplied README and recorded its citation, non-commercial
+  attribution terms, tab-separated format, timestamp units, and known logging
+  caveat.
+- Added `docs/datasets/aalto_keystrokes.md` with the dataset card and the
+  participant-streaming/privacy processing decision.
 
 ## Exact next step
 
-- Inventory the Aalto keystroke dataset safely, record its availability and
-  licence/format facts, and write its dataset card without loading large files
-  into memory.
+- Implement `ml/src/botguard_ml/loaders/aalto_keystrokes.py` to stream seeded
+  participant files, create sentence windows with at least 10 events, map
+  key identity to `key_class` in memory, and write progress-aware Parquet
+  shards without retaining text or key identities.
 
-## Files touched in P2-13
+## Files touched in P3-01
 
-- `docs/model_card.md`
-- `docs/plan/phase_2.md`
+- `scripts/inventory.py`
+- `docs/datasets/inventory_aalto_keystrokes.txt`
+- `docs/datasets/aalto_keystrokes.md`
 - `PROGRESS.md`
 
 ## Validation
 
-- Documentation-only change; no test run required.
+- `python scripts/inventory.py aalto_keystrokes`
+- `python scripts/tasks.py test-fast`
+- `python scripts/tasks.py lint`
+
+All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
-- The model card deliberately reports no final model metric because complete
-  feature shards are unavailable.
-- Work is on `phase-2-mouse-model`.
+- The local Aalto copy is extracted and approximately 18.85 GB; never
+  concatenate participant files or load the metadata table wholesale.
+- Raw `SENTENCE`, `USER_INPUT`, `LETTER`, `KEYCODE`, and `KEYSTROKE_ID` must
+  not enter canonical keyboard shards.
+- The configured branch remains `phase-2-mouse-model`; do not switch branches
+  without explicit instruction.
 
-## Questions for the human (P3-01)
+## Questions for the human (P3-02)
 
 - None.
