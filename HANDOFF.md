@@ -1,6 +1,6 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** a4a3bd5
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 44974f9
 
 ## Current task
 
@@ -24,7 +24,7 @@
 - P1-07 cloned DELBOT-Mouse shallowly, inspected its 4.6 MB archive, and added a streaming loader and dataset card in `72bef69`.
 - P1-08 recorded dataset availability decisions in `04e249c`.
 - P1-09 added the incremental `data-audit` command and focused tests in `a4a3bd5`.
-- P1-10 added and ran the bounded EDA script; commit is pending.
+- P1-10 added and ran the bounded EDA script in `44974f9`.
 
 ## Exact next step
 
