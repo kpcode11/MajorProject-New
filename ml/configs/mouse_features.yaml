@@ -5,3 +5,5 @@ min_moves: 20
 pause_ms: 100.0
 min_points: 8
 min_path_px: 20.0
+heading_change_rad: 0.17453292519943295
+include_shortcut_features: true

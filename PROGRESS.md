@@ -26,7 +26,7 @@
 | P1-11 | 1 | Dataset-fingerprint test | DONE | 20af833 | Adds human-only scale-invariant pairwise classification; current report honestly records insufficient data. |
 | P1-12 | 1 | Data manifest | DONE | 40a70c6 | Records observed source files, metadata, licence notes, and full/first-1-MiB SHA-256 hashes. |
 | P2-01 | 2 | Mouse trajectory segmentation | DONE | ad62ff1 | Pause and click/down/up splits; min_points and min_path_px filters; focused tests pass. |
-| P2-02 | 2 | Mouse feature extraction | TODO | | |
+| P2-02 | 2 | Mouse feature extraction | DONE | pending | Appendix A.2 segment features, window aggregation, hand-computed tests, and Hypothesis invariants. |
 | P2-03 | 2 | Mouse feature shards | TODO | | |
 | P2-04 | 2 | Leakage-safe split utilities | TODO | | |
 | P2-05 | 2 | Mouse baselines | TODO | | |
