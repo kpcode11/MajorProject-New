@@ -1,6 +1,6 @@
 # Development environment
 
-**Recorded:** 2026-10-13  
+**Recorded:** 2026-10-13
 **Source:** Human-reported system details.
 
 | Item | Value |
