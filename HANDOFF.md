@@ -1,21 +1,22 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** main  |  **Last commit:** d63224c
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** main  |  **Last commit:** adea826
 
 ## Current task
 
-- ID: P0-04 — create Python package projects and dependencies
-- State: done — awaiting commit; P0-05 is next.
+- ID: P0-05 — implement task runner and status script
+- State: done — awaiting commit; P0-06 is next.
 
 ## Done in this task so far
 
 - P0-01 created and committed the repository skeleton and ignore rules.
 - P0-02 created and committed the durable handoff/progress files, plan copies, phase files, and tool pointers.
 - P0-03 recorded the supplied environment and dataset configuration in `d63224c`.
+- P0-04 added and validated Python package environments in `0550595` and `adea826`.
 
 ## Exact next step
 
-- Commit P0-04, then implement the P0-05 task runner and status script.
+- Commit P0-05, then add the Python CI workflow for P0-06.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -25,6 +26,7 @@
 - `config/datasets.example.yaml` — portable dataset configuration template.
 - `ml/pyproject.toml`, `backend/pyproject.toml` — package metadata and dependencies.
 - `ml/.venv`, `backend/.venv` — installed local development environments (ignored by Git).
+- `scripts/tasks.py`, `scripts/status.py` — validated setup, lint, test, status, and placeholder commands.
 
 ## Commands to run first
 
@@ -33,13 +35,12 @@
 
 ## Known problems / gotchas
 
-- `scripts/tasks.py` is intentionally not available until P0-05.
 - Git marks this workspace safe in the local user's global Git configuration due to a sandbox ownership mismatch.
 
 ## Dataset / long-job state
 
 - No dataset operation has started.
 
-## Questions for the human (P0-04)
+## Questions for the human (P0-05)
 
 - None.
