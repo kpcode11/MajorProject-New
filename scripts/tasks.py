@@ -7,11 +7,21 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = (ROOT / "ml", ROOT / "backend")
-IMPLEMENTED = ("setup", "lint", "test", "test-fast", "status")
-PLANNED = ("data-audit", "train-mouse", "train-keyboard", "train-touch", "eval-all", "serve", "demo", "loadtest")
+IMPLEMENTED = (
+    "setup",
+    "lint",
+    "test",
+    "test-fast",
+    "status",
+    "data-audit",
+    "fingerprint",
+    "train-mouse",
+    "train-keyboard",
+    "keyboard-privacy",
+)
+PLANNED = ("train-touch", "eval-all", "serve", "demo", "loadtest")
 
 
 def package_python(package: Path) -> Path:
@@ -53,7 +63,10 @@ def lint() -> None:
 def test() -> None:
     """Run the complete test suites for both Python packages."""
     for package in PACKAGES:
-        run([str(require_environment(package)), "-m", "pytest", "-q", "-x", "--maxfail=3"], cwd=package)
+        run(
+            [str(require_environment(package)), "-m", "pytest", "-q", "-x", "--maxfail=3"],
+            cwd=package,
+        )
 
 
 def test_fast() -> None:
@@ -66,11 +79,185 @@ def status() -> None:
     run([sys.executable, str(ROOT / "scripts" / "status.py")])
 
 
+def data_audit() -> None:
+    """Create bounded audit reports for canonical mouse Parquet shards."""
+    run(
+        [
+            str(require_environment(PACKAGES[0])),
+            str(ROOT / "scripts" / "data_audit.py"),
+            "--input-root",
+            str(ROOT / "data" / "interim"),
+            "--output-root",
+            str(ROOT / "results" / "mouse"),
+        ]
+    )
+
+
+def fingerprint() -> None:
+    """Run the human-only cross-dataset fingerprint experiment."""
+    run(
+        [
+            str(require_environment(PACKAGES[0])),
+            str(ROOT / "scripts" / "dataset_fingerprint.py"),
+            "--input-root",
+            str(ROOT / "data" / "interim"),
+            "--output",
+            str(ROOT / "results" / "mouse" / "fingerprint.json"),
+        ]
+    )
+
+
+def train_keyboard(stage: str, max_participants: int | None) -> None:
+    """Build the privacy-safe Aalto keyboard event shards."""
+    interpreter = require_environment(PACKAGES[0])
+    if stage == "events":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "build_keyboard_events.py"),
+                "--output-root",
+                str(ROOT / "data" / "interim" / "aalto_keystrokes"),
+                *(
+                    []
+                    if max_participants is None
+                    else ["--max-participants", str(max_participants)]
+                ),
+            ]
+        )
+    elif stage == "features":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "build_keyboard_features.py"),
+                "--input-root",
+                str(ROOT / "data" / "interim" / "aalto_keystrokes"),
+                "--output",
+                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+            ]
+        )
+    elif stage == "evaluate":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "evaluate_keyboard.py"),
+                "--input",
+                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+                "--output",
+                str(ROOT / "results" / "keyboard" / "evaluation.csv"),
+            ]
+        )
+    elif stage == "onnx":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "export_keyboard_onnx.py"),
+                "--input",
+                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+                "--output-dir",
+                str(ROOT / "backend" / "models" / "keyboard-v1"),
+            ]
+        )
+    else:
+        raise ValueError("train-keyboard supports --stage events, features, evaluate, or onnx")
+
+
+def keyboard_privacy() -> None:
+    """Scan all generated keyboard shards for prohibited content."""
+    interpreter = require_environment(PACKAGES[0])
+    run(
+        [
+            str(interpreter),
+            str(ROOT / "scripts" / "scan_keyboard_privacy.py"),
+            "--input-root",
+            str(ROOT / "data" / "interim" / "aalto_keystrokes"),
+        ]
+    )
+
+
+def train_mouse(stage: str, max_sessions: int | None) -> None:
+    """Build the requested mouse training stage."""
+    interpreter = require_environment(PACKAGES[0])
+    if stage == "features":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "build_mouse_features.py"),
+                "--input-root",
+                str(ROOT / "data" / "interim"),
+                "--output-root",
+                str(ROOT / "data" / "processed" / "mouse_features"),
+                *([] if max_sessions is None else ["--max-sessions", str(max_sessions)]),
+            ]
+        )
+    elif stage == "baselines":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "run_mouse_baselines.py"),
+                "--input-root",
+                str(ROOT / "data" / "processed" / "mouse_features"),
+                "--output",
+                str(ROOT / "results" / "mouse" / "baselines.csv"),
+            ]
+        )
+    elif stage == "hparams":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "run_mouse_hparams.py"),
+                "--input-root",
+                str(ROOT / "data" / "processed" / "mouse_features"),
+                "--output",
+                str(ROOT / "results" / "mouse" / "hparams.json"),
+            ]
+        )
+    elif stage == "ablations":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "run_mouse_ablations.py"),
+                "--input-root",
+                str(ROOT / "data" / "processed" / "mouse_features"),
+                "--output",
+                str(ROOT / "results" / "mouse" / "ablations.csv"),
+            ]
+        )
+    elif stage == "shap":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "run_mouse_shap.py"),
+                "--input-root",
+                str(ROOT / "data" / "processed" / "mouse_features"),
+                "--output-root",
+                str(ROOT / "results" / "mouse"),
+            ]
+        )
+    elif stage == "onnx":
+        run(
+            [
+                str(interpreter),
+                str(ROOT / "scripts" / "export_mouse_onnx.py"),
+                "--input-root",
+                str(ROOT / "data" / "processed" / "mouse_features"),
+                "--output-dir",
+                str(ROOT / "backend" / "models" / "mouse-v1"),
+            ]
+        )
+    else:
+        raise ValueError(
+            "train-mouse supports --stage features, baselines, hparams, ablations, shap, or onnx"
+        )
+
+
 def main() -> int:
     """Parse a task command and dispatch it."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=(*IMPLEMENTED, *PLANNED))
-    command = parser.parse_args().command
+    parser.add_argument("--stage", default="features")
+    parser.add_argument("--max-sessions", type=int, default=None)
+    args = parser.parse_args()
+    command = args.command
     try:
         if command == "setup":
             setup()
@@ -80,6 +267,16 @@ def main() -> int:
             test_fast() if command == "test-fast" else test()
         elif command == "status":
             status()
+        elif command == "data-audit":
+            data_audit()
+        elif command == "fingerprint":
+            fingerprint()
+        elif command == "train-keyboard":
+            train_keyboard(args.stage, args.max_participants)
+        elif command == "keyboard-privacy":
+            keyboard_privacy()
+        elif command == "train-mouse":
+            train_mouse(args.stage, args.max_sessions)
         else:
             print(f"{command}: not implemented yet")
     except (RuntimeError, subprocess.CalledProcessError) as error:

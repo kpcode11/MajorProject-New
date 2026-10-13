@@ -1,0 +1,9 @@
+# Changing these parameters requires re-running mouse training (Appendix A.1).
+window_s: 10.0
+hop_s: 5.0
+min_moves: 20
+pause_ms: 100.0
+min_points: 8
+min_path_px: 20.0
+heading_change_rad: 0.17453292519943295
+include_shortcut_features: true

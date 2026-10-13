@@ -1,6 +1,6 @@
 # Progress
 
-**Current phase:** 0  |  **Branch:** main  |  **Last updated:** 2026-10-13  |  **Last agent/tool:** Codex
+**Current phase:** 3  |  **Branch:** phase-3-keyboard  |  **Last updated:** 2026-10-14  |  **Last agent/tool:** Copilot
 
 ## Task table
 
@@ -12,43 +12,43 @@
 | P0-04 | 0 | Python package projects and dependencies | DONE | 0550595, adea826 | Installed and validated on Python 3.14.7. |
 | P0-05 | 0 | Task runner and status script | DONE | 9534e33 | setup, lint, test, test-fast, status, and placeholders validated. |
 | P0-06 | 0 | Python CI workflow | DONE | 63a2c00 | Windows Python 3.14 workflow YAML validated locally. |
-| P0-07 | 0 | README and phase-1 branch | DONE | pending | Phase 0 commands pass; branch creation follows commit. |
-| P1-01 | 1 | Safe dataset inventory | TODO | | |
-| P1-02 | 1 | Dataset inventory cards | TODO | | |
-| P1-03 | 1 | Web bot-detection loader | TODO | | |
-| P1-04 | 1 | IEEE blog-bots loader | TODO | | |
-| P1-05 | 1 | CaptchaSolve30k loader | TODO | | |
-| P1-06 | 1 | Windowing | TODO | | |
-| P1-07 | 1 | DELBOT acquisition and loader | TODO | | |
-| P1-08 | 1 | Dataset availability decisions | TODO | | |
-| P1-09 | 1 | Mouse data audit | TODO | | |
-| P1-10 | 1 | Mouse exploratory analysis | TODO | | |
-| P1-11 | 1 | Dataset-fingerprint test | TODO | | |
-| P1-12 | 1 | Data manifest | TODO | | |
-| P2-01 | 2 | Mouse trajectory segmentation | TODO | | |
-| P2-02 | 2 | Mouse feature extraction | TODO | | |
-| P2-03 | 2 | Mouse feature shards | TODO | | |
-| P2-04 | 2 | Leakage-safe split utilities | TODO | | |
-| P2-05 | 2 | Mouse baselines | TODO | | |
-| P2-06 | 2 | LightGBM optimisation | TODO | | |
-| P2-07 | 2 | Session score aggregation | TODO | | |
-| P2-08 | 2 | Model calibration | TODO | | |
-| P2-09 | 2 | Mouse evaluation | TODO | | |
-| P2-10 | 2 | Mouse ablations | TODO | | |
-| P2-11 | 2 | Mouse SHAP explanations | TODO | | |
-| P2-12 | 2 | Mouse ONNX export | TODO | | |
-| P2-13 | 2 | Mouse model-card section | TODO | | |
-| P3-01 | 3 | Aalto inventory and card | TODO | | |
-| P3-02 | 3 | Aalto keyboard loader | TODO | | |
-| P3-03 | 3 | Keyboard privacy scan | TODO | | |
-| P3-04 | 3 | Keyboard features | TODO | | |
-| P3-05 | 3 | Synthetic keyboard bots | TODO | | |
-| P3-06 | 3 | Keyboard feature shards | TODO | | |
-| P3-07 | 3 | Keyboard evaluation | TODO | | |
-| P3-08 | 3 | Optional second keyboard source | TODO | | |
-| P3-09 | 3 | Keyboard ONNX export | TODO | | |
-| P3-10 | 3 | Desktop fusion | TODO | | |
-| P3-11 | 3 | Keyboard and fusion model card | TODO | | |
+| P0-07 | 0 | README and phase-1 branch | DONE | 015cc73 | Phase 0 commands pass; Phase 1 branch created. |
+| P1-01 | 1 | Safe dataset inventory | DONE | a6a0bfa | Bounded report saved for Bournemouth; fast tests pass. |
+| P1-02 | 1 | Dataset inventory cards | DONE | 31e0ecc | Cards use only locally observed formats and documentation. |
+| P1-03 | 1 | Web bot-detection loader | DONE | 94d15f4 | Streams both observed phase formats; parser and smoke conversion pass. |
+| P1-04 | 1 | IEEE blog-bots loader | DONE | c8c43c9 | Streams train/test sessions, preserves move/click/scroll events, and passes fixture and real-data smoke tests. |
+| P1-05 | 1 | CaptchaSolve30k loader | DONE | 6aeab38 | Streams JSONL sessions, prefers observed tickInputs, includes the 9-byte decoder, and passes fixture and real-session smoke tests. |
+| P1-06 | 1 | Windowing | DONE | d0a28c7 | Adds 10-second/5-second overlapping windows, exact duplicate removal, sorting, and minimum move filtering. |
+| P1-07 | 1 | DELBOT acquisition and loader | DONE | 72bef69 | Shallow clone succeeded; archive inspected and streamed directly with two bounded samples extracted for inspection. |
+| P1-08 | 1 | Dataset availability decisions | DONE | pending | Recorded unavailable BeCAPTCHA/CMU, repo-only UL-Keystroke, and obtained DELBOT outcomes. |
+| P1-09 | 1 | Mouse data audit | DONE | a4a3bd5 | Adds incremental Parquet audits with JSON/Markdown reports and focused coverage. |
+| P1-10 | 1 | Mouse exploratory analysis | DONE | 44974f9 | Adds bounded trajectory, speed, and sampling-interval figures per canonical dataset. |
+| P1-11 | 1 | Dataset-fingerprint test | DONE | 20af833 | Adds human-only scale-invariant pairwise classification; current report honestly records insufficient data. |
+| P1-12 | 1 | Data manifest | DONE | 40a70c6 | Records observed source files, metadata, licence notes, and full/first-1-MiB SHA-256 hashes. |
+| P2-01 | 2 | Mouse trajectory segmentation | DONE | ad62ff1 | Pause and click/down/up splits; min_points and min_path_px filters; focused tests pass. |
+| P2-02 | 2 | Mouse feature extraction | DONE | pending | Appendix A.2 segment features, window aggregation, hand-computed tests, and Hypothesis invariants. |
+| P2-03 | 2 | Mouse feature shards | DONE | pending | Resumable canonical-Parquet feature shards, schema, metadata, and train-mouse CLI. |
+| P2-04 | 2 | Leakage-safe split utilities | DONE | pending | Added grouped, cross-phase, cross-dataset, and leave-one-bot-type-out splits with group-isolation tests. |
+| P2-05 | 2 | Mouse baselines | DONE | pending | Added majority, scaled Logistic Regression, Random Forest, and LightGBM on one grouped split with CSV output. |
+| P2-06 | 2 | LightGBM optimisation | DONE | pending | Added time-boxed Optuna search with stratified grouped CV on training groups only and JSON output. |
+| P2-07 | 2 | Session score aggregation | DONE | pending | Added mean, top-k mean, max, and learned logistic aggregation comparison on validation sessions. |
+| P2-08 | 2 | Model calibration | DONE | pending | Added separate grouped calibration split with isotonic/Platt scaling, reliability data, and Brier scores. |
+| P2-09 | 2 | Mouse evaluation | DONE | pending | Added Appendix E score evaluation, split modes, group bootstrap CIs, and human-FPR-by-game reporting. |
+| P2-10 | 2 | Mouse ablations | DONE | b132069 | Added kinematics, geometry, timing, click, and shortcut-inclusive/exclusive ablations on one grouped split. |
+| P2-11 | 2 | Mouse SHAP explanations | DONE | e8e7ef2 | Added LightGBM SHAP summary and top-contributor reports per scored window. |
+| P2-12 | 2 | Mouse ONNX export | DONE | ac133fe | Added LightGBM ONNX export, metadata, CLI stage, and native-vs-ONNX parity test. |
+| P2-13 | 2 | Mouse model-card section | DONE | 2c59e4c | Documented model scope, inputs, evaluation status, limitations, privacy, and deployment boundaries. |
+| P3-01 | 3 | Aalto inventory and card | DONE | b1f2b28 | Corrected full inventory counts and documented Aalto format, terms, size, and participant-streaming access. |
+| P3-02 | 3 | Aalto keyboard loader | DONE | f6e6db5 | Added seeded participant streaming, sentence windows, privacy-safe key classes, Parquet shards, malformed counts, and resumable state. |
+| P3-03 | 3 | Keyboard privacy scan | DONE | 4b8342d | Added Parquet-wide prohibited-column scan, CLI/task integration, fixture rejection tests, and real-shard validation. |
+| P3-04 | 3 | Keyboard features | DONE | 85c7e5b | Added text-agnostic Appendix A.3 timing, variability, burst, pause, autocorrelation, and integrity features with tests. |
+| P3-05 | 3 | Synthetic keyboard bots | DONE | e7006fa | Added deterministic K1 constant, K2 uniform, K3 training-human-fitted mimic, and K4 burst generators with tests. |
+| P3-06 | 3 | Keyboard feature shards | DONE | d748e0a | Added human and configurable K1/K2/K4 feature shards with participant/generator split groups and K3 holdout enforcement. |
+| P3-07 | 3 | Keyboard evaluation | DONE | 695a6a8 | Added grouped keyboard evaluation with K3 holdout, per-generator reports, speed terciles, human FPR, and bootstrap CIs. |
+| P3-08 | 3 | Optional second keyboard source | DONE | fdad7d8 | No usable BB-MAS or UL repository data is configured; recorded the single-human-source limitation without adding an unsupported loader. |
+| P3-09 | 3 | Keyboard ONNX export | DONE | fde90e8 | Added Logistic Regression ONNX export, metadata, CLI stage, explicit skl2onnx dependency, and native-vs-ONNX parity tests. |
+| P3-10 | 3 | Desktop fusion | DONE | 5884937 | Added deterministic same-class pseudo-session pairing, missing-modality-safe fusion rules, validation stacker, result labels, metadata writer, and tests. |
+| P3-11 | 3 | Keyboard and fusion model card | DONE | 0ae687d | Documented keyboard scope, privacy boundaries, single-human-source limitation, synthetic bots, pseudo-session fusion, and missing-modality policy. |
 | P4-01 | 4 | Environment signal schema | TODO | | |
 | P4-02 | 4 | Pure environment rules | TODO | | |
 | P4-03 | 4 | Rule score | TODO | | |

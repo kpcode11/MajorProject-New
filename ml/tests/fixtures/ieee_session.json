@@ -1,0 +1,1 @@
+{"bot_info":{"bot_id":2,"bot_name":"HumanishBot","session_timestamp":1000},"mouse_movements":[{"x":10,"y":20,"timestamp":1010},{"x":12,"y":22,"timestamp":1020}],"clicks":[{"x":12,"y":22,"target":"A","text":"private text","timestamp":1030}],"scrolls":[{"direction":"down","position":30,"timestamp":1040}],"timestamps":{"start":1000,"end":1040}}

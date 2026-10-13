@@ -6,7 +6,7 @@ datasets:
   ieee_blog_bots: { folder: "Comparative Activity Patterns of Human Users and Hierarchical Bots on a Blog Platform", status: available }
   captchasolve30k: { folder: "CaptchaSolve30k", status: available }
   aalto_keystrokes: { folder: "Keystrokes", status: available }
-  delbot_mouse: { folder: "DELBOT-Mouse", status: to_clone }
+  delbot_mouse: { folder: "DELBOT-Mouse", status: available }
   ul_keystroke_repo: { folder: "FILL_IN_FOLDER_NAME", status: repo_only }
   becaptcha_mouse: { status: unavailable }
   cmu_keystroke: { status: unavailable }

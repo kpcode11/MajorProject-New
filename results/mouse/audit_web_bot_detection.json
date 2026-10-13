@@ -1,0 +1,86 @@
+{
+  "counts": {
+    "bot_type": {
+      "moderate_bot": 4037
+    },
+    "coord_space": {
+      "pixels": 4037
+    },
+    "domain": {
+      "wiki_part1": 4037
+    },
+    "event": {
+      "move": 4037
+    },
+    "label": {
+      "1": 4037
+    },
+    "touchscreen": {
+      "False": 4037
+    }
+  },
+  "dataset": "web_bot_detection",
+  "missing_values": {
+    "screen_h": {
+      "count": 4037,
+      "rate": 1.0
+    },
+    "screen_w": {
+      "count": 4037,
+      "rate": 1.0
+    }
+  },
+  "numeric": {
+    "dt_ms": {
+      "count": 4036,
+      "max": 4318.0,
+      "mean": 34.99653121902874,
+      "min": 8.0,
+      "p50": 17.0,
+      "p95": 17.0
+    },
+    "events_per_second": {
+      "count": 1,
+      "max": 28.58134035654107,
+      "mean": 28.58134035654107,
+      "min": 28.58134035654107,
+      "p50": 28.58134035654107,
+      "p95": 28.58134035654107
+    },
+    "t_ms": {
+      "count": 4037,
+      "max": 141246.0,
+      "mean": 73990.89249442656,
+      "min": 0.0,
+      "p50": 70891.0,
+      "p95": 132880.0
+    },
+    "x": {
+      "count": 4037,
+      "max": 1223.0,
+      "mean": 367.7374287837503,
+      "min": 0.0,
+      "p50": 322.0,
+      "p95": 776.0
+    },
+    "y": {
+      "count": 4037,
+      "max": 448.0,
+      "mean": 259.45380232846173,
+      "min": 5.0,
+      "p50": 241.0,
+      "p95": 417.0
+    }
+  },
+  "rows": 4037,
+  "sessions": 1,
+  "shards": 1,
+  "source": "C:\\Users\\KESHAV\\Documents\\MajorProject\\data\\interim\\web_bot_detection\\smoke.parquet",
+  "subjects": 1,
+  "windows": {
+    "count": 29,
+    "hop_s": 5,
+    "min_moves": 20,
+    "window_s": 10
+  }
+}

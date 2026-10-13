@@ -1,50 +1,61 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** main  |  **Last commit:** 63a2c00
+**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** phase-3-keyboard  |  **Last commit:** 0ae687d
 
 ## Current task
 
-- ID: P0-07 — write README and create the Phase 1 branch
-- State: done — awaiting commit and branch creation; P1-01 follows.
+- ID: P4-01 — environment signal schema
+- State: ready to start.
 
-## Done in this task so far
+## Done in P3-11
 
-- P0-01 created and committed the repository skeleton and ignore rules.
-- P0-02 created and committed the durable handoff/progress files, plan copies, phase files, and tool pointers.
-- P0-03 recorded the supplied environment and dataset configuration in `d63224c`.
-- P0-04 added and validated Python package environments in `0550595` and `adea826`.
-- P0-05 added the cross-platform task runner and status script in `9534e33`.
-- P0-06 added the Windows Python CI workflow in `63a2c00`.
+- Added `export_keyboard_onnx()` with median imputation, standard scaling, and
+  Logistic Regression.
+- Excluded K3 training rows and recorded that policy in `metadata.json`.
+- Added `scripts/export_keyboard_onnx.py` and the
+  `train-keyboard --stage onnx` task.
+- Added native-vs-ONNX parity and metadata tests.
+- Declared `skl2onnx` directly in the ML package dependencies.
+- Added deterministic same-class pseudo-session pairing in `fuse.py`.
+- Added mouse-only, keyboard-only, average, noisy-OR, and validation
+  Logistic Regression stacker comparisons.
+- Added explicit missing-modality behavior and fusion metadata output.
+- Added tests for mouse-only, keyboard-only, both, neither, pairing, and
+  result labeling.
+- Updated the model card with keyboard and fusion scope, privacy, data-source,
+  synthetic-bot, pseudo-session, and missing-modality limitations.
 
 ## Exact next step
 
-- Commit P0-07, create `phase-1-dataset-audit`, then begin P1-01 safe dataset inventory.
+- Start Phase 4 by defining the privacy-safe environment signal schema.
 
-## Files touched (uncommitted or recently changed)
+## Files touched in P3-11
 
-- `138dbc9` — P0-01 repository skeleton.
-- `b59792d` — P0-02 handoff system and split plan.
-- `docs/env.md` — human-provided system details; Docker CLI is absent from the current shell PATH.
-- `config/datasets.example.yaml` — portable dataset configuration template.
-- `ml/pyproject.toml`, `backend/pyproject.toml` — package metadata and dependencies.
-- `ml/.venv`, `backend/.venv` — installed local development environments (ignored by Git).
-- `scripts/tasks.py`, `scripts/status.py` — validated setup, lint, test, status, and placeholder commands.
-- `.github/workflows/ci.yml` — Windows Python 3.14 setup, lint, and fast-test workflow.
-- `README.md` — project scope, current status, and development commands.
+- `ml/src/botguard_ml/export_onnx.py`
+- `ml/tests/test_keyboard_onnx.py`
+- `scripts/export_keyboard_onnx.py`
+- `ml/pyproject.toml`
+- `scripts/tasks.py`
+- `ml/src/botguard_ml/fuse.py`
+- `ml/tests/test_fuse.py`
+- `docs/model_card.md`
+- `docs/plan/phase_3.md`
+- `PROGRESS.md`
 
-## Commands to run first
+## Validation
 
-    python scripts/status.py
-    python scripts/tasks.py test-fast
+- `python scripts/tasks.py test-fast`
+- `python scripts/tasks.py lint`
+
+All passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
-- Git marks this workspace safe in the local user's global Git configuration due to a sandbox ownership mismatch.
+- Real final keyboard metrics require a bounded feature-shard run and
+  sufficient human and bot groups.
+- K3 must remain evaluation-only.
+- Work is on the dedicated `phase-3-keyboard` branch.
 
-## Dataset / long-job state
-
-- No dataset operation has started.
-
-## Questions for the human (P0-07)
+## Questions for the human (P3-08)
 
 - None.

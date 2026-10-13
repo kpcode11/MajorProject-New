@@ -1,0 +1,24 @@
+{
+  "datasets": [],
+  "feature_names": [
+    "n_moves",
+    "duration_s",
+    "path_over_bbox",
+    "displacement_over_bbox",
+    "straightness",
+    "dt_mean_ms",
+    "dt_std_ms",
+    "dt_mode_fraction"
+  ],
+  "human_only": true,
+  "reason": "No human-only windows with at least 20 move events were found.",
+  "results": [],
+  "scale_invariance": "coordinates are normalized by each window bounding-box diagonal",
+  "status": "insufficient_data",
+  "windowing": {
+    "hop_s": 5,
+    "min_moves": 20,
+    "window_s": 10
+  },
+  "windows": 0
+}

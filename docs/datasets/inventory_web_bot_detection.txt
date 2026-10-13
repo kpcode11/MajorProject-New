@@ -1,0 +1,24 @@
+dataset: web_bot_detection
+path: C:\Users\KESHAV\Downloads\datasets\web_bot_detection_dataset
+exists: True
+[dir] phase1
+  [dir] annotations
+    [dir] humans_and_advanced_bots
+    [dir] humans_and_moderate_bots
+  [dir] data
+    [dir] mouse_movements
+    [dir] web_logs
+[dir] phase2
+  [dir] annotations
+    [dir] humans_and_advanced_bots
+    [dir] humans_and_moderate_and_advanced_bots
+  [dir] data
+    [dir] mouse_movements
+    [dir] web_logs
+README.docx (21.0 KB)
+
+by extension:
+.docx: 1 files, 21.0 KB
+
+largest files:
+21.0 KB README.docx
