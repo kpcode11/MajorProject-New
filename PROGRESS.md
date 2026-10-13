@@ -19,8 +19,8 @@
 | P1-04 | 1 | IEEE blog-bots loader | DONE | c8c43c9 | Streams train/test sessions, preserves move/click/scroll events, and passes fixture and real-data smoke tests. |
 | P1-05 | 1 | CaptchaSolve30k loader | DONE | 6aeab38 | Streams JSONL sessions, prefers observed tickInputs, includes the 9-byte decoder, and passes fixture and real-session smoke tests. |
 | P1-06 | 1 | Windowing | DONE | d0a28c7 | Adds 10-second/5-second overlapping windows, exact duplicate removal, sorting, and minimum move filtering. |
-| P1-07 | 1 | DELBOT acquisition and loader | TODO | | |
-| P1-08 | 1 | Dataset availability decisions | TODO | | |
+| P1-07 | 1 | DELBOT acquisition and loader | DONE | pending | Shallow clone succeeded; archive inspected and streamed directly with two bounded samples extracted for inspection. |
+| P1-08 | 1 | Dataset availability decisions | IN_PROGRESS | | Record observed availability and DELBOT outcome. |
 | P1-09 | 1 | Mouse data audit | TODO | | |
 | P1-10 | 1 | Mouse exploratory analysis | TODO | | |
 | P1-11 | 1 | Dataset-fingerprint test | TODO | | |

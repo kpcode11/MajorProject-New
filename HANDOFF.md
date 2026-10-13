@@ -4,7 +4,7 @@
 
 ## Current task
 
-- ID: P1-07 — DELBOT-Mouse acquisition and loader
+- ID: P1-08 — dataset availability decisions
 - State: ready to start.
 
 ## Done in this task so far
@@ -21,10 +21,11 @@
 - P1-04 implemented the IEEE blog-bots loader and fixture tests in `c8c43c9`.
 - P1-05 implemented the CaptchaSolve30k streaming loader and decoder tests in `6aeab38`.
 - P1-06 implemented canonical mouse-event windowing and focused tests in `d0a28c7`.
+- P1-07 cloned DELBOT-Mouse shallowly, inspected its 4.6 MB archive, and added a streaming loader and dataset card; commit is pending.
 
 ## Exact next step
 
-- Check whether DELBOT-Mouse can be acquired safely with a shallow clone; if unavailable or too large, document the skip and continue.
+- Record BeCAPTCHA-Mouse, CMU, UL-Keystroke, and DELBOT availability outcomes in `docs/decision_log.md`, then commit as `P1-08: record dataset availability decisions`.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -44,6 +45,8 @@
 - `ml/tests/test_ieee_blog_bots.py` and `ml/tests/fixtures/ieee_session.json` — IEEE loader coverage.
 - `ml/src/botguard_ml/loaders/captchasolve30k.py` and `ml/tests/test_captchasolve30k.py` — CaptchaSolve30k loader and decoder coverage.
 - `ml/src/botguard_ml/features/windowing.py` and `ml/tests/test_windowing.py` — canonical mouse windowing and coverage.
+- `ml/src/botguard_ml/loaders/delbot_mouse.py` and `ml/tests/test_delbot_mouse.py` — DELBOT archive loader and coverage.
+- `docs/datasets/delbot_mouse.md` — DELBOT dataset card.
 
 ## Commands to run first
 
