@@ -39,7 +39,7 @@
 | P2-12 | 2 | Mouse ONNX export | DONE | ac133fe | Added LightGBM ONNX export, metadata, CLI stage, and native-vs-ONNX parity test. |
 | P2-13 | 2 | Mouse model-card section | DONE | 2c59e4c | Documented model scope, inputs, evaluation status, limitations, privacy, and deployment boundaries. |
 | P3-01 | 3 | Aalto inventory and card | DONE | b1f2b28 | Corrected full inventory counts and documented Aalto format, terms, size, and participant-streaming access. |
-| P3-02 | 3 | Aalto keyboard loader | DONE | pending | Added seeded participant streaming, sentence windows, privacy-safe key classes, Parquet shards, malformed counts, and resumable state. |
+| P3-02 | 3 | Aalto keyboard loader | DONE | f6e6db5 | Added seeded participant streaming, sentence windows, privacy-safe key classes, Parquet shards, malformed counts, and resumable state. |
 | P3-03 | 3 | Keyboard privacy scan | TODO | | |
 | P3-04 | 3 | Keyboard features | TODO | | |
 | P3-05 | 3 | Synthetic keyboard bots | TODO | | |
