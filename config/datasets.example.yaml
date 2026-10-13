@@ -1,0 +1,14 @@
+# Copy this file to datasets.local.yaml and replace the placeholder root.
+# Dataset inputs are read-only and must remain outside the repository.
+datasets_root: 'C:\path\to\datasets'
+datasets:
+  web_bot_detection: { folder: "web_bot_detection_dataset", status: available }
+  ieee_blog_bots: { folder: "Comparative Activity Patterns of Human Users and Hierarchical Bots on a Blog Platform", status: available }
+  captchasolve30k: { folder: "CaptchaSolve30k", status: available }
+  aalto_keystrokes: { folder: "Keystrokes", status: available }
+  delbot_mouse: { folder: "DELBOT-Mouse", status: to_clone }
+  ul_keystroke_repo: { folder: "FILL_IN_FOLDER_NAME", status: repo_only }
+  becaptcha_mouse: { status: unavailable }
+  cmu_keystroke: { status: unavailable }
+  mobile_touch: { status: none_yet }
+limits: { max_ram_gb: 6, max_interim_gb: 5, default_max_sessions: 500, default_max_participants: 1000 }

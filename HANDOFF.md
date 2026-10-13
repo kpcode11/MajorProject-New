@@ -5,7 +5,7 @@
 ## Current task
 
 - ID: P0-03 — record development environment and dataset configuration
-- State: blocked — requires the human environment details listed below.
+- State: done — awaiting commit; P0-04 is next.
 
 ## Done in this task so far
 
@@ -14,12 +14,14 @@
 
 ## Exact next step
 
-- Obtain the P0-03 environment details from the human, then create `docs/env.md`, `config/datasets.local.yaml`, and `config/datasets.example.yaml`.
+- Commit P0-03, then begin P0-04 dependency project setup.
 
 ## Files touched (uncommitted or recently changed)
 
 - `138dbc9` — P0-01 repository skeleton.
 - `b59792d` — P0-02 handoff system and split plan.
+- `docs/env.md` — human-provided system details; Docker CLI is absent from the current shell PATH.
+- `config/datasets.example.yaml` — portable dataset configuration template.
 
 ## Commands to run first
 
@@ -37,4 +39,4 @@
 
 ## Questions for the human (P0-03)
 
-- What are the RAM, free disk space, CPU core count, Python version, Node version, Docker/WSL2 availability, and whether `git clone` works here? — provide the values — or authorise environment inspection except for network cloning.
+- None; the required environment details were supplied on 2026-10-13.
