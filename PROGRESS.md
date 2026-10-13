@@ -47,7 +47,7 @@
 | P3-07 | 3 | Keyboard evaluation | DONE | 695a6a8 | Added grouped keyboard evaluation with K3 holdout, per-generator reports, speed terciles, human FPR, and bootstrap CIs. |
 | P3-08 | 3 | Optional second keyboard source | DONE | fdad7d8 | No usable BB-MAS or UL repository data is configured; recorded the single-human-source limitation without adding an unsupported loader. |
 | P3-09 | 3 | Keyboard ONNX export | DONE | fde90e8 | Added Logistic Regression ONNX export, metadata, CLI stage, explicit skl2onnx dependency, and native-vs-ONNX parity tests. |
-| P3-10 | 3 | Desktop fusion | DONE | pending | Added deterministic same-class pseudo-session pairing, missing-modality-safe fusion rules, validation stacker, result labels, metadata writer, and tests. |
+| P3-10 | 3 | Desktop fusion | DONE | 5884937 | Added deterministic same-class pseudo-session pairing, missing-modality-safe fusion rules, validation stacker, result labels, metadata writer, and tests. |
 | P3-11 | 3 | Keyboard and fusion model card | TODO | | |
 | P4-01 | 4 | Environment signal schema | TODO | | |
 | P4-02 | 4 | Pure environment rules | TODO | | |
