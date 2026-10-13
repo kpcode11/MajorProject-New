@@ -10,8 +10,8 @@
 | P0-02 | 0 | Agent records, plan split, pointers | DONE | b59792d | Split-plan output validated. |
 | P0-03 | 0 | Human environment and dataset config | DONE | d63224c | Environment recorded; local config ignored by Git. |
 | P0-04 | 0 | Python package projects and dependencies | DONE | 0550595, adea826 | Installed and validated on Python 3.14.7. |
-| P0-05 | 0 | Task runner and status script | DONE | pending | setup, lint, test, test-fast, status, and placeholders validated. |
-| P0-06 | 0 | Python CI workflow | TODO | | |
+| P0-05 | 0 | Task runner and status script | DONE | 9534e33 | setup, lint, test, test-fast, status, and placeholders validated. |
+| P0-06 | 0 | Python CI workflow | DONE | pending | Windows Python 3.14 workflow YAML validated locally. |
 | P0-07 | 0 | README and phase-1 branch | TODO | | |
 | P1-01 | 1 | Safe dataset inventory | TODO | | |
 | P1-02 | 1 | Dataset inventory cards | TODO | | |

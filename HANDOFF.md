@@ -1,11 +1,11 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** main  |  **Last commit:** adea826
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** main  |  **Last commit:** 9534e33
 
 ## Current task
 
-- ID: P0-05 — implement task runner and status script
-- State: done — awaiting commit; P0-06 is next.
+- ID: P0-06 — add Python CI workflow
+- State: done — awaiting commit; P0-07 is next.
 
 ## Done in this task so far
 
@@ -13,10 +13,11 @@
 - P0-02 created and committed the durable handoff/progress files, plan copies, phase files, and tool pointers.
 - P0-03 recorded the supplied environment and dataset configuration in `d63224c`.
 - P0-04 added and validated Python package environments in `0550595` and `adea826`.
+- P0-05 added the cross-platform task runner and status script in `9534e33`.
 
 ## Exact next step
 
-- Commit P0-05, then add the Python CI workflow for P0-06.
+- Commit P0-06, then write the README stub and create the Phase 1 branch for P0-07.
 
 ## Files touched (uncommitted or recently changed)
 
@@ -27,6 +28,7 @@
 - `ml/pyproject.toml`, `backend/pyproject.toml` — package metadata and dependencies.
 - `ml/.venv`, `backend/.venv` — installed local development environments (ignored by Git).
 - `scripts/tasks.py`, `scripts/status.py` — validated setup, lint, test, status, and placeholder commands.
+- `.github/workflows/ci.yml` — Windows Python 3.14 setup, lint, and fast-test workflow.
 
 ## Commands to run first
 
@@ -41,6 +43,6 @@
 
 - No dataset operation has started.
 
-## Questions for the human (P0-05)
+## Questions for the human (P0-06)
 
 - None.

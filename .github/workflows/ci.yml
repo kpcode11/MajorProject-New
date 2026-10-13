@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    name: Python lint and fast tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+      - name: Set up Python projects
+        run: python scripts/tasks.py setup
+      - name: Lint
+        run: python scripts/tasks.py lint
+      - name: Fast tests
+        run: python scripts/tasks.py test-fast
