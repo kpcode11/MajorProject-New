@@ -1,6 +1,6 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 72bef69
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** phase-1-dataset-audit  |  **Last commit:** 04e249c
 
 ## Current task
 
@@ -22,7 +22,7 @@
 - P1-05 implemented the CaptchaSolve30k streaming loader and decoder tests in `6aeab38`.
 - P1-06 implemented canonical mouse-event windowing and focused tests in `d0a28c7`.
 - P1-07 cloned DELBOT-Mouse shallowly, inspected its 4.6 MB archive, and added a streaming loader and dataset card in `72bef69`.
-- P1-08 recorded dataset availability decisions; commit is pending.
+- P1-08 recorded dataset availability decisions in `04e249c`.
 
 ## Exact next step
 
