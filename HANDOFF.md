@@ -1,6 +1,6 @@
 # Handoff
 
-**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** main  |  **Last commit:** 138dbc9
+**Updated:** 2026-10-13  |  **By:** Codex  |  **Branch:** main  |  **Last commit:** b59792d
 
 ## Current task
 
@@ -10,7 +10,7 @@
 ## Done in this task so far
 
 - P0-01 created and committed the repository skeleton and ignore rules.
-- P0-02 created the durable handoff/progress files, plan copies, phase files, and tool pointers.
+- P0-02 created and committed the durable handoff/progress files, plan copies, phase files, and tool pointers.
 
 ## Exact next step
 
@@ -18,7 +18,8 @@
 
 ## Files touched (uncommitted or recently changed)
 
-- See commit `138dbc9` for P0-01; P0-02 files are pending commit.
+- `138dbc9` — P0-01 repository skeleton.
+- `b59792d` — P0-02 handoff system and split plan.
 
 ## Commands to run first
 

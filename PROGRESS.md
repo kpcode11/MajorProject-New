@@ -7,7 +7,7 @@
 | ID | Phase | Task (short) | Status | Commit | Notes |
 |----|-------|--------------|--------|--------|-------|
 | P0-01 | 0 | Repo skeleton and ignore files | DONE | 138dbc9 | Python stubs compile. |
-| P0-02 | 0 | Agent records, plan split, pointers | DONE | pending | Commit after split-plan validation. |
+| P0-02 | 0 | Agent records, plan split, pointers | DONE | b59792d | Split-plan output validated. |
 | P0-03 | 0 | Human environment and dataset config | BLOCKED | | Awaiting human details. |
 | P0-04 | 0 | Python package projects and dependencies | TODO | | |
 | P0-05 | 0 | Task runner and status script | TODO | | |
