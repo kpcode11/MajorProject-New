@@ -50,7 +50,7 @@
 | P3-10 | 3 | Desktop fusion | DONE | 5884937 | Added deterministic same-class pseudo-session pairing, missing-modality-safe fusion rules, validation stacker, result labels, metadata writer, and tests. |
 | P3-11 | 3 | Keyboard and fusion model card | DONE | 0ae687d | Documented keyboard scope, privacy boundaries, single-human-source limitation, synthetic bots, pseudo-session fusion, and missing-modality policy. |
 | P4-01 | 4 | Environment signal schema | DONE | 8d8b575 | 26-field EnvSignals Pydantic model from Appendix B.2; all optional; no fingerprint hash; 16 tests. |
-| P4-02 | 4 | Pure environment rules | TODO | | |
+| P4-02 | 4 | Pure environment rules | DONE | 7f1ac74 | Implemented RuleResult and pure rule functions R01-R13, evaluate_all_rules, and 62 unit tests. |
 | P4-03 | 4 | Rule score | TODO | | |
 | P4-04 | 4 | Configurable rule weights | TODO | | |
 | P4-05 | 4 | Rule-layer tests | TODO | | |
