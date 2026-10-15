@@ -116,9 +116,7 @@ class EnvSignals(BaseModel):
     # Rendering
     webgl_renderer_class: str | None = Field(
         default=None,
-        description=(
-            "Classified WebGL renderer: 'hardware', 'software', 'virtual', 'unknown'."
-        ),
+        description=("Classified WebGL renderer: 'hardware', 'software', 'virtual', 'unknown'."),
     )
 
     # Browser features

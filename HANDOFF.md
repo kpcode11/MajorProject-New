@@ -19,7 +19,7 @@
   round-trip, all-defaults-None, partial payloads, dict construction, extra
   fields ignored, is_empty(), serialization round-trips (dict and JSON), type
   validation, and privacy guarantees (no fingerprint fields, exact field count).
-- Ruff auto-fixed `Optional[X]` → `X | None` and import sorting.
+- Ruff auto-fixed `Optional[X]` -> `X | None` and import sorting.
 
 ## Exact next step
 
