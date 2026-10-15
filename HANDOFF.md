@@ -1,61 +1,50 @@
 # Handoff
 
-**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** main  |  **Last commit:** pending
+**Updated:** 2026-10-15  |  **By:** Antigravity  |  **Branch:** main  |  **Last commit:** pending
 
 ## Current task
 
 - ID: P4-01 — environment signal schema
-- State: ready to start.
+- State: IN_PROGRESS (code written, tests passing, awaiting full test-fast).
 
-## Done in P3-11
+## Done in P4-01 (so far)
 
-- Added `export_keyboard_onnx()` with median imputation, standard scaling, and
-  Logistic Regression.
-- Excluded K3 training rows and recorded that policy in `metadata.json`.
-- Added `scripts/export_keyboard_onnx.py` and the
-  `train-keyboard --stage onnx` task.
-- Added native-vs-ONNX parity and metadata tests.
-- Declared `skl2onnx` directly in the ML package dependencies.
-- Added deterministic same-class pseudo-session pairing in `fuse.py`.
-- Added mouse-only, keyboard-only, average, noisy-OR, and validation
-  Logistic Regression stacker comparisons.
-- Added explicit missing-modality behavior and fusion metadata output.
-- Added tests for mouse-only, keyboard-only, both, neither, pairing, and
-  result labeling.
-- Updated the model card with keyboard and fusion scope, privacy, data-source,
-  synthetic-bot, pseudo-session, and missing-modality limitations.
+- Defined `EnvSignals` Pydantic model in `backend/app/schemas.py` with all 26
+  fields from Appendix B.2.
+- All fields are `Optional` (default `None`) so missing/partial payloads are
+  accepted; the rule layer handles the R01_NO_PAYLOAD case via `is_empty()`.
+- No unique fingerprint hash field — privacy requirement enforced by schema
+  design and by test.
+- Added `backend/tests/test_env_signals.py` with 16 tests: full B.2 payload
+  round-trip, all-defaults-None, partial payloads, dict construction, extra
+  fields ignored, is_empty(), serialization round-trips (dict and JSON), type
+  validation, and privacy guarantees (no fingerprint fields, exact field count).
+- Ruff auto-fixed `Optional[X]` → `X | None` and import sorting.
 
 ## Exact next step
 
-- Start Phase 4 by defining the privacy-safe environment signal schema.
+- Run `python scripts/tasks.py test-fast` to verify no regressions.
+- Update PROGRESS.md with commit hash, commit as "P4-01: define environment
+  signal schema", then proceed to P4-02 (pure environment rules).
 
-## Files touched in P3-11
+## Files touched in P4-01
 
-- `ml/src/botguard_ml/export_onnx.py`
-- `ml/tests/test_keyboard_onnx.py`
-- `scripts/export_keyboard_onnx.py`
-- `ml/pyproject.toml`
-- `scripts/tasks.py`
-- `ml/src/botguard_ml/fuse.py`
-- `ml/tests/test_fuse.py`
-- `docs/model_card.md`
-- `docs/plan/phase_3.md`
+- `backend/app/schemas.py`
+- `backend/tests/test_env_signals.py`
 - `PROGRESS.md`
+- `HANDOFF.md`
 
 ## Validation
 
-- `python scripts/tasks.py test-fast`
-- `python scripts/tasks.py lint`
-
-All passed. Windows pytest cache warnings are pre-existing and harmless.
+- `pytest tests/test_env_signals.py` — 16 passed.
+- `ruff check` — clean after auto-fix.
+- `python scripts/tasks.py test-fast` — pending.
 
 ## Known problems / gotchas
 
-- Real final keyboard metrics require a bounded feature-shard run and
-  sufficient human and bot groups.
-- K3 must remain evaluation-only.
-- Phase 3 is merged into `main`; the next task is Phase 4 on `main`.
+- Phase 3 is merged into `main`; Phase 4 work continues on `main`.
+- Windows pytest cache warnings are pre-existing and harmless.
 
-## Questions for the human (P3-08)
+## Questions for the human
 
 - None.

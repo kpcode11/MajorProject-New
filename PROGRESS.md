@@ -49,7 +49,7 @@
 | P3-09 | 3 | Keyboard ONNX export | DONE | fde90e8 | Added Logistic Regression ONNX export, metadata, CLI stage, explicit skl2onnx dependency, and native-vs-ONNX parity tests. |
 | P3-10 | 3 | Desktop fusion | DONE | 5884937 | Added deterministic same-class pseudo-session pairing, missing-modality-safe fusion rules, validation stacker, result labels, metadata writer, and tests. |
 | P3-11 | 3 | Keyboard and fusion model card | DONE | 0ae687d | Documented keyboard scope, privacy boundaries, single-human-source limitation, synthetic bots, pseudo-session fusion, and missing-modality policy. |
-| P4-01 | 4 | Environment signal schema | TODO | | |
+| P4-01 | 4 | Environment signal schema | IN_PROGRESS | | |
 | P4-02 | 4 | Pure environment rules | TODO | | |
 | P4-03 | 4 | Rule score | TODO | | |
 | P4-04 | 4 | Configurable rule weights | TODO | | |
