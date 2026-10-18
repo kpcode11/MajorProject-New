@@ -1,40 +1,41 @@
 # Handoff
 
-**Updated:** 2026-10-18  |  **By:** User  |  **Branch:** phase-4-env-rules  |  **Last commit:** 99adf30
+**Updated:** 2026-10-18  |  **By:** User  |  **Branch:** phase-4-env-rules  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P4-06 - Signal privacy documentation
+- ID: P4-07 - Optional BotD comparison
 - State: ready to start.
 
-## Done in P4-05
+## Done in P4-06
 
-- Added a normal Chrome on Windows aggregate fixture test requiring a zero
-  rule score and no fired rules.
-- Added a headless-browser aggregate fixture test requiring a score above
-  0.8 and the expected webdriver, software-renderer, zero-plugin,
-  viewport-anomaly, and native-integrity rules.
-- Preserved the existing individual passing and failing tests for R01-R13.
-- Full project tests and lint pass.
+- Added `docs/signals.md` documenting all 26 `EnvSignals` fields.
+- Classified signals as low-sensitivity context, derived integrity, or
+  server-side control.
+- Documented aggregation, retention boundaries, and missing-signal handling.
+- Explicitly prohibited persistent identifiers, fingerprint hashes, raw
+  headers, exact hardware identifiers, location, content, typed characters,
+  key identities, clipboard data, and raw renderer/plugin details.
+- Documented normal-browser and headless fixture coverage.
 
 ## Exact next step
 
-- Document every environment signal and its privacy class in
-  `docs/signals.md`, including what is collected, what is bucketed, and what
-  is explicitly prohibited.
+- Decide whether the optional offline BotD comparison is appropriate. Do not
+  add a runtime dependency; record a decision before any external comparison.
 
-## Files touched in P4-05
+## Files touched in P4-06
 
-- `backend/tests/test_rules.py`
+- `docs/signals.md`
 - `docs/plan/phase_4.md`
 - `PROGRESS.md`
 
 ## Validation
 
+Documentation-only task; no code validation required. Previous P4-05
+validation remains passing:
+
 - `python scripts/tasks.py test-fast`
 - `python scripts/tasks.py lint`
-
-Both passed. Windows pytest cache warnings are pre-existing and harmless.
 
 ## Known problems / gotchas
 
