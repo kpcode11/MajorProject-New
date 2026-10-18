@@ -185,6 +185,24 @@ class TestRuleScore:
         assert config.enabled["R02_WEBDRIVER"] is True
         assert config.weights["R13_RATE_LIMIT"] == 1.0
 
+    def test_normal_chrome_fixture_has_near_zero_score(self, normal_chrome_env: EnvSignals) -> None:
+        result = evaluate_rule_score(normal_chrome_env, {})
+        assert result.rule_score == pytest.approx(0.0)
+        assert result.fired_rules == []
+        assert result.reasons == []
+
+    def test_headless_fixture_fires_several_rules(self, headless_bot_env: EnvSignals) -> None:
+        result = evaluate_rule_score(headless_bot_env, {})
+        assert result.rule_score > 0.8
+        assert len(result.fired_rules) >= 4
+        assert {
+            "R02_WEBDRIVER",
+            "R06_SOFTWARE_RENDERER",
+            "R07_ZERO_PLUGINS_DESKTOP",
+            "R08_VIEWPORT_ANOMALY",
+            "R10_NATIVE_FUNCTION_TAMPER",
+        }.issubset(result.fired_rules)
+
 
 # ---------------------------------------------------------------------------
 # Individual rule tests: R01 to R13

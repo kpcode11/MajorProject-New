@@ -1,34 +1,30 @@
 # Handoff
 
-**Updated:** 2026-10-18  |  **By:** User  |  **Branch:** phase-4-env-rules  |  **Last commit:** 1de5ffc
+**Updated:** 2026-10-18  |  **By:** User  |  **Branch:** phase-4-env-rules  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P4-05 - Rule-layer tests
+- ID: P4-06 - Signal privacy documentation
 - State: ready to start.
 
-## Done in P4-04
+## Done in P4-05
 
-- Added `backend/config/rules.yaml` with all R01-R13 default weights and
-  enabled flags.
-- Added validated `RuleConfig` and `load_rule_config()` in
-  `backend/app/config.py`.
-- Rejects unknown rule IDs, invalid enabled values, malformed mappings, and
-  weights outside [0, 1].
-- Added optional enabled-rule handling to `evaluate_all_rules()`; disabled
-  rules return a non-fired result without changing pure rule functions.
-- Added configuration loading and disabled-rule tests.
+- Added a normal Chrome on Windows aggregate fixture test requiring a zero
+  rule score and no fired rules.
+- Added a headless-browser aggregate fixture test requiring a score above
+  0.8 and the expected webdriver, software-renderer, zero-plugin,
+  viewport-anomaly, and native-integrity rules.
+- Preserved the existing individual passing and failing tests for R01-R13.
+- Full project tests and lint pass.
 
 ## Exact next step
 
-- Complete P4-05 fixture coverage: normal Chrome should have near-zero rule
-  score, while a headless default should fire several rules.
+- Document every environment signal and its privacy class in
+  `docs/signals.md`, including what is collected, what is bucketed, and what
+  is explicitly prohibited.
 
-## Files touched in P4-04
+## Files touched in P4-05
 
-- `backend/app/config.py`
-- `backend/config/rules.yaml`
-- `backend/app/rules.py`
 - `backend/tests/test_rules.py`
 - `docs/plan/phase_4.md`
 - `PROGRESS.md`

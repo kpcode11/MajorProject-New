@@ -25,7 +25,7 @@
 
 - [x] **P4-03** Combine rule weights into a **rule score** in [0, 1] (documented formula) and a list of reasons. A hard rule (R13, invalid nonce/signature) bypasses the model.
 - [x] **P4-04** Make weights configurable in `backend/config/rules.yaml`.
-- [ ] **P4-05** Tests: one passing and one failing payload per rule; a "normal Chrome on Windows" fixture must produce rule score near 0; a "headless default" fixture must fire several rules.
+- [x] **P4-05** Tests: one passing and one failing payload per rule; a "normal Chrome on Windows" fixture must produce rule score near 0; a "headless default" fixture must fire several rules.
 - [ ] **P4-06** Document each signal and its privacy class in `docs/signals.md`.
 - [ ] **P4-07** Optional baseline: compare against the open-source BotD library's verdicts on the same fixtures (only as an offline comparison; do not add it as a runtime dependency without a decision-log entry).
 
