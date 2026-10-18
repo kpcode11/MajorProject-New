@@ -684,6 +684,7 @@ def evaluate_all_rules(
     behaviour: dict[str, Any] | None = None,
     *,
     weights: dict[str, float] | None = None,
+    enabled: dict[str, bool] | None = None,
     rate_limit_exceeded: bool = False,
     nonce_age_ms: float | None = None,
     min_action_ms: float = 200.0,
@@ -702,7 +703,8 @@ def evaluate_all_rules(
         List of RuleResult instances for R01 through R13.
     """
     w = weights or {}
-    return [
+    e = enabled or {}
+    results = [
         check_r01_no_payload(env, behaviour, weight=w.get("R01_NO_PAYLOAD")),
         check_r02_webdriver(env, weight=w.get("R02_WEBDRIVER")),
         check_r03_ua_platform_mismatch(env, weight=w.get("R03_UA_PLATFORM_MISMATCH")),
@@ -722,6 +724,14 @@ def evaluate_all_rules(
         ),
         check_r13_rate_limit(rate_limit_exceeded, weight=w.get("R13_RATE_LIMIT")),
     ]
+    if not e:
+        return results
+    return [
+        result
+        if e.get(result.id, True)
+        else RuleResult(result.id, False, result.weight, "Rule disabled by configuration")
+        for result in results
+    ]
 
 
 def evaluate_rule_score(
@@ -729,6 +739,7 @@ def evaluate_rule_score(
     behaviour: dict[str, Any] | None = None,
     *,
     weights: dict[str, float] | None = None,
+    enabled: dict[str, bool] | None = None,
     rate_limit_exceeded: bool = False,
     invalid_nonce_or_signature: bool = False,
     nonce_age_ms: float | None = None,
@@ -739,6 +750,7 @@ def evaluate_rule_score(
         env,
         behaviour,
         weights=weights,
+        enabled=enabled,
         rate_limit_exceeded=rate_limit_exceeded,
         nonce_age_ms=nonce_age_ms,
         min_action_ms=min_action_ms,

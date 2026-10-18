@@ -1,32 +1,33 @@
 # Handoff
 
-**Updated:** 2026-10-18  |  **By:** Copilot  |  **Branch:** phase-4-env-rules  |  **Last commit:** 0bc16b8
+**Updated:** 2026-10-18  |  **By:** User  |  **Branch:** phase-4-env-rules  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P4-04 - Configurable rule weights
+- ID: P4-05 - Rule-layer tests
 - State: ready to start.
 
-## Done in P4-03
+## Done in P4-04
 
-- Added `RuleScore` in `backend/app/rules.py`.
-- Combined fired rule weights using:
-  `rule_score = 1 - prod(1 - weight_i)`.
-- Preserved fired rule IDs and human-readable reasons.
-- Marked R13 rate-limit violations as hard model bypasses.
-- Added invalid nonce/signature as an explicit hard model bypass.
-- Added `evaluate_rule_score()` to evaluate and combine the complete ruleset.
-- Added tests for zero score, noisy-OR arithmetic, hard rules, invalid
-  weights, and integrated evaluation.
-- Updated the Phase 4 checklist for P4-01 through P4-03.
+- Added `backend/config/rules.yaml` with all R01-R13 default weights and
+  enabled flags.
+- Added validated `RuleConfig` and `load_rule_config()` in
+  `backend/app/config.py`.
+- Rejects unknown rule IDs, invalid enabled values, malformed mappings, and
+  weights outside [0, 1].
+- Added optional enabled-rule handling to `evaluate_all_rules()`; disabled
+  rules return a non-fired result without changing pure rule functions.
+- Added configuration loading and disabled-rule tests.
 
 ## Exact next step
 
-- Implement `backend/config/rules.yaml` loading and configurable enabled
-  flags/weights without changing the pure rule behavior.
+- Complete P4-05 fixture coverage: normal Chrome should have near-zero rule
+  score, while a headless default should fire several rules.
 
-## Files touched in P4-03
+## Files touched in P4-04
 
+- `backend/app/config.py`
+- `backend/config/rules.yaml`
 - `backend/app/rules.py`
 - `backend/tests/test_rules.py`
 - `docs/plan/phase_4.md`

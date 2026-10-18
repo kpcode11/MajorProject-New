@@ -6,8 +6,11 @@ weight overrides, missing-data safety, and full ruleset evaluation.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
+from app.config import load_rule_config
 from app.rules import (
     DEFAULT_RULE_WEIGHTS,
     RuleResult,
@@ -167,6 +170,20 @@ class TestRuleScore:
         result = evaluate_rule_score(normal_chrome_env, {})
         assert result.rule_score == pytest.approx(0.0)
         assert result.model_bypassed is False
+
+    def test_disabled_rule_does_not_fire(self, headless_bot_env: EnvSignals) -> None:
+        results = evaluate_all_rules(
+            headless_bot_env,
+            enabled={"R02_WEBDRIVER": False},
+        )
+        webdriver = next(result for result in results if result.id == "R02_WEBDRIVER")
+        assert webdriver.fired is False
+        assert webdriver.reason == "Rule disabled by configuration"
+
+    def test_yaml_rule_config_loads(self) -> None:
+        config = load_rule_config(Path(__file__).parents[1] / "config" / "rules.yaml")
+        assert config.enabled["R02_WEBDRIVER"] is True
+        assert config.weights["R13_RATE_LIMIT"] == 1.0
 
 
 # ---------------------------------------------------------------------------
