@@ -52,7 +52,7 @@
 | P4-01 | 4 | Environment signal schema | DONE | 8d8b575 | 26-field EnvSignals Pydantic model from Appendix B.2; all optional; no fingerprint hash; 16 tests. |
 | P4-02 | 4 | Pure environment rules | DONE | 7f1ac74 | Implemented RuleResult and pure rule functions R01-R13, evaluate_all_rules, and 62 unit tests. |
 | P4-03 | 4 | Rule score | DONE | c91ab3b | Added noisy-OR rule scoring, fired-rule reasons, hard-rule detection for R13/invalid nonce or signature, and model-bypass tests. |
-| P4-04 | 4 | Configurable rule weights | DONE | pending | Added validated YAML loading for enabled flags and weights, with disabled-rule handling in combined evaluation. |
+| P4-04 | 4 | Configurable rule weights | DONE | 9ddd713 | Added validated YAML loading for enabled flags and weights, with disabled-rule handling in combined evaluation. |
 | P4-05 | 4 | Rule-layer tests | TODO | | |
 | P4-06 | 4 | Signal privacy documentation | TODO | | |
 | P4-07 | 4 | Optional BotD comparison | TODO | | |
