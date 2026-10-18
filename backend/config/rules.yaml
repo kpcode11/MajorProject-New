@@ -1,0 +1,15 @@
+rules:
+  R01_NO_PAYLOAD: {weight: 0.80, enabled: true}
+  R02_WEBDRIVER: {weight: 0.60, enabled: true}
+  R03_UA_PLATFORM_MISMATCH: {weight: 0.30, enabled: true}
+  R04_UA_HINTS_MISMATCH: {weight: 0.30, enabled: true}
+  R05_TZ_LANG_MISMATCH: {weight: 0.10, enabled: true}
+  R06_SOFTWARE_RENDERER: {weight: 0.15, enabled: true}
+  R07_ZERO_PLUGINS_DESKTOP: {weight: 0.10, enabled: true}
+  R08_VIEWPORT_ANOMALY: {weight: 0.30, enabled: true}
+  R09_TOUCH_INCONSISTENT: {weight: 0.10, enabled: true}
+  R10_NATIVE_FUNCTION_TAMPER: {weight: 0.30, enabled: true}
+  R11_UNTRUSTED_EVENTS: {weight: 0.60, enabled: true}
+  R12_TOO_FAST: {weight: 0.30, enabled: true}
+  R13_RATE_LIMIT: {weight: 1.00, enabled: true}
+combine: noisy_or

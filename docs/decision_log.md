@@ -27,3 +27,16 @@ Do not alter an existing decision; add a dated entry instead.
   `skl2onnx` alone does not provide that converter.
 - **Scope:** The converter will be validated with an ONNX-vs-native parity test
   before any exported model is used by the backend.
+
+### 2026-10-18 — Defer optional BotD comparison
+
+- **Decision:** Do not add BotD as a dependency or implement an external
+  comparison in the current phase.
+- **Rationale:** The project has a complete local rule-layer fixture suite,
+  while no approved BotD adapter, pinned offline artifact, or reproducible
+  comparison dataset is present in the repository. Adding a third-party
+  runtime or downloading an unpinned implementation would expand scope and
+  make the comparison difficult to reproduce.
+- **Scope:** The project's pure R01-R13 rules remain the evaluated baseline.
+  A future offline BotD comparison may be added only with a pinned version,
+  documented licence, fixture adapter, and a new decision entry.

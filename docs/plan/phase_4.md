@@ -4,8 +4,8 @@
 
 ### Tasks
 
-- [ ] **P4-01** Define the environment payload schema (`backend/app/schemas.py: EnvSignals`) with the fields in Appendix B.2.
-- [ ] **P4-02** Implement `rules.py` with each rule as a small pure function returning `RuleResult(id, fired: bool, weight: float, reason: str)`:
+- [x] **P4-01** Define the environment payload schema (`backend/app/schemas.py: EnvSignals`) with the fields in Appendix B.2.
+- [x] **P4-02** Implement `rules.py` with each rule as a small pure function returning `RuleResult(id, fired: bool, weight: float, reason: str)`:
 
 | Rule id | Condition (examples) | Default weight |
 |---------|----------------------|----------------|
@@ -23,16 +23,16 @@
 | R12_TOO_FAST | Time from nonce issue to action under a plausible minimum | medium |
 | R13_RATE_LIMIT | Request-rate caps exceeded (server-side, Store) | hard |
 
-- [ ] **P4-03** Combine rule weights into a **rule score** in [0, 1] (documented formula) and a list of reasons. A hard rule (R13, invalid nonce/signature) bypasses the model.
-- [ ] **P4-04** Make weights configurable in `backend/config/rules.yaml`.
-- [ ] **P4-05** Tests: one passing and one failing payload per rule; a "normal Chrome on Windows" fixture must produce rule score near 0; a "headless default" fixture must fire several rules.
-- [ ] **P4-06** Document each signal and its privacy class in `docs/signals.md`.
-- [ ] **P4-07** Optional baseline: compare against the open-source BotD library's verdicts on the same fixtures (only as an offline comparison; do not add it as a runtime dependency without a decision-log entry).
+- [x] **P4-03** Combine rule weights into a **rule score** in [0, 1] (documented formula) and a list of reasons. A hard rule (R13, invalid nonce/signature) bypasses the model.
+- [x] **P4-04** Make weights configurable in `backend/config/rules.yaml`.
+- [x] **P4-05** Tests: one passing and one failing payload per rule; a "normal Chrome on Windows" fixture must produce rule score near 0; a "headless default" fixture must fire several rules.
+- [x] **P4-06** Document each signal and its privacy class in `docs/signals.md`.
+- [x] **P4-07** Optional baseline: comparison deferred by decision; no approved pinned BotD artifact or fixture adapter is present, and no runtime dependency was added.
 
 ### Acceptance criteria
 
-- [ ] All rule tests pass.
-- [ ] A fixture list shows expected rule outcomes in `docs/signals.md`.
-- [ ] No rule uses persistent identifiers or a unique fingerprint hash.
+- [x] All rule tests pass.
+- [x] A fixture list shows expected rule outcomes in `docs/signals.md`.
+- [x] No rule uses persistent identifiers or a unique fingerprint hash.
 
 ---

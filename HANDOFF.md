@@ -1,61 +1,47 @@
 # Handoff
 
-**Updated:** 2026-10-14  |  **By:** Copilot  |  **Branch:** main  |  **Last commit:** pending
+**Updated:** 2026-10-18  |  **By:** User  |  **Branch:** phase-4-env-rules  |  **Last commit:** 6960b1a
 
 ## Current task
 
-- ID: P4-01 — environment signal schema
+- ID: P5-01 - Settings and score store
 - State: ready to start.
 
-## Done in P3-11
+## Done in P4-07
 
-- Added `export_keyboard_onnx()` with median imputation, standard scaling, and
-  Logistic Regression.
-- Excluded K3 training rows and recorded that policy in `metadata.json`.
-- Added `scripts/export_keyboard_onnx.py` and the
-  `train-keyboard --stage onnx` task.
-- Added native-vs-ONNX parity and metadata tests.
-- Declared `skl2onnx` directly in the ML package dependencies.
-- Added deterministic same-class pseudo-session pairing in `fuse.py`.
-- Added mouse-only, keyboard-only, average, noisy-OR, and validation
-  Logistic Regression stacker comparisons.
-- Added explicit missing-modality behavior and fusion metadata output.
-- Added tests for mouse-only, keyboard-only, both, neither, pairing, and
-  result labeling.
-- Updated the model card with keyboard and fusion scope, privacy, data-source,
-  synthetic-bot, pseudo-session, and missing-modality limitations.
+- Recorded the decision to defer the optional BotD comparison.
+- Did not add a BotD runtime dependency or download an unpinned artifact.
+- Documented the local R01-R13 rule suite as the current baseline.
+- Added the future requirements for any BotD comparison: pinned version,
+  licence review, fixture adapter, and a new decision entry.
+- Marked Phase 4 acceptance criteria complete in `docs/plan/phase_4.md`.
 
 ## Exact next step
 
-- Start Phase 4 by defining the privacy-safe environment signal schema.
+- Begin Phase 5 by implementing backend settings and a privacy-safe score
+  store, preserving the documented model/rule boundaries.
 
-## Files touched in P3-11
+## Files touched in P4-07
 
-- `ml/src/botguard_ml/export_onnx.py`
-- `ml/tests/test_keyboard_onnx.py`
-- `scripts/export_keyboard_onnx.py`
-- `ml/pyproject.toml`
-- `scripts/tasks.py`
-- `ml/src/botguard_ml/fuse.py`
-- `ml/tests/test_fuse.py`
-- `docs/model_card.md`
-- `docs/plan/phase_3.md`
+- `docs/decision_log.md`
+- `docs/signals.md`
+- `docs/plan/phase_4.md`
 - `PROGRESS.md`
 
 ## Validation
 
+Documentation and decision-log task; no code validation required. The complete
+rule implementation was previously validated with:
+
 - `python scripts/tasks.py test-fast`
 - `python scripts/tasks.py lint`
 
-All passed. Windows pytest cache warnings are pre-existing and harmless.
-
 ## Known problems / gotchas
 
-- Real final keyboard metrics require a bounded feature-shard run and
-  sufficient human and bot groups.
-- K3 must remain evaluation-only.
-- Phase 3 is merged into `main`; the next task is Phase 4 on `main`.
+- Phase 4 environment rules remain on `phase-4-env-rules`.
+- Do not use persistent identifiers or fingerprint hashes.
+- Hard rules must bypass model scoring.
 
-## Questions for the human (P3-08)
+## Questions for the human
 
 - None.
