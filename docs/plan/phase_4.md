@@ -4,8 +4,8 @@
 
 ### Tasks
 
-- [ ] **P4-01** Define the environment payload schema (`backend/app/schemas.py: EnvSignals`) with the fields in Appendix B.2.
-- [ ] **P4-02** Implement `rules.py` with each rule as a small pure function returning `RuleResult(id, fired: bool, weight: float, reason: str)`:
+- [x] **P4-01** Define the environment payload schema (`backend/app/schemas.py: EnvSignals`) with the fields in Appendix B.2.
+- [x] **P4-02** Implement `rules.py` with each rule as a small pure function returning `RuleResult(id, fired: bool, weight: float, reason: str)`:
 
 | Rule id | Condition (examples) | Default weight |
 |---------|----------------------|----------------|
@@ -23,7 +23,7 @@
 | R12_TOO_FAST | Time from nonce issue to action under a plausible minimum | medium |
 | R13_RATE_LIMIT | Request-rate caps exceeded (server-side, Store) | hard |
 
-- [ ] **P4-03** Combine rule weights into a **rule score** in [0, 1] (documented formula) and a list of reasons. A hard rule (R13, invalid nonce/signature) bypasses the model.
+- [x] **P4-03** Combine rule weights into a **rule score** in [0, 1] (documented formula) and a list of reasons. A hard rule (R13, invalid nonce/signature) bypasses the model.
 - [ ] **P4-04** Make weights configurable in `backend/config/rules.yaml`.
 - [ ] **P4-05** Tests: one passing and one failing payload per rule; a "normal Chrome on Windows" fixture must produce rule score near 0; a "headless default" fixture must fire several rules.
 - [ ] **P4-06** Document each signal and its privacy class in `docs/signals.md`.

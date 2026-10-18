@@ -11,6 +11,7 @@ import pytest
 from app.rules import (
     DEFAULT_RULE_WEIGHTS,
     RuleResult,
+    RuleScore,
     check_r01_no_payload,
     check_r02_webdriver,
     check_r03_ua_platform_mismatch,
@@ -24,7 +25,9 @@ from app.rules import (
     check_r11_untrusted_events,
     check_r12_too_fast,
     check_r13_rate_limit,
+    combine_rule_results,
     evaluate_all_rules,
+    evaluate_rule_score,
 )
 from app.schemas import EnvSignals
 
@@ -116,6 +119,54 @@ class TestRuleResult:
         r = RuleResult(id="R02_WEBDRIVER", fired=False, weight=0.6, reason="pass")
         with pytest.raises(Exception):
             r.fired = True  # type: ignore[misc]
+
+
+class TestRuleScore:
+    def test_no_fired_rules_have_zero_score(self) -> None:
+        result = combine_rule_results([RuleResult("R02_WEBDRIVER", False, 0.6, "passed")])
+        assert isinstance(result, RuleScore)
+        assert result.rule_score == 0.0
+        assert result.reasons == []
+        assert result.model_bypassed is False
+
+    def test_fired_rules_use_noisy_or(self) -> None:
+        result = combine_rule_results(
+            [
+                RuleResult("R02_WEBDRIVER", True, 0.6, "webdriver"),
+                RuleResult("R06_SOFTWARE_RENDERER", True, 0.15, "software"),
+            ]
+        )
+        assert result.rule_score == pytest.approx(0.66)
+        assert result.fired_rules == ["R02_WEBDRIVER", "R06_SOFTWARE_RENDERER"]
+        assert result.reasons == ["webdriver", "software"]
+        assert result.model_bypassed is False
+
+    def test_rate_limit_bypasses_model(self) -> None:
+        result = combine_rule_results([RuleResult("R13_RATE_LIMIT", True, 1.0, "rate limit")])
+        assert result.rule_score == 1.0
+        assert result.model_bypassed is True
+        assert result.hard_rule == "R13_RATE_LIMIT"
+        assert "model bypass" in result.reasons[-1]
+
+    def test_invalid_nonce_bypasses_model(self) -> None:
+        result = combine_rule_results(
+            [],
+            invalid_nonce_or_signature=True,
+        )
+        assert result.rule_score == 1.0
+        assert result.model_bypassed is True
+        assert result.hard_rule == "INVALID_NONCE_OR_SIGNATURE"
+
+    def test_rejects_invalid_fired_weight(self) -> None:
+        with pytest.raises(ValueError, match=r"in \[0, 1\]"):
+            combine_rule_results([RuleResult("R02_WEBDRIVER", True, 1.1, "bad")])
+
+    def test_evaluate_rule_score_integrates_rule_evaluation(
+        self, normal_chrome_env: EnvSignals
+    ) -> None:
+        result = evaluate_rule_score(normal_chrome_env, {})
+        assert result.rule_score == pytest.approx(0.0)
+        assert result.model_bypassed is False
 
 
 # ---------------------------------------------------------------------------

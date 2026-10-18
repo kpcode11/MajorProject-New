@@ -13,6 +13,7 @@ aggregate behaviour metrics. No unique fingerprint hash is computed.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import isfinite
 from typing import Any
 
 from app.schemas import EnvSignals
@@ -46,6 +47,64 @@ class RuleResult:
             "weight": self.weight,
             "reason": self.reason,
         }
+
+
+@dataclass(frozen=True)
+class RuleScore:
+    """Combined rule-layer result used by the later model decision layer."""
+
+    rule_score: float
+    reasons: list[str]
+    fired_rules: list[str]
+    model_bypassed: bool
+    hard_rule: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert the combined result to a response-safe dictionary."""
+        return {
+            "rule_score": self.rule_score,
+            "reasons": list(self.reasons),
+            "fired_rules": list(self.fired_rules),
+            "model_bypassed": self.model_bypassed,
+            "hard_rule": self.hard_rule,
+        }
+
+
+def combine_rule_results(
+    results: list[RuleResult],
+    *,
+    invalid_nonce_or_signature: bool = False,
+) -> RuleScore:
+    """Combine fired rule weights with noisy-OR and identify hard bypasses."""
+    fired = [result for result in results if result.fired]
+    for result in fired:
+        if not 0.0 <= result.weight <= 1.0 or not isfinite(result.weight):
+            raise ValueError(f"rule weight must be finite and in [0, 1]: {result.id}")
+
+    hard_rule: str | None = None
+    if invalid_nonce_or_signature:
+        hard_rule = "INVALID_NONCE_OR_SIGNATURE"
+    elif any(result.id == "R13_RATE_LIMIT" for result in fired):
+        hard_rule = "R13_RATE_LIMIT"
+
+    if hard_rule is not None:
+        score = 1.0
+        reasons = [result.reason for result in fired]
+        reasons.append(f"{hard_rule} requires model bypass")
+    else:
+        score = 1.0
+        for result in fired:
+            score *= 1.0 - result.weight
+        score = 1.0 - score
+        reasons = [result.reason for result in fired]
+
+    return RuleScore(
+        rule_score=score,
+        reasons=reasons,
+        fired_rules=[result.id for result in fired],
+        model_bypassed=hard_rule is not None,
+        hard_rule=hard_rule,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -663,3 +722,28 @@ def evaluate_all_rules(
         ),
         check_r13_rate_limit(rate_limit_exceeded, weight=w.get("R13_RATE_LIMIT")),
     ]
+
+
+def evaluate_rule_score(
+    env: EnvSignals | dict[str, Any] | None,
+    behaviour: dict[str, Any] | None = None,
+    *,
+    weights: dict[str, float] | None = None,
+    rate_limit_exceeded: bool = False,
+    invalid_nonce_or_signature: bool = False,
+    nonce_age_ms: float | None = None,
+    min_action_ms: float = 200.0,
+) -> RuleScore:
+    """Evaluate all rules and return their combined score and explanations."""
+    results = evaluate_all_rules(
+        env,
+        behaviour,
+        weights=weights,
+        rate_limit_exceeded=rate_limit_exceeded,
+        nonce_age_ms=nonce_age_ms,
+        min_action_ms=min_action_ms,
+    )
+    return combine_rule_results(
+        results,
+        invalid_nonce_or_signature=invalid_nonce_or_signature,
+    )
