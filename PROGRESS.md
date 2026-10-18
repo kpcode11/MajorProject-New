@@ -55,7 +55,7 @@
 | P4-04 | 4 | Configurable rule weights | DONE | 9ddd713 | Added validated YAML loading for enabled flags and weights, with disabled-rule handling in combined evaluation. |
 | P4-05 | 4 | Rule-layer tests | DONE | d3195de | Added aggregate normal Chrome and headless-browser fixture assertions, including rule score and fired-rule expectations. |
 | P4-06 | 4 | Signal privacy documentation | DONE | pending | Added the complete signal privacy register, prohibited-data boundary, retention guidance, and fixture coverage summary. |
-| P4-07 | 4 | Optional BotD comparison | TODO | | |
+| P4-07 | 4 | Optional BotD comparison | DONE | pending | Deferred by decision: no pinned offline BotD artifact or approved adapter is present; no runtime dependency added. |
 | P5-01 | 5 | Settings and score store | TODO | | |
 | P5-02 | 5 | API schemas and limits | TODO | | |
 | P5-03 | 5 | Nonces | TODO | | |

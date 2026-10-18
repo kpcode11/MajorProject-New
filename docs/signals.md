@@ -97,3 +97,9 @@ The rule tests cover:
 - A headless-browser fixture that fires multiple expected automation rules and
   produces a high rule score.
 - One passing and one failing case for each R01-R13 rule.
+
+## Optional BotD comparison
+
+The optional BotD comparison is deferred. No BotD package is a runtime
+dependency, and no unpinned external implementation or downloaded artifact is
+used by this project. The local R01-R13 rule suite is the current baseline.

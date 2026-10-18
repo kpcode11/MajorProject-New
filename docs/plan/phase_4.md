@@ -27,12 +27,12 @@
 - [x] **P4-04** Make weights configurable in `backend/config/rules.yaml`.
 - [x] **P4-05** Tests: one passing and one failing payload per rule; a "normal Chrome on Windows" fixture must produce rule score near 0; a "headless default" fixture must fire several rules.
 - [x] **P4-06** Document each signal and its privacy class in `docs/signals.md`.
-- [ ] **P4-07** Optional baseline: compare against the open-source BotD library's verdicts on the same fixtures (only as an offline comparison; do not add it as a runtime dependency without a decision-log entry).
+- [x] **P4-07** Optional baseline: comparison deferred by decision; no approved pinned BotD artifact or fixture adapter is present, and no runtime dependency was added.
 
 ### Acceptance criteria
 
-- [ ] All rule tests pass.
-- [ ] A fixture list shows expected rule outcomes in `docs/signals.md`.
-- [ ] No rule uses persistent identifiers or a unique fingerprint hash.
+- [x] All rule tests pass.
+- [x] A fixture list shows expected rule outcomes in `docs/signals.md`.
+- [x] No rule uses persistent identifiers or a unique fingerprint hash.
 
 ---

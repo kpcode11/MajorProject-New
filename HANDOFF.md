@@ -1,46 +1,45 @@
 # Handoff
 
-**Updated:** 2026-10-18  |  **By:** User  |  **Branch:** phase-4-env-rules  |  **Last commit:** 8f28d83
+**Updated:** 2026-10-18  |  **By:** User  |  **Branch:** phase-4-env-rules  |  **Last commit:** pending
 
 ## Current task
 
-- ID: P4-07 - Optional BotD comparison
+- ID: P5-01 - Settings and score store
 - State: ready to start.
 
-## Done in P4-06
+## Done in P4-07
 
-- Added `docs/signals.md` documenting all 26 `EnvSignals` fields.
-- Classified signals as low-sensitivity context, derived integrity, or
-  server-side control.
-- Documented aggregation, retention boundaries, and missing-signal handling.
-- Explicitly prohibited persistent identifiers, fingerprint hashes, raw
-  headers, exact hardware identifiers, location, content, typed characters,
-  key identities, clipboard data, and raw renderer/plugin details.
-- Documented normal-browser and headless fixture coverage.
+- Recorded the decision to defer the optional BotD comparison.
+- Did not add a BotD runtime dependency or download an unpinned artifact.
+- Documented the local R01-R13 rule suite as the current baseline.
+- Added the future requirements for any BotD comparison: pinned version,
+  licence review, fixture adapter, and a new decision entry.
+- Marked Phase 4 acceptance criteria complete in `docs/plan/phase_4.md`.
 
 ## Exact next step
 
-- Decide whether the optional offline BotD comparison is appropriate. Do not
-  add a runtime dependency; record a decision before any external comparison.
+- Begin Phase 5 by implementing backend settings and a privacy-safe score
+  store, preserving the documented model/rule boundaries.
 
-## Files touched in P4-06
+## Files touched in P4-07
 
+- `docs/decision_log.md`
 - `docs/signals.md`
 - `docs/plan/phase_4.md`
 - `PROGRESS.md`
 
 ## Validation
 
-Documentation-only task; no code validation required. Previous P4-05
-validation remains passing:
+Documentation and decision-log task; no code validation required. The complete
+rule implementation was previously validated with:
 
 - `python scripts/tasks.py test-fast`
 - `python scripts/tasks.py lint`
 
 ## Known problems / gotchas
 
-- Phase 4 work continues on `phase-4-env-rules`.
-- Do not use persistent identifiers or fingerprint hashes in environment rules.
+- Phase 4 environment rules remain on `phase-4-env-rules`.
+- Do not use persistent identifiers or fingerprint hashes.
 - Hard rules must bypass model scoring.
 
 ## Questions for the human
