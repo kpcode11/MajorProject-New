@@ -60,7 +60,7 @@
 | P5-02 | 5 | API schemas and limits | DONE | 3bdbfd7 | |
 | P5-03 | 5 | Nonces | DONE | | |
 | P5-04 | 5 | Model scoring | TODO | | |
-| P5-05 | 5 | Risk policy | TODO | | |
+| P5-05 | 5 | Risk policy | IN_PROGRESS | | |
 | P5-06 | 5 | Human tokens | TODO | | |
 | P5-07 | 5 | Rate limiting | TODO | | |
 | P5-08 | 5 | Persistence and migrations | TODO | | |

@@ -1,0 +1,31 @@
+# Risk policy configuration (Appendix C.1)
+#
+# Thresholds are placeholders.  Final values should be chosen from
+# validation data (Appendix E) and recorded in docs/decision_log.md.
+#
+# score < allow_below          -> allow
+# score >= deny_at_or_above    -> deny
+# in between                   -> challenge
+
+action_classes:
+  low:    { allow_below: 0.50, deny_at_or_above: 0.90 }   # read-only pages
+  medium: { allow_below: 0.30, deny_at_or_above: 0.80 }   # login, search
+  high:   { allow_below: 0.15, deny_at_or_above: 0.70 }   # OTP request, updates
+
+actions:
+  page_view:       low
+  centre_search:   medium
+  login:           medium
+  otp_request:     high
+  details_update:  high
+
+fail_safe:
+  redis_down:  deny_high_allow_low   # deny high-sensitivity actions; allow low
+  model_error: rules_only            # fall back to rules-only scoring
+  db_down:     continue_and_buffer   # keep running; buffer assessments
+
+# Client-visible risk bands (exact score is never exposed to untrusted callers)
+band_cutoffs:
+  low:    0.30   # score < 0.30  -> low band
+  medium: 0.70   # 0.30 <= score < 0.70 -> medium band
+                 # score >= 0.70 -> high band
