@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "completed": {
+    "web_bot_detection\\smoke.parquet": {
+      "output": "smoke.parquet",
+      "sessions": 1,
+      "windows": 29
+    },
+    "web_bot_detection\\web_bot_detection_50.parquet": {
+      "output": "web_bot_detection_50.parquet",
+      "sessions": 50,
+      "windows": 2385
+    }
+  }
+}
