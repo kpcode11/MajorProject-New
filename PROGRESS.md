@@ -57,7 +57,7 @@
 | P4-06 | 4 | Signal privacy documentation | DONE | pending | Added the complete signal privacy register, prohibited-data boundary, retention guidance, and fixture coverage summary. |
 | P4-07 | 4 | Optional BotD comparison | DONE | pending | Deferred by decision: no pinned offline BotD artifact or approved adapter is present; no runtime dependency added. |
 | P5-01 | 5 | Settings and score store | DONE | b8ffaae | |
-| P5-02 | 5 | API schemas and limits | TODO | | |
+| P5-02 | 5 | API schemas and limits | DONE | | |
 | P5-03 | 5 | Nonces | TODO | | |
 | P5-04 | 5 | Model scoring | TODO | | |
 | P5-05 | 5 | Risk policy | TODO | | |

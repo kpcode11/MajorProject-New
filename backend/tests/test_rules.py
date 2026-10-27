@@ -306,7 +306,12 @@ class TestRule04UaHintsMismatch:
 
 class TestRule05TzLangMismatch:
     def test_fires_on_invalid_terrestrial_offset(self) -> None:
-        res = check_r05_tz_lang_mismatch(EnvSignals(timezone_offset_min=1000))
+        # Use model_construct to bypass schema validation so we can test the
+        # rule logic directly with an out-of-range value.  In practice, the
+        # schema rejects timezone_offset_min > 840, so this value would never
+        # arrive from the API; the rule serves as a defence-in-depth guard.
+        signals = EnvSignals.model_construct(timezone_offset_min=1000)
+        res = check_r05_tz_lang_mismatch(signals)
         assert res.fired is True
 
     def test_fires_on_india_lang_with_us_tz(self) -> None:
