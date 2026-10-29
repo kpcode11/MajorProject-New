@@ -123,9 +123,7 @@ class TestYamlOverrides:
         settings = load_settings(yaml_path=p)
         assert settings.store_backend == "redis"
 
-    def test_env_overrides_yaml(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_env_overrides_yaml(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Environment variable beats YAML."""
         p = _write_yaml(tmp_path, "store_backend: redis\n")
         monkeypatch.setenv("STORE_BACKEND", "memory")

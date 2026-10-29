@@ -386,9 +386,7 @@ class KeyBehaviour(BaseModel):
             if not isinstance(item, list) or len(item) != 3:
                 raise ValueError("each key event must be [key_class, down_ms, up_ms]")
             if str(item[0]) not in KEY_CLASSES:
-                raise ValueError(
-                    f"key_class must be one of {sorted(KEY_CLASSES)}, got {item[0]!r}"
-                )
+                raise ValueError(f"key_class must be one of {sorted(KEY_CLASSES)}, got {item[0]!r}")
         return v
 
 
@@ -420,9 +418,7 @@ class TouchPoint(BaseModel):
 class TouchGesture(BaseModel):
     """A single touch gesture (tap, swipe, drag, other)."""
 
-    type: Literal["tap", "swipe", "drag", "other"] = Field(
-        description="Gesture type."
-    )
+    type: Literal["tap", "swipe", "drag", "other"] = Field(description="Gesture type.")
     points: list[list[float]] = Field(
         default_factory=list,
         max_length=MAX_GESTURE_POINTS,
@@ -586,9 +582,7 @@ class AssessResponse(BaseModel):
     is returned to untrusted callers.  The score is in logs and admin API only.
     """
 
-    decision: Literal["allow", "challenge", "deny"] = Field(
-        description="Access decision."
-    )
+    decision: Literal["allow", "challenge", "deny"] = Field(description="Access decision.")
     band: Literal["low", "medium", "high"] = Field(
         description="Risk band (coarse; the exact score is not exposed)."
     )

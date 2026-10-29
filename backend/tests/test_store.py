@@ -40,9 +40,7 @@ _STORE_PARAMS = [
     pytest.param(
         _make_redis_store,
         id="redis",
-        marks=pytest.mark.skipif(
-            not _FAKEREDIS_AVAILABLE, reason="fakeredis not installed"
-        ),
+        marks=pytest.mark.skipif(not _FAKEREDIS_AVAILABLE, reason="fakeredis not installed"),
     ),
 ]
 
@@ -219,7 +217,6 @@ class TestBuildStore:
             pytest.skip("fakeredis not installed")
         # Patch redis.from_url to use fakeredis so no live server is needed.
         import fakeredis
-
 
         real_from_url = None
         try:

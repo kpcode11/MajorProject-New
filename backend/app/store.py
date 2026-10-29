@@ -226,7 +226,7 @@ class RedisStore(Store):
 
     def __init__(self, redis_client: object) -> None:
         # Accept any redis-compatible client (redis.Redis or fakeredis.FakeRedis).
-        self._r = redis_client  # type: ignore[assignment]
+        self._r = redis_client
 
     @staticmethod
     def _decode(val: object) -> str | None:
@@ -322,7 +322,7 @@ def build_store(
         return InMemoryStore()
     if backend == "redis":
         try:
-            import redis as _redis  # type: ignore[import-untyped]
+            import redis as _redis
         except ImportError as exc:
             raise ImportError(
                 "The 'redis' package is required when STORE_BACKEND=redis. "
