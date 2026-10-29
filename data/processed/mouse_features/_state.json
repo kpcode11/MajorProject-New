@@ -10,6 +10,11 @@
       "output": "web_bot_detection_50.parquet",
       "sessions": 50,
       "windows": 2385
+    },
+    "web_bot_detection\\phase1_100.parquet": {
+      "output": "phase1_100.parquet",
+      "sessions": 100,
+      "windows": 4692
     }
   }
 }
