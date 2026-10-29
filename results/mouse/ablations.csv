@@ -1,0 +1,7 @@
+configuration,model,roc_auc,n_features,n_train_groups,n_test_groups
+all_with_shortcuts,logistic_regression,0.9901783677538101,120,3254,814
+all_without_shortcuts,logistic_regression,0.9861782177599036,108,3254,814
+group_kinematics,logistic_regression,0.964758462937443,54,3254,814
+group_geometry,logistic_regression,0.8889745104105147,21,3254,814
+group_timing,logistic_regression,0.9687343951651963,38,3254,814
+group_click,logistic_regression,0.5330113151653214,9,3254,814

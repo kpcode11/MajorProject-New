@@ -50,6 +50,8 @@ def canonical_events(lines: Iterator[str], *, session_id: str, source: str) -> l
     subject_id = session_id if label == 0 else f"{bot_type}:{session_id}"
 
     rows: list[tuple[float, dict[str, Any]]] = []
+    last_x: float | None = None
+    last_y: float | None = None
     for line_number, line in enumerate(lines, start=2):
         fields = line.strip().split(",")
         if len(fields) < 4:
@@ -59,6 +61,15 @@ def canonical_events(lines: Iterator[str], *, session_id: str, source: str) -> l
             raise ValueError(f"{source}:{line_number}: unsupported event {event_type!r}")
         event, touchscreen = EVENT_TYPES[event_type]
         timestamp = _number(fields[0], field="timestamp", source=source)
+        raw_x, raw_y = fields[2].strip(), fields[3].strip()
+        if event == "up" and (raw_x.lower() == "nan" or raw_y.lower() == "nan"):
+            if last_x is None or last_y is None:
+                continue
+            x_val, y_val = last_x, last_y
+        else:
+            x_val = _number(raw_x, field="x", source=source)
+            y_val = _number(raw_y, field="y", source=source)
+            last_x, last_y = x_val, y_val
         row = {
             "dataset": DATASET,
             "session_id": session_id,
@@ -66,8 +77,8 @@ def canonical_events(lines: Iterator[str], *, session_id: str, source: str) -> l
             "label": label,
             "bot_type": bot_type,
             "t_ms": timestamp,
-            "x": _number(fields[2], field="x", source=source),
-            "y": _number(fields[3], field="y", source=source),
+            "x": x_val,
+            "y": y_val,
             "coord_space": "pixels",
             "event": event,
             "screen_w": screen_w,

@@ -1,0 +1,5 @@
+method,validation_roc_auc,n_train_sessions,n_validation_sessions
+mean,1.0,651,163
+learned_logistic,0.9996064541519086,651,163
+top_k_mean,0.9994096812278631,651,163
+max,0.9992129083038174,651,163

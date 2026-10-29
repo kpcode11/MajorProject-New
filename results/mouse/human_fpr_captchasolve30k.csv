@@ -1,0 +1,4 @@
+game_type,n_rows,flagged_share_all_features_1pct_thr,flagged_share_no_shortcuts_1pct_thr
+polygon-stacking,269,0.9591078066914498,0.5724907063197026
+sheep-herding,270,0.7666666666666667,0.31851851851851853
+thread-the-needle,123,0.9024390243902439,0.3170731707317073

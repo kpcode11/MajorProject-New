@@ -88,16 +88,16 @@ def run_baselines(
 
     models: dict[str, Any] = {
         "logistic_regression": make_pipeline(
-            SimpleImputer(strategy="median"),
+            SimpleImputer(strategy="median", keep_empty_features=True),
             StandardScaler(),
             LogisticRegression(max_iter=1000, random_state=seed),
         ),
         "random_forest": make_pipeline(
-            SimpleImputer(strategy="median"),
+            SimpleImputer(strategy="median", keep_empty_features=True),
             RandomForestClassifier(n_estimators=200, random_state=seed, n_jobs=1),
         ),
         "lightgbm": make_pipeline(
-            SimpleImputer(strategy="median"),
+            SimpleImputer(strategy="median", keep_empty_features=True),
             LGBMClassifier(
                 n_estimators=100,
                 learning_rate=0.05,

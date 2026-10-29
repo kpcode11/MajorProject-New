@@ -164,9 +164,11 @@ def _mean(values: list[float]) -> float:
 
 
 def _std(values: list[float]) -> float:
-    if len(values) < 2:
+    n = len(values)
+    if n < 2:
         return _nan()
-    return float(np.std(values, ddof=1))
+    mean = sum(values) / n
+    return float(math.sqrt(sum((value - mean) ** 2 for value in values) / (n - 1)))
 
 
 def _max(values: list[float]) -> float:
@@ -177,6 +179,14 @@ def _percentile(values: list[float], q: float) -> float:
     if not values:
         return _nan()
     return float(np.percentile(values, q))
+
+
+def _percentiles_4(values: list[float]) -> tuple[float, float, float, float]:
+    if not values:
+        nan = _nan()
+        return nan, nan, nan, nan
+    p25, p50, p75, p95 = np.percentile(values, (25.0, 50.0, 75.0, 95.0))
+    return float(p25), float(p50), float(p75), float(p95)
 
 
 def _safe_div(numerator: float, denominator: float) -> float:
@@ -399,14 +409,16 @@ def extract_segment_features(
             if last_click - PRE_CLICK_MS <= end_t <= last_click
         ]
 
+    speed_p25, speed_p50, speed_p75, speed_p95 = _percentiles_4(speeds)
+    speed_mean = _mean(speeds)
     features = {
-        "speed_mean": _mean(speeds),
+        "speed_mean": speed_mean,
         "speed_std": _std(speeds),
         "speed_max": _max(speeds),
-        "speed_p25": _percentile(speeds, 25),
-        "speed_p50": _percentile(speeds, 50),
-        "speed_p75": _percentile(speeds, 75),
-        "speed_p95": _percentile(speeds, 95),
+        "speed_p25": speed_p25,
+        "speed_p50": speed_p50,
+        "speed_p75": speed_p75,
+        "speed_p95": speed_p95,
         "acc_mean": _mean(accelerations),
         "acc_std": _std(accelerations),
         "acc_max_abs": _max([abs(value) for value in accelerations]),
@@ -429,7 +441,7 @@ def extract_segment_features(
         "accel_phase_ratio": _safe_div(peak_t, time_after_peak),
         "click_dwell_mean": _mean(dwells),
         "click_dwell_std": _std(dwells),
-        "pre_click_slowdown": _safe_div(_mean(pre_click_speeds), _mean(speeds)),
+        "pre_click_slowdown": _safe_div(_mean(pre_click_speeds), speed_mean),
     }
     return {name: features[name] for name in SEGMENT_FEATURE_NAMES}
 
@@ -468,11 +480,17 @@ def extract_window_features(
         extract_segment_features(segment, pause_ms=pause_ms, heading_change_rad=heading_change_rad)
         for segment in segments
     ]
+    window_dwells = _click_dwells(rows)
     aggregated: dict[str, float] = {}
     for name in SEGMENT_FEATURE_NAMES:
         if not include_shortcut_features and name in SHORTCUT_FEATURES:
             continue
         values = [row[name] for row in segment_rows if math.isfinite(row[name])]
+        if not values and window_dwells:
+            if name == "click_dwell_mean":
+                values = window_dwells
+            elif name == "click_dwell_std" and len(window_dwells) >= 2:
+                values = [_std(window_dwells)]
         aggregated[f"{name}_mean"] = _mean(values)
         aggregated[f"{name}_std"] = _std(values)
         aggregated[f"{name}_max"] = _max(values)

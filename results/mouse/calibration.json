@@ -1,0 +1,97 @@
+{
+  "isotonic": {
+    "method": "isotonic",
+    "seed": 42,
+    "calibration_size": 0.15,
+    "test_size": 0.2,
+    "n_train_rows": 3450,
+    "n_calibration_rows": 890,
+    "n_test_rows": 912,
+    "n_train_groups": 529,
+    "n_calibration_groups": 122,
+    "n_test_groups": 163,
+    "raw_brier": 0.0022975754439405528,
+    "calibrated_brier": 0.001779207874773435,
+    "reliability": [
+      {
+        "bin_lower": 0.0,
+        "bin_upper": 0.1,
+        "mean_predicted": 9.544532178296095e-05,
+        "fraction_positive": 0.0,
+        "count": 381.0
+      },
+      {
+        "bin_lower": 0.1,
+        "bin_upper": 0.2,
+        "mean_predicted": 0.14285714285714285,
+        "fraction_positive": 0.5,
+        "count": 4.0
+      },
+      {
+        "bin_lower": 0.6000000000000001,
+        "bin_upper": 0.7000000000000001,
+        "mean_predicted": 0.6666666666666666,
+        "fraction_positive": 1.0,
+        "count": 1.0
+      },
+      {
+        "bin_lower": 0.9,
+        "bin_upper": 1.0,
+        "mean_predicted": 1.0,
+        "fraction_positive": 1.0,
+        "count": 526.0
+      }
+    ]
+  },
+  "platt": {
+    "method": "platt",
+    "seed": 42,
+    "calibration_size": 0.15,
+    "test_size": 0.2,
+    "n_train_rows": 3450,
+    "n_calibration_rows": 890,
+    "n_test_rows": 912,
+    "n_train_groups": 529,
+    "n_calibration_groups": 122,
+    "n_test_groups": 163,
+    "raw_brier": 0.0022975754439405528,
+    "calibrated_brier": 0.0035191503847884355,
+    "reliability": [
+      {
+        "bin_lower": 0.0,
+        "bin_upper": 0.1,
+        "mean_predicted": 0.05744632730697812,
+        "fraction_positive": 0.0026109660574412533,
+        "count": 383.0
+      },
+      {
+        "bin_lower": 0.1,
+        "bin_upper": 0.2,
+        "mean_predicted": 0.1132459227199682,
+        "fraction_positive": 1.0,
+        "count": 1.0
+      },
+      {
+        "bin_lower": 0.4,
+        "bin_upper": 0.5,
+        "mean_predicted": 0.49230089075658573,
+        "fraction_positive": 0.0,
+        "count": 1.0
+      },
+      {
+        "bin_lower": 0.7000000000000001,
+        "bin_upper": 0.8,
+        "mean_predicted": 0.7862321098346816,
+        "fraction_positive": 1.0,
+        "count": 1.0
+      },
+      {
+        "bin_lower": 0.9,
+        "bin_upper": 1.0,
+        "mean_predicted": 0.9889309326846205,
+        "fraction_positive": 1.0,
+        "count": 526.0
+      }
+    ]
+  }
+}

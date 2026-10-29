@@ -1,20 +1,25 @@
 {
   "version": 1,
   "completed": {
-    "web_bot_detection\\smoke.parquet": {
-      "output": "smoke.parquet",
-      "sessions": 1,
-      "windows": 29
+    "delbot_mouse\\delbot_mouse.parquet": {
+      "output": "delbot_mouse.parquet",
+      "sessions": 3551,
+      "windows": 4432
     },
-    "web_bot_detection\\web_bot_detection_50.parquet": {
-      "output": "web_bot_detection_50.parquet",
-      "sessions": 50,
-      "windows": 2385
+    "ieee_blog_bots\\ieee_blog_bots.parquet": {
+      "output": "ieee_blog_bots.parquet",
+      "sessions": 156,
+      "windows": 1114
     },
-    "web_bot_detection\\phase1_100.parquet": {
-      "output": "phase1_100.parquet",
-      "sessions": 100,
-      "windows": 4692
+    "web_bot_detection\\phase1.parquet": {
+      "output": "phase1.parquet",
+      "sessions": 150,
+      "windows": 7574
+    },
+    "web_bot_detection\\phase2.parquet": {
+      "output": "phase2.parquet",
+      "sessions": 299,
+      "windows": 15277
     }
   }
 }

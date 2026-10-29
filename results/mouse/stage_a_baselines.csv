@@ -1,4 +1,5 @@
-model,roc_auc,pr_auc,balanced_accuracy,brier_score,fpr,fnr,tp,fp,tn,fn,n_test
-majority_class,0.5,0.3481,0.5,0.3481,0.0,1.0,0,0,927,495,1422
-logistic_regression,1.0,1.0,1.0,0.0006,0.0,0.0,495,0,927,0,1422
-lightgbm_tuned,1.0,1.0,1.0,0.0,0.0,0.0,495,0,927,0,1422
+model,roc_auc,pr_auc,balanced_accuracy,accuracy,brier_score,eer,fpr,fnr,thr_1pct_fpr,recall_at_1pct_fpr,actual_fpr_at_1pct_thr,thr_5pct_fpr,recall_at_5pct_fpr,actual_fpr_at_5pct_thr,tp,fp,tn,fn,n_test
+majority_class,0.5,0.634,0.5,0.634,0.366,0.5,1.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,3330,1922,0,0,5252
+logistic_regression,0.9902,0.991,0.9554,0.9596,0.0305,0.041,0.0604,0.0288,0.9376,0.8015,0.0104,0.5896,0.9649,0.0505,3234,116,1806,96,5252
+lightgbm_tuned,0.9999,1.0,0.9962,0.9964,0.0028,0.0039,0.0047,0.003,0.1217,0.9985,0.0104,0.0025,1.0,0.051,3320,9,1913,10,5252
+lightgbm_no_shortcuts,0.999,0.9991,0.9866,0.989,0.0093,0.0139,0.0224,0.0045,0.7734,0.9904,0.0182,0.0178,0.9991,0.0505,3315,43,1879,15,5252

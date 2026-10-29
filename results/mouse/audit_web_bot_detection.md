@@ -1,35 +1,35 @@
 # Mouse audit: web_bot_detection
 
-- Source shards: 1
-- Rows: 4037
-- Sessions: 1
-- Subjects: 1
-- Windows: 29 (10 s, 5 s hop, at least 20 moves)
+- Source shards: 2
+- Rows: 3631539
+- Sessions: 449
+- Subjects: 449
+- Windows: 22851 (10 s, 5 s hop, at least 20 moves)
 
 ## Counts
 
 | Dimension | Values |
 |---|---|
-| label | `{"1": 4037}` |
-| bot_type | `{"moderate_bot": 4037}` |
-| domain | `{"wiki_part1": 4037}` |
-| event | `{"move": 4037}` |
-| coord_space | `{"pixels": 4037}` |
-| touchscreen | `{"False": 4037}` |
+| label | `{"0": 1156076, "1": 2475463}` |
+| bot_type | `{"advanced": 1543039, "human": 1156076, "moderate": 932424}` |
+| domain | `{"wiki_part1": 1103181, "wiki_part2": 2528358}` |
+| event | `{"move": 3631539}` |
+| coord_space | `{"pixels": 3631539}` |
+| touchscreen | `{"False": 3631539}` |
 
 ## Numeric summaries
 
 | Field | Summary |
 |---|---|
-| t_ms | `{"count": 4037, "max": 141246.0, "mean": 73990.89249442656, "min": 0.0, "p50": 70891.0, "p95": 132880.0}` |
-| x | `{"count": 4037, "max": 1223.0, "mean": 367.7374287837503, "min": 0.0, "p50": 322.0, "p95": 776.0}` |
-| y | `{"count": 4037, "max": 448.0, "mean": 259.45380232846173, "min": 5.0, "p50": 241.0, "p95": 417.0}` |
-| dt_ms | `{"count": 4036, "max": 4318.0, "mean": 34.99653121902874, "min": 8.0, "p50": 17.0, "p95": 17.0}` |
-| events_per_second | `{"count": 1, "max": 28.58134035654107, "mean": 28.58134035654107, "min": 28.58134035654107, "p50": 28.58134035654107, "p95": 28.58134035654107}` |
+| t_ms | `{"count": 1103181, "max": 677103.0, "mean": 162848.5397917477, "min": 0.0, "p50": 71065.0, "p95": 183675.0}` |
+| x | `{"count": 1103181, "max": 1598.0, "mean": 631.9795201331423, "min": 0.0, "p50": 493.0, "p95": 1296.0}` |
+| y | `{"count": 1103181, "max": 725.0, "mean": 359.2691942663987, "min": 0.0, "p50": 287.0, "p95": 508.0}` |
+| dt_ms | `{"count": 1103031, "max": 43681.0, "mean": 37.4649116842591, "min": -5983.0, "p50": 17.0, "p95": 29.0}` |
+| events_per_second | `{"count": 150, "max": 59.13778478846412, "mean": 28.952484627643152, "min": 9.896486439969511, "p50": 26.152552258380513, "p95": 57.06170077427562}` |
 
 ## Missing values
 
 | Field | Count | Rate |
 |---|---:|---:|
-| screen_h | 4037 | 1.000000 |
-| screen_w | 4037 | 1.000000 |
+| screen_h | 1103181 | 1.000000 |
+| screen_w | 1103181 | 1.000000 |

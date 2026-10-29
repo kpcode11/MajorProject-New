@@ -22,8 +22,23 @@ def parse_pairs(value: str) -> list[tuple[float, float]]:
 
 
 def parse_times(value: str) -> list[float]:
-    """Parse the observed comma-separated movement timestamps into milliseconds."""
-    return [float(item) for item in value.split(",") if item.strip()]
+    """Parse the observed comma-separated movement timestamps into milliseconds.
+
+    Phase-2 MongoDB exports contain occasional chunk-boundary truncations where a
+    13-digit epoch millisecond timestamp loses its leading digits (for example
+    ``975082250`` between ``1593975081837`` and ``1593975082675``). When a
+    13-digit reference timestamp is present, restore the truncated prefix.
+    """
+    tokens = [item.strip() for item in value.split(",") if item.strip()]
+    ref = next((token for token in tokens if len(token) == 13 and token.isdigit()), None)
+    result: list[float] = []
+    for token in tokens:
+        if ref is not None and token.isdigit() and 0 < len(token) < 13:
+            token = ref[: 13 - len(token)] + token
+        elif len(token) == 13 and token.isdigit():
+            ref = token
+        result.append(float(token))
+    return result
 
 
 def canonical_events(
@@ -120,10 +135,13 @@ def phase1_records(root: Path, max_sessions: int | None) -> Iterator[list[dict[s
                 if session_id in seen_humans:
                     continue
                 seen_humans.add(session_id)
+            normalized_bot_type = (
+                "human" if label_name == "human" else label_name.removesuffix("_bot")
+            )
             events = canonical_events(
                 record,
                 label=0 if label_name == "human" else 1,
-                bot_type=label_name,
+                bot_type=normalized_bot_type,
                 domain="wiki_part1",
             )
             if events:

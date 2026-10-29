@@ -6,6 +6,7 @@ import argparse
 import base64
 import json
 import random
+import re
 import struct
 from collections.abc import Iterator
 from pathlib import Path
@@ -17,6 +18,7 @@ import pyarrow.parquet as pq  # type: ignore[import-untyped]
 DATASET = "captchasolve30k"
 SPLITS = ("train", "validation", "test")
 SAMPLE_SIZE = 9
+GAME_TYPE_PATTERN = re.compile(rb'"gameType"\s*:\s*"([^"]+)"')
 
 
 def decode_input_stream(value: str) -> list[tuple[float, float, int]]:
@@ -68,7 +70,7 @@ def canonical_events(
             {
                 "dataset": DATASET,
                 "session_id": session_id,
-                "subject_id": session_id,
+                "subject_id": f"{game_type}:{session_id}",
                 "label": 0,
                 "bot_type": "human",
                 "t_ms": index * sample_interval_ms,
@@ -86,8 +88,27 @@ def canonical_events(
     return events
 
 
-def _records(root: Path) -> Iterator[tuple[Path, int, dict[str, Any]]]:
-    """Yield JSONL records with their byte offsets, one record at a time."""
+def _extract_game_type(line: bytes, path: Path) -> str:
+    """Extract gameType without decoding large tickInputs arrays when possible."""
+    tail = line[-4096:] if len(line) > 4096 else line
+    match = GAME_TYPE_PATTERN.search(tail) or GAME_TYPE_PATTERN.search(line)
+    if match is not None:
+        game_type = match.group(1).decode("utf-8", "replace")
+        if game_type:
+            return game_type
+    record = json.loads(line)
+    if not isinstance(record, dict):
+        raise ValueError(f"{path}: every JSONL line must be an object")
+    raw_type = record.get("gameType")
+    if not isinstance(raw_type, str) or not raw_type:
+        raise ValueError(f"{path}: gameType is required")
+    return raw_type
+
+
+def _selected_offsets(root: Path, max_sessions: int | None, seed: int) -> list[tuple[Path, int]]:
+    """Select a deterministic, game-type-stratified set using only offsets."""
+    all_offsets: dict[str, list[tuple[Path, int]]] = {}
+    cap_per_type = None if max_sessions is None else max(max_sessions * 2, 100)
     for split in SPLITS:
         path = root / f"{split}.jsonl"
         if not path.is_file():
@@ -98,20 +119,14 @@ def _records(root: Path) -> Iterator[tuple[Path, int, dict[str, Any]]]:
                 line = handle.readline()
                 if not line:
                     break
-                record = json.loads(line)
-                if not isinstance(record, dict):
-                    raise ValueError(f"{path}: every JSONL line must be an object")
-                yield path, offset, record
-
-
-def _selected_offsets(root: Path, max_sessions: int | None, seed: int) -> list[tuple[Path, int]]:
-    """Select a deterministic, game-type-stratified set using only offsets."""
-    all_offsets: dict[str, list[tuple[Path, int]]] = {}
-    for path, offset, record in _records(root):
-        game_type = record.get("gameType")
-        if not isinstance(game_type, str) or not game_type:
-            raise ValueError(f"{path}: gameType is required")
-        all_offsets.setdefault(game_type, []).append((path, offset))
+                game_type = _extract_game_type(line, path)
+                all_offsets.setdefault(game_type, []).append((path, offset))
+                if (
+                    cap_per_type is not None
+                    and len(all_offsets) >= 3
+                    and all(len(items) >= cap_per_type for items in all_offsets.values())
+                ):
+                    break
     total = sum(len(items) for items in all_offsets.values())
     if max_sessions is None or max_sessions >= total:
         selected = [item for items in all_offsets.values() for item in items]
@@ -158,7 +173,7 @@ def load(root: Path, output: Path, max_sessions: int = 3000, seed: int = 0) -> i
 
 
 def main() -> None:
-    """Run the loader with bounded, seeded sampling."""
+    """Run the loader with a bounded session count and fixed seed."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source", type=Path)
     parser.add_argument("output", type=Path)

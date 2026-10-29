@@ -66,15 +66,32 @@ def _inc(counter: Counter[str], value: Any) -> None:
 def _window_count(move_times: list[float]) -> int:
     if not move_times:
         return 0
-    first = min(move_times)
-    last = max(move_times)
+    times = sorted(move_times)
+    first = times[0]
+    last = times[-1]
+    n_times = len(times)
     count = 0
-    start = first
-    while start <= last:
+    step_idx = 0
+    left = 0
+    while True:
+        start = first + step_idx * HOP_MS
+        if start > last:
+            break
+        while left < n_times and times[left] < start:
+            left += 1
+        if left >= n_times:
+            break
         end = start + WINDOW_MS
-        if sum(start <= timestamp < end for timestamp in move_times) >= MIN_MOVES:
+        if times[left] >= end:
+            jump = math.floor((times[left] - first - WINDOW_MS) / HOP_MS) + 1
+            step_idx = max(step_idx + 1, jump)
+            continue
+        right = left
+        while right < n_times and times[right] < end:
+            right += 1
+        if right - left >= MIN_MOVES:
             count += 1
-        start += HOP_MS
+        step_idx += 1
     return count
 
 

@@ -1,5 +1,9 @@
 {
-  "datasets": [],
+  "datasets": [
+    "delbot_mouse",
+    "ieee_blog_bots",
+    "web_bot_detection"
+  ],
   "feature_names": [
     "n_moves",
     "duration_s",
@@ -11,14 +15,57 @@
     "dt_mode_fraction"
   ],
   "human_only": true,
-  "reason": "No human-only windows with at least 20 move events were found.",
-  "results": [],
+  "reason": null,
+  "results": [
+    {
+      "accuracy": 1.0,
+      "pair": [
+        "delbot_mouse",
+        "ieee_blog_bots"
+      ],
+      "status": "ok",
+      "test_sessions": [
+        "delbot_mouse:circleHide_1665395762167",
+        "ieee_blog_bots:test/human_28"
+      ],
+      "test_windows": 24,
+      "train_windows": 622
+    },
+    {
+      "accuracy": 0.9948186528497409,
+      "pair": [
+        "delbot_mouse",
+        "web_bot_detection"
+      ],
+      "status": "ok",
+      "test_sessions": [
+        "delbot_mouse:circleHide_1665395762167",
+        "web_bot_detection:i6io829o6v8o8r5bo6tgoc903p"
+      ],
+      "test_windows": 193,
+      "train_windows": 9636
+    },
+    {
+      "accuracy": 0.9455445544554455,
+      "pair": [
+        "ieee_blog_bots",
+        "web_bot_detection"
+      ],
+      "status": "ok",
+      "test_sessions": [
+        "ieee_blog_bots:train/human_05",
+        "web_bot_detection:i6io829o6v8o8r5bo6tgoc903p"
+      ],
+      "test_windows": 202,
+      "train_windows": 9983
+    }
+  ],
   "scale_invariance": "coordinates are normalized by each window bounding-box diagonal",
-  "status": "insufficient_data",
+  "status": "ok",
   "windowing": {
     "hop_s": 5,
     "min_moves": 20,
     "window_s": 10
   },
-  "windows": 0
+  "windows": 10330
 }

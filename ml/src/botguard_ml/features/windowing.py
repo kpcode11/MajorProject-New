@@ -51,15 +51,31 @@ def window_events(
 
     window_ms = window_s * 1000.0
     hop_ms = hop_s * 1000.0
-    first_t = float(cleaned[0]["t_ms"])
-    last_t = float(cleaned[-1]["t_ms"])
+    times = [float(event["t_ms"]) for event in cleaned]
+    first_t = times[0]
+    last_t = times[-1]
+    n_events = len(cleaned)
     windows: list[list[dict[str, Any]]] = []
-    start = first_t
-    while start <= last_t:
+    step_idx = 0
+    left = 0
+    while True:
+        start = first_t + step_idx * hop_ms
+        if start > last_t:
+            break
+        while left < n_events and times[left] < start:
+            left += 1
+        if left >= n_events:
+            break
         end = start + window_ms
-        batch = [dict(event) for event in cleaned if start <= float(event["t_ms"]) < end]
-        move_count = sum(event.get("event") == "move" for event in batch)
+        if times[left] >= end and min_moves > 0:
+            jump = math.floor((times[left] - first_t - window_ms) / hop_ms) + 1
+            step_idx = max(step_idx + 1, jump)
+            continue
+        right = left
+        while right < n_events and times[right] < end:
+            right += 1
+        move_count = sum(cleaned[index].get("event") == "move" for index in range(left, right))
         if move_count >= min_moves:
-            windows.append(batch)
-        start += hop_ms
+            windows.append([dict(cleaned[index]) for index in range(left, right)])
+        step_idx += 1
     return windows

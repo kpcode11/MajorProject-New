@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "completed": {
+    "captchasolve30k\\captchasolve30k_300.parquet": {
+      "output": "captchasolve30k_300.parquet",
+      "sessions": 300,
+      "windows": 662
+    }
+  }
+}

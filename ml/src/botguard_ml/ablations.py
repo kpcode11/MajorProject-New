@@ -89,7 +89,7 @@ def run_ablations(
     results: list[dict[str, Any]] = []
     for name, features in configurations:
         model = make_pipeline(
-            SimpleImputer(strategy="median"),
+            SimpleImputer(strategy="median", keep_empty_features=True),
             StandardScaler(),
             LogisticRegression(max_iter=1000, random_state=seed),
         )

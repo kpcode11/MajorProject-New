@@ -76,7 +76,7 @@ def explain_lightgbm(
         raise ValueError("training data must contain both labels")
     if list(x_train.columns) != list(x_scored.columns):
         raise ValueError("training and scored features must have identical columns")
-    imputer = SimpleImputer(strategy="median")
+    imputer = SimpleImputer(strategy="median", keep_empty_features=True)
     train_values = imputer.fit_transform(x_train)
     scored_values = imputer.transform(x_scored)
     model = LGBMClassifier(

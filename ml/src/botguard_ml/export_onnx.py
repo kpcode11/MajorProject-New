@@ -37,19 +37,29 @@ def export_mouse_onnx(
     version: str = "v1",
     data_manifest_hash: str = "unknown",
     seed: int = 42,
+    hyperparameters: dict[str, Any] | None = None,
+    metrics: dict[str, Any] | None = None,
+    calibration: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Fit the fixed mouse LightGBM model and export it with metadata."""
+    """Fit the mouse LightGBM model and export it with metadata."""
     if not feature_columns:
         raise ValueError("feature_columns must not be empty")
     labels = rows["label"].to_numpy(dtype=int)
     if len(np.unique(labels)) < 2:
         raise ValueError("training data must contain both labels")
-    imputer = SimpleImputer(strategy="median")
+    imputer = SimpleImputer(strategy="median", keep_empty_features=True)
     values = imputer.fit_transform(rows[feature_columns]).astype(np.float32)
+    params: dict[str, Any] = (
+        dict(hyperparameters)
+        if hyperparameters is not None
+        else {
+            "n_estimators": 100,
+            "learning_rate": 0.05,
+            "num_leaves": 31,
+        }
+    )
     model = LGBMClassifier(
-        n_estimators=100,
-        learning_rate=0.05,
-        num_leaves=31,
+        **params,
         random_state=seed,
         n_jobs=1,
         verbosity=-1,
@@ -62,15 +72,25 @@ def export_mouse_onnx(
         initial_types=[("features", FloatTensorType([None, len(feature_columns)]))],
     )
     onnxmltools.save_model(onnx_model, str(onnx_path))
-    metadata = {
+    medians = {
+        col: (float(val) if np.isfinite(val) else 0.0)
+        for col, val in zip(feature_columns, imputer.statistics_, strict=False)
+    }
+    metadata: dict[str, Any] = {
         "version": version,
         "feature_order": feature_columns,
         "data_manifest_hash": data_manifest_hash,
         "git_commit": _git_commit(),
         "model": "lightgbm",
         "imputation": "median",
+        "imputer_medians": medians,
+        "hyperparameters": params,
         "seed": seed,
     }
+    if metrics is not None:
+        metadata["metrics"] = metrics
+    if calibration is not None:
+        metadata["calibration"] = calibration
     (output_dir / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
     return metadata
 
@@ -102,7 +122,7 @@ def export_keyboard_onnx(
     if len(np.unique(labels)) < 2:
         raise ValueError("training data must contain both labels")
     model = make_pipeline(
-        SimpleImputer(strategy="median"),
+        SimpleImputer(strategy="median", keep_empty_features=True),
         StandardScaler(),
         LogisticRegression(max_iter=1000, random_state=seed),
     )

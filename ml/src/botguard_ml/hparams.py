@@ -13,47 +13,36 @@ from lightgbm import LGBMClassifier
 from sklearn.impute import SimpleImputer  # type: ignore[import-untyped]
 from sklearn.metrics import roc_auc_score  # type: ignore[import-untyped]
 from sklearn.model_selection import StratifiedGroupKFold  # type: ignore[import-untyped]
-from sklearn.pipeline import make_pipeline  # type: ignore[import-untyped]
 
 from botguard_ml.baselines import _feature_columns, load_feature_rows
 from botguard_ml.splits import grouped_split
 
 
-def _cv_score(
+def _prepare_folds(
     frame: pd.DataFrame,
     features: list[str],
     train_indices: list[int],
-    params: dict[str, Any],
     *,
     seed: int,
     folds: int,
-) -> float:
+) -> list[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]:
     train = frame.iloc[train_indices]
-    x = train[features]
+    x = train[features].to_numpy(dtype=np.float32)
     y = train["label"].to_numpy(dtype=int)
     groups = train["split_group"].astype(str).to_numpy()
-    scores: list[float] = []
     splitter = StratifiedGroupKFold(n_splits=folds, shuffle=True, random_state=seed)
+    prepared: list[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]] = []
     for fold_train, fold_valid in splitter.split(x, y, groups):
-        model = make_pipeline(
-            SimpleImputer(strategy="median"),
-            LGBMClassifier(**params, random_state=seed, n_jobs=1, verbosity=-1),
-        )
-        model.fit(x.iloc[fold_train], y[fold_train])
-        validation_labels = y[fold_valid]
-        if len(np.unique(validation_labels)) < 2:
+        y_val = y[fold_valid]
+        if len(np.unique(y_val)) < 2:
             continue
-        scores.append(
-            float(
-                roc_auc_score(
-                    validation_labels,
-                    model.predict_proba(x.iloc[fold_valid])[:, 1],
-                )
-            )
-        )
-    if not scores:
+        imputer = SimpleImputer(strategy="median", keep_empty_features=True)
+        x_tr = imputer.fit_transform(x[fold_train]).astype(np.float32)
+        x_va = imputer.transform(x[fold_valid]).astype(np.float32)
+        prepared.append((x_tr, y[fold_train], x_va, y_val))
+    if not prepared:
         raise ValueError("grouped CV produced no validation folds with both labels")
-    return float(np.mean(scores))
+    return prepared
 
 
 def optimise_lightgbm(
@@ -80,11 +69,12 @@ def optimise_lightgbm(
     if folds < 2:
         raise ValueError("at least two training groups are required for grouped CV")
 
+    prepared_folds = _prepare_folds(rows, features, train_indices, seed=seed, folds=folds)
     sampler = optuna.samplers.TPESampler(seed=seed)
     study = optuna.create_study(direction="maximize", sampler=sampler)
 
     def objective(trial: optuna.Trial) -> float:
-        params = {
+        params: dict[str, Any] = {
             "n_estimators": trial.suggest_int("n_estimators", 50, 300),
             "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.2, log=True),
             "num_leaves": trial.suggest_int("num_leaves", 7, 63),
@@ -92,7 +82,13 @@ def optimise_lightgbm(
             "subsample": trial.suggest_float("subsample", 0.7, 1.0),
             "colsample_bytree": trial.suggest_float("colsample_bytree", 0.7, 1.0),
         }
-        return _cv_score(rows, features, train_indices, params, seed=seed, folds=folds)
+        scores: list[float] = []
+        for x_tr, y_tr, x_va, y_va in prepared_folds:
+            model = LGBMClassifier(**params, random_state=seed, n_jobs=-1, verbosity=-1)
+            model.fit(x_tr, y_tr)
+            probs = np.asarray(model.predict_proba(x_va), dtype=np.float64)[:, 1]
+            scores.append(float(roc_auc_score(y_va, probs)))
+        return float(np.mean(scores))
 
     study.optimize(objective, n_trials=n_trials, timeout=timeout_seconds, n_jobs=1)
     if not study.trials:
