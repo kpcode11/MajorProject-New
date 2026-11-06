@@ -16,7 +16,9 @@ def main() -> None:
         type=Path,
         default=Path("data/processed/keyboard_features/features.parquet"),
     )
-    parser.add_argument("--output-dir", type=Path, default=Path("backend/models/keyboard-v1"))
+    parser.add_argument(
+        "--output-dir", type=Path, default=Path("backend/models/keyboard-v1")
+    )
     parser.add_argument("--version", default="v1")
     parser.add_argument("--manifest-hash", default="unknown")
     parser.add_argument("--seed", type=int, default=42)

@@ -1,0 +1,9 @@
+group,roc_auc,pr_auc,balanced_accuracy,accuracy,brier_score,eer,thr_1pct_fpr,recall_at_1pct_fpr,actual_fpr_at_1pct_thr,thr_5pct_fpr,recall_at_5pct_fpr,actual_fpr_at_5pct_thr,bot_recall_at_05,tp,fp,tn,fn,n_rows,n_humans,n_bots,model,generator,is_held_out_from_training,mean_bot_score,roc_auc_ci_low,roc_auc_ci_high,pr_auc_ci_low,pr_auc_ci_high
+logistic_regression:generator:K1,1.0,1.0,0.9989,0.9984,0.001,0.0,0.0896,1.0,0.0101,0.006,1.0,0.0501,1.0,982,6,2769,0,3757,2775,982,logistic_regression,K1,False,0.9992,1.0,1.0,1.0,1.0
+logistic_regression:generator:K2,1.0,1.0,0.9989,0.9984,0.001,0.0,0.0896,1.0,0.0101,0.006,1.0,0.0501,1.0,1005,6,2769,0,3780,2775,1005,logistic_regression,K2,False,0.9921,1.0,1.0,1.0,1.0
+logistic_regression:generator:K3,0.8415,0.8676,0.4999,0.3583,0.6272,0.2358,0.0896,0.0353,0.0101,0.006,0.2492,0.0501,0.002,10,6,2769,4970,7755,2775,4980,logistic_regression,K3,True,0.0133,0.8191,0.864,0.8408,0.8976
+logistic_regression:generator:K4,1.0,1.0,0.9989,0.9984,0.001,0.0002,0.0896,1.0,0.0101,0.006,1.0,0.0501,1.0,1016,6,2769,0,3791,2775,1016,logistic_regression,K4,False,0.9957,1.0,1.0,1.0,1.0
+lightgbm_tuned:generator:K1,1.0,1.0,1.0,1.0,0.0,0.0,0.0,1.0,0.0101,0.0,1.0,0.0501,1.0,982,0,2775,0,3757,2775,982,lightgbm_tuned,K1,False,1.0,1.0,1.0,1.0,1.0
+lightgbm_tuned:generator:K2,1.0,1.0,1.0,1.0,0.0,0.0,0.0,1.0,0.0101,0.0,1.0,0.0501,1.0,1005,0,2775,0,3780,2775,1005,lightgbm_tuned,K2,False,1.0,1.0,1.0,1.0,1.0
+lightgbm_tuned:generator:K3,0.9951,0.9939,0.5031,0.3618,0.637,0.012,0.0,0.9851,0.0101,0.0,0.9988,0.0501,0.0062,31,0,2775,4949,7755,2775,4980,lightgbm_tuned,K3,True,0.0067,0.9884,0.9988,0.9847,0.9991
+lightgbm_tuned:generator:K4,1.0,1.0,1.0,1.0,0.0,0.0,0.0,1.0,0.0101,0.0,1.0,0.0501,1.0,1016,0,2775,0,3791,2775,1016,lightgbm_tuned,K4,False,1.0,1.0,1.0,1.0,1.0

@@ -46,16 +46,19 @@ def evaluate_keyboard(
     missing = required.difference(rows.columns)
     if missing:
         raise ValueError(f"rows missing columns: {', '.join(sorted(missing))}")
-    metadata = rows.to_dict("records")
-    train_indices, test_indices = grouped_split(metadata, test_size=test_size, seed=seed)
-    train_indices = [index for index in train_indices if rows.iloc[index]["bot_type"] != "K3"]
-    k3_indices = [index for index, row in enumerate(metadata) if row["bot_type"] == "K3"]
-    test_indices = sorted(set(test_indices).union(k3_indices))
+    non_k3_mask = rows["bot_type"] != "K3"
+    non_k3_positions = np.flatnonzero(non_k3_mask.to_numpy())
+    non_k3_metadata = rows.iloc[non_k3_positions].to_dict("records")
+    rel_train, rel_test = grouped_split(non_k3_metadata, test_size=test_size, seed=seed)
+    train_indices = [int(non_k3_positions[idx]) for idx in rel_train]
+    test_indices_non_k3 = [int(non_k3_positions[idx]) for idx in rel_test]
+    k3_indices = [int(idx) for idx in np.flatnonzero((~non_k3_mask).to_numpy())]
+    test_indices = sorted(set(test_indices_non_k3).union(k3_indices))
     features = _feature_columns(rows)
     if len(np.unique(rows.iloc[train_indices]["label"])) < 2:
         raise ValueError("training split must contain both labels")
     model = make_pipeline(
-        SimpleImputer(strategy="median"),
+        SimpleImputer(strategy="median", keep_empty_features=True),
         StandardScaler(),
         LogisticRegression(max_iter=1000, random_state=seed),
     )
@@ -63,9 +66,12 @@ def evaluate_keyboard(
     test = rows.iloc[test_indices].copy()
     test["score"] = model.predict_proba(test[features])[:, 1]
     reports = [_report("overall", test, n_bootstrap=n_bootstrap, seed=seed)]
-    for bot_type, group in test[test["label"] == 1].groupby("bot_type"):
-        reports.append(_report(f"generator:{bot_type}", group, n_bootstrap=n_bootstrap, seed=seed))
     human = test[test["label"] == 0]
+    for bot_type, group in test[test["label"] == 1].groupby("bot_type"):
+        eval_slice = pd.concat([human, group], ignore_index=True) if not human.empty else group
+        rep = _report(f"generator:{bot_type}", eval_slice, n_bootstrap=n_bootstrap, seed=seed)
+        rep["n_bot_rows"] = len(group)
+        reports.append(rep)
     if not human.empty:
         threshold = float(np.quantile(human["score"], 0.99))
         reports.append(

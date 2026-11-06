@@ -39,19 +39,26 @@ from sklearn.preprocessing import StandardScaler
 
 # ── repo root (two levels up from this file: ml/scripts/ → ml/ → repo/) ──────
 REPO_ROOT = Path(__file__).resolve().parents[2]
-PROCESSED  = REPO_ROOT / "data" / "processed" / "mouse_features"
-RESULTS    = REPO_ROOT / "results" / "mouse"
-MODEL_OUT  = REPO_ROOT / "backend" / "models" / "mouse-trained"
+PROCESSED = REPO_ROOT / "data" / "processed" / "mouse_features"
+RESULTS = REPO_ROOT / "results" / "mouse"
+MODEL_OUT = REPO_ROOT / "backend" / "models" / "mouse-trained"
 
 SEED = 42
 N_OPTUNA_TRIALS = 30
-CV_FOLDS = 5          # for hyperparameter search (inner CV on training set)
-TEST_FOLD = 0         # which GroupKFold outer fold to use as the held-out test set
+CV_FOLDS = 5  # for hyperparameter search (inner CV on training set)
+TEST_FOLD = 0  # which GroupKFold outer fold to use as the held-out test set
 
 # Meta-columns that are not features
 META_COLS = {
-    "dataset", "domain", "session_id", "subject_id",
-    "split_group", "label", "bot_type", "window_index", "session_index",
+    "dataset",
+    "domain",
+    "session_id",
+    "subject_id",
+    "split_group",
+    "label",
+    "bot_type",
+    "window_index",
+    "session_index",
 }
 
 optuna.logging.set_verbosity(optuna.logging.WARNING)
@@ -59,8 +66,10 @@ optuna.logging.set_verbosity(optuna.logging.WARNING)
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
+
 def banner(msg: str) -> None:
-    print(f"\n{'='*70}\n  {msg}\n{'='*70}", flush=True)
+    print(f"\n{'=' * 70}\n  {msg}\n{'=' * 70}", flush=True)
+
 
 def step(msg: str, pct: float) -> None:
     print(f"  [{pct:5.1f}%]  {msg}", flush=True)
@@ -84,7 +93,10 @@ def prepare_arrays(df: pd.DataFrame) -> tuple[np.ndarray, np.ndarray, np.ndarray
     # Drop columns that are 100% NaN (e.g. click features absent from this dataset)
     all_nan = [c for c in feature_cols if df[c].isna().all()]
     if all_nan:
-        step(f"Dropping {len(all_nan)} all-NaN columns: {all_nan[:5]}{'...' if len(all_nan)>5 else ''}", 6)
+        step(
+            f"Dropping {len(all_nan)} all-NaN columns: {all_nan[:5]}{'...' if len(all_nan) > 5 else ''}",
+            6,
+        )
         feature_cols = [c for c in feature_cols if c not in all_nan]
 
     X_df = df[feature_cols].copy()
@@ -102,7 +114,7 @@ def prepare_arrays(df: pd.DataFrame) -> tuple[np.ndarray, np.ndarray, np.ndarray
     groups = pd.Categorical(df["session_id"]).codes.astype(np.int32)
 
     step(f"Features: {X.shape[1]} columns, {X.shape[0]} rows", 7)
-    step(f"Label balance — human: {(y==0).sum():,}  bot: {(y==1).sum():,}", 8)
+    step(f"Label balance — human: {(y == 0).sum():,}  bot: {(y == 1).sum():,}", 8)
     step(f"Unique sessions (groups): {len(np.unique(groups))}", 9)
     return X, y, groups, feature_cols
 
@@ -115,44 +127,49 @@ def make_train_test_split(
     splits = list(outer.split(X, y, groups))
     train_idx, test_idx = splits[TEST_FOLD]
     return (
-        X[train_idx], X[test_idx],
-        y[train_idx], y[test_idx],
-        groups[train_idx], groups[test_idx],
+        X[train_idx],
+        X[test_idx],
+        y[train_idx],
+        y[test_idx],
+        groups[train_idx],
+        groups[test_idx],
     )
 
 
 def evaluate(model, X_test: np.ndarray, y_test: np.ndarray, name: str) -> dict:
     """Compute and return a standard metrics dict."""
-    y_pred  = model.predict(X_test)
+    y_pred = model.predict(X_test)
     y_proba = model.predict_proba(X_test)[:, 1]
 
-    roc  = roc_auc_score(y_test, y_proba)
-    pr   = average_precision_score(y_test, y_proba)
-    bal  = balanced_accuracy_score(y_test, y_pred)
+    roc = roc_auc_score(y_test, y_proba)
+    pr = average_precision_score(y_test, y_proba)
+    bal = balanced_accuracy_score(y_test, y_pred)
     brier = brier_score_loss(y_test, y_proba)
-    cm   = confusion_matrix(y_test, y_pred)
+    cm = confusion_matrix(y_test, y_pred)
     tn, fp, fn, tp = cm.ravel()
-    fpr  = fp / (fp + tn) if (fp + tn) > 0 else float("nan")
-    fnr  = fn / (fn + tp) if (fn + tp) > 0 else float("nan")
+    fpr = fp / (fp + tn) if (fp + tn) > 0 else float("nan")
+    fnr = fn / (fn + tp) if (fn + tp) > 0 else float("nan")
 
     return {
         "model": name,
-        "roc_auc":            round(roc,  4),
-        "pr_auc":             round(pr,   4),
-        "balanced_accuracy":  round(bal,  4),
-        "brier_score":        round(brier,4),
-        "fpr":                round(fpr,  4),
-        "fnr":                round(fnr,  4),
-        "tp": int(tp), "fp": int(fp), "tn": int(tn), "fn": int(fn),
+        "roc_auc": round(roc, 4),
+        "pr_auc": round(pr, 4),
+        "balanced_accuracy": round(bal, 4),
+        "brier_score": round(brier, 4),
+        "fpr": round(fpr, 4),
+        "fnr": round(fnr, 4),
+        "tp": int(tp),
+        "fp": int(fp),
+        "tn": int(tn),
+        "fn": int(fn),
         "n_test": int(len(y_test)),
     }
 
 
 # ── Stage A.1 — Baseline models ──────────────────────────────────────────────
 
-def run_baselines(
-    X_train, X_test, y_train, y_test, groups_train
-) -> list[dict]:
+
+def run_baselines(X_train, X_test, y_train, y_test, groups_train) -> list[dict]:
     step("Training baseline models...", 12)
     baselines = []
 
@@ -163,10 +180,12 @@ def run_baselines(
     step(f"  majority_class   ROC-AUC = {baselines[-1]['roc_auc']:.4f}", 14)
 
     # Logistic Regression (scaled, grouped CV to pick C)
-    lr = Pipeline([
-        ("scaler", StandardScaler()),
-        ("clf",    LogisticRegression(max_iter=1000, random_state=SEED, C=0.1)),
-    ])
+    lr = Pipeline(
+        [
+            ("scaler", StandardScaler()),
+            ("clf", LogisticRegression(max_iter=1000, random_state=SEED, C=0.1)),
+        ]
+    )
     lr.fit(X_train, y_train)
     baselines.append(evaluate(lr, X_test, y_test, "logistic_regression"))
     step(f"  logistic_regr    ROC-AUC = {baselines[-1]['roc_auc']:.4f}", 18)
@@ -177,30 +196,34 @@ def run_baselines(
 
 # ── Stage A.2 — LightGBM with Optuna ─────────────────────────────────────────
 
+
 def tune_lightgbm(
     X_train: np.ndarray,
     y_train: np.ndarray,
     groups_train: np.ndarray,
 ) -> dict:
-    step(f"Hyperparameter tuning ({N_OPTUNA_TRIALS} Optuna trials, {CV_FOLDS}-fold grouped CV)...", 22)
+    step(
+        f"Hyperparameter tuning ({N_OPTUNA_TRIALS} Optuna trials, {CV_FOLDS}-fold grouped CV)...",
+        22,
+    )
 
     inner_cv = GroupKFold(n_splits=CV_FOLDS)
     trial_counter = [0]
 
     def objective(trial: optuna.Trial) -> float:
         params = {
-            "n_estimators":      trial.suggest_int("n_estimators", 50, 400),
-            "learning_rate":     trial.suggest_float("learning_rate", 0.01, 0.3, log=True),
-            "num_leaves":        trial.suggest_int("num_leaves", 15, 127),
+            "n_estimators": trial.suggest_int("n_estimators", 50, 400),
+            "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3, log=True),
+            "num_leaves": trial.suggest_int("num_leaves", 15, 127),
             "min_child_samples": trial.suggest_int("min_child_samples", 5, 100),
-            "subsample":         trial.suggest_float("subsample", 0.5, 1.0),
-            "colsample_bytree":  trial.suggest_float("colsample_bytree", 0.4, 1.0),
-            "reg_alpha":         trial.suggest_float("reg_alpha", 1e-8, 10.0, log=True),
-            "reg_lambda":        trial.suggest_float("reg_lambda", 1e-8, 10.0, log=True),
-            "class_weight":      "balanced",
-            "random_state":      SEED,
-            "verbose":           -1,
-            "n_jobs":            -1,
+            "subsample": trial.suggest_float("subsample", 0.5, 1.0),
+            "colsample_bytree": trial.suggest_float("colsample_bytree", 0.4, 1.0),
+            "reg_alpha": trial.suggest_float("reg_alpha", 1e-8, 10.0, log=True),
+            "reg_lambda": trial.suggest_float("reg_lambda", 1e-8, 10.0, log=True),
+            "class_weight": "balanced",
+            "random_state": SEED,
+            "verbose": -1,
+            "n_jobs": -1,
         }
         scores = []
         for tr_idx, val_idx in inner_cv.split(X_train, y_train, groups_train):
@@ -213,10 +236,13 @@ def tune_lightgbm(
     def progress_cb(study: optuna.Study, trial: optuna.Trial) -> None:
         trial_counter[0] += 1
         n = trial_counter[0]
-        pct = 22 + (n / N_OPTUNA_TRIALS) * 45   # 22% → 67%
-        print(f"  [{pct:5.1f}%]  trial {n:2d}/{N_OPTUNA_TRIALS}  "
-              f"val ROC-AUC = {trial.value:.4f}  "
-              f"best = {study.best_value:.4f}", flush=True)
+        pct = 22 + (n / N_OPTUNA_TRIALS) * 45  # 22% → 67%
+        print(
+            f"  [{pct:5.1f}%]  trial {n:2d}/{N_OPTUNA_TRIALS}  "
+            f"val ROC-AUC = {trial.value:.4f}  "
+            f"best = {study.best_value:.4f}",
+            flush=True,
+        )
 
     study = optuna.create_study(
         direction="maximize",
@@ -229,18 +255,22 @@ def tune_lightgbm(
     return study.best_params
 
 
-def train_final_lgbm(
-    X_train, y_train, best_params: dict
-) -> lgb.LGBMClassifier:
+def train_final_lgbm(X_train, y_train, best_params: dict) -> lgb.LGBMClassifier:
     step("Training final LightGBM on full training set...", 70)
-    params = {**best_params, "class_weight": "balanced",
-              "random_state": SEED, "verbose": -1, "n_jobs": -1}
+    params = {
+        **best_params,
+        "class_weight": "balanced",
+        "random_state": SEED,
+        "verbose": -1,
+        "n_jobs": -1,
+    }
     model = lgb.LGBMClassifier(**params)
     model.fit(X_train, y_train)
     return model
 
 
 # ── Stage A.3 — Save results ──────────────────────────────────────────────────
+
 
 def save_all(
     lgbm_model: lgb.LGBMClassifier,
@@ -260,8 +290,20 @@ def save_all(
 
     # ── results/mouse/stage_a_baselines.csv ──
     rows = baseline_metrics + [lgbm_metrics]
-    csv_cols = ["model", "roc_auc", "pr_auc", "balanced_accuracy",
-                "brier_score", "fpr", "fnr", "tp", "fp", "tn", "fn", "n_test"]
+    csv_cols = [
+        "model",
+        "roc_auc",
+        "pr_auc",
+        "balanced_accuracy",
+        "brier_score",
+        "fpr",
+        "fnr",
+        "tp",
+        "fp",
+        "tn",
+        "fn",
+        "n_test",
+    ]
     lines = [",".join(csv_cols)]
     for r in rows:
         lines.append(",".join(str(r.get(c, "")) for c in csv_cols))
@@ -272,13 +314,13 @@ def save_all(
     full_results = {
         "stage": "A",
         "note": "Trained on 151 sessions (7,106 windows) already extracted. "
-                "No click features (all-NaN dropped). Median imputation for partial NaN.",
+        "No click features (all-NaN dropped). Median imputation for partial NaN.",
         "data": {
             "n_windows_total": n_train + n_test,
             "n_train_windows": n_train,
-            "n_test_windows":  n_test,
+            "n_test_windows": n_test,
             "n_train_sessions": n_train_groups,
-            "n_test_sessions":  n_test_groups,
+            "n_test_sessions": n_test_groups,
             "split": "GroupKFold(n_splits=5), fold 0",
             "grouping_unit": "session_id (no session appears in both train and test)",
         },
@@ -300,13 +342,21 @@ def save_all(
     metadata = {
         "version": "stage-a-v1",
         "note": "Stage A model — trained on Bournemouth phase1 only (151 sessions). "
-                "Will be superseded by Stage D (full dataset).",
+        "Will be superseded by Stage D (full dataset).",
         "feature_order": feature_cols,
         "dropped_all_nan_features": [
-            "pre_click_slowdown_mean", "pre_click_slowdown_std", "pre_click_slowdown_max",
-            "click_dwell_mean_mean", "click_dwell_mean_std", "click_dwell_mean_max",
-            "click_dwell_std_mean", "click_dwell_std_std", "click_dwell_std_max",
-            "bbox_area_norm_mean", "bbox_area_norm_std", "bbox_area_norm_max",
+            "pre_click_slowdown_mean",
+            "pre_click_slowdown_std",
+            "pre_click_slowdown_max",
+            "click_dwell_mean_mean",
+            "click_dwell_mean_std",
+            "click_dwell_mean_max",
+            "click_dwell_std_mean",
+            "click_dwell_std_std",
+            "click_dwell_std_max",
+            "bbox_area_norm_mean",
+            "bbox_area_norm_std",
+            "bbox_area_norm_max",
         ],
         "imputation": "median (fit on training set; applied to train and test)",
         "model_family": "lightgbm",
@@ -314,13 +364,12 @@ def save_all(
         "metrics": lgbm_metrics,
         "hyperparameters": best_params,
     }
-    (MODEL_OUT / "metadata.json").write_text(
-        json.dumps(metadata, indent=2), encoding="utf-8"
-    )
+    (MODEL_OUT / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     step("  Saved metadata.json", 93)
 
 
 # ── main ──────────────────────────────────────────────────────────────────────
+
 
 def main() -> None:
     banner("STAGE A — Mouse model training on existing feature shards")
@@ -353,21 +402,31 @@ def main() -> None:
     step(f"LightGBM test  FPR      = {lgbm_metrics['fpr']:.4f}  (humans flagged as bot)", 78)
     step(f"LightGBM test  FNR      = {lgbm_metrics['fnr']:.4f}  (bots missed)", 79)
     step(f"LightGBM test  Brier    = {lgbm_metrics['brier_score']:.4f}", 80)
-    step(f"Confusion matrix  TP={lgbm_metrics['tp']}  FP={lgbm_metrics['fp']}  "
-         f"TN={lgbm_metrics['tn']}  FN={lgbm_metrics['fn']}", 81)
+    step(
+        f"Confusion matrix  TP={lgbm_metrics['tp']}  FP={lgbm_metrics['fp']}  "
+        f"TN={lgbm_metrics['tn']}  FN={lgbm_metrics['fn']}",
+        81,
+    )
 
     # Top feature importances
     step("Top 10 features by importance:", 82)
-    importances = pd.Series(
-        lgbm_model.feature_importances_, index=feature_cols
-    ).sort_values(ascending=False)
+    importances = pd.Series(lgbm_model.feature_importances_, index=feature_cols).sort_values(
+        ascending=False
+    )
     for feat, imp in importances.head(10).items():
         print(f"      {feat:<45}  {imp:>6}")
 
     # Save everything
     save_all(
-        lgbm_model, lgbm_metrics, baseline_metrics, best_params, feature_cols,
-        len(X_train), len(X_test), n_tr_sess, n_te_sess,
+        lgbm_model,
+        lgbm_metrics,
+        baseline_metrics,
+        best_params,
+        feature_cols,
+        len(X_train),
+        len(X_test),
+        n_tr_sess,
+        n_te_sess,
     )
 
     elapsed = time.perf_counter() - t_start

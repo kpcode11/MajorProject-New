@@ -11,6 +11,7 @@ import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
 
 from botguard_ml.features.keyboard import keyboard_features, validate_keyboard_features
+from botguard_ml.splits import grouped_split
 from botguard_ml.synthetic.keyboard import fit_human_timing, generate_keyboard
 
 METADATA_COLUMNS = (
@@ -28,10 +29,8 @@ def _event_windows(input_root: Path) -> list[list[dict[str, Any]]]:
     windows: list[list[dict[str, Any]]] = []
     for path in sorted(input_root.glob("*.parquet")):
         grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
-        for batch in pq.ParquetFile(path).iter_batches(batch_size=4096):
-            data = batch.to_pydict()
-            for index, session_id in enumerate(data["session_id"]):
-                grouped[str(session_id)].append({column: data[column][index] for column in data})
+        for row in pq.read_table(path).to_pylist():
+            grouped[str(row["session_id"])].append(row)
         windows.extend(grouped[session] for session in sorted(grouped))
     return windows
 
@@ -56,8 +55,10 @@ def build_keyboard_feature_shards(
 ) -> dict[str, int]:
     """Build human features and synthetic training-bot features.
 
-    K3 is excluded by default and must be generated separately for held-out
-    evaluation so its timing distribution cannot enter training.
+    K3 is excluded from ``output`` (``features.parquet``) so its timing
+    distribution cannot enter training, and a separate held-out
+    ``k3_holdout.parquet`` shard is fitted strictly on training-human
+    participants when at least two human participant groups exist.
     """
     if bot_prevalence < 0:
         raise ValueError("bot_prevalence must not be negative")
@@ -67,7 +68,15 @@ def build_keyboard_feature_shards(
     if any(bot_type == "K3" for bot_type in bot_types):
         raise ValueError("K3 is held out and cannot be included in training shards")
     human_rows = [_feature_row(window) for window in human_windows]
-    profile = fit_human_timing(human_windows)
+
+    human_groups = {str(row["split_group"]) for row in human_rows}
+    if len(human_groups) >= 4:
+        train_idx, _ = grouped_split(human_rows, test_size=0.2, seed=42)
+        train_human_windows = [human_windows[i] for i in train_idx]
+    else:
+        train_human_windows = human_windows
+
+    profile = fit_human_timing(train_human_windows)
     target_bots = int(round(len(human_rows) * bot_prevalence))
     bot_rows: list[dict[str, Any]] = []
     for index in range(target_bots):
@@ -83,6 +92,21 @@ def build_keyboard_feature_shards(
         bot_rows.append(_feature_row(events))
     output.parent.mkdir(parents=True, exist_ok=True)
     pq.write_table(pa.Table.from_pylist(human_rows + bot_rows), output)
+
+    n_k3 = max(1, target_bots // max(1, len(bot_types)))
+    if len(human_groups) >= 4 and n_k3 > 0:
+        k3_rows: list[dict[str, Any]] = []
+        for index in range(n_k3):
+            n_keys = len(train_human_windows[index % len(train_human_windows)])
+            k3_events = generate_keyboard(
+                "K3",
+                n_keys=n_keys,
+                seed=seed + 100_000 + index,
+                profile=profile,
+            )
+            k3_rows.append(_feature_row(k3_events))
+        pq.write_table(pa.Table.from_pylist(k3_rows), output.parent / "k3_holdout.parquet")
+
     (output.parent / "keyboard_features.schema.json").write_text(
         json.dumps(
             {

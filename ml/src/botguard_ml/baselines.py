@@ -34,7 +34,7 @@ METADATA_COLUMNS = {
 
 def load_feature_rows(input_root: Path) -> pd.DataFrame:
     """Load feature shards and reject missing required metadata."""
-    paths = sorted(input_root.glob("*.parquet"))
+    paths = [input_root] if input_root.is_file() else sorted(input_root.glob("*.parquet"))
     if not paths:
         raise ValueError(f"no feature shards found under {input_root}")
     frames = [pq.read_table(path).to_pandas() for path in paths]

@@ -15,7 +15,9 @@ def main() -> None:
         type=Path,
         default=Path(r"C:\Users\KESHAV\Downloads\datasets\Keystrokes"),
     )
-    parser.add_argument("--output-root", type=Path, default=Path("data/interim/aalto_keystrokes"))
+    parser.add_argument(
+        "--output-root", type=Path, default=Path("data/interim/aalto_keystrokes")
+    )
     parser.add_argument("--max-participants", type=int, default=1000)
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args()

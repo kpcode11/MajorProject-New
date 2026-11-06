@@ -144,32 +144,78 @@ modalities and the backend risk policy.
 
 ## Keyboard behaviour model
 
+### Model summary & privacy guarantees
+
 The keyboard component estimates whether a privacy-safe typing-timing window
 resembles the human or synthetic bot classes used in the research pipeline.
-It uses Logistic Regression with median imputation and standard scaling, and
-exports an ONNX artifact with an explicit feature order and metadata. The
-pipeline stores coarse key classes and timing-derived features only; typed
-sentences, user input, key identities, and keystroke identifiers are not
-persisted.
+The pipeline stores coarse key classes (`letter`, `digit`, `space`, `backspace`,
+`punctuation`, `modifier`, `navigation`, `other`) and timing-derived features
+only; typed sentences, user input, raw keycodes, and keystroke identifiers are
+dropped inside the parser and verified absent via an automated privacy scan
+(`results/keyboard/privacy_scan.json`: `997` participant shards, `725,436` key
+events, `0` prohibited columns).
 
-Aalto provides the current human source. It is a prescribed typing test, not
-ordinary browsing behaviour, and no second human keyboard source is configured
-locally. K1-K4 are documented synthetic timing generators; K3 is held out
-from training and used only for evaluation. Keyboard results must include
-grouped splits, per-generator recall, speed-tercile results, human
-false-positive rates, and uncertainty intervals.
+Two keyboard models are trained and exported to ONNX:
+
+1. **Primary reference (`backend/models/keyboard-v1/model.onnx`)**: Scaled
+   Logistic Regression (`C = 1.0`, selected via 5-fold `StratifiedGroupKFold`
+   on training groups, `CV ROC-AUC = 1.0000`) with median imputation and
+   standard scaling over 31 timing/rhythm features (`max_abs_diff = 8.04e-08 < 1e-4`
+   native-vs-ONNX parity across 500 held-out test windows).
+2. **Non-linear comparison (`backend/models/keyboard-lgbm-v1/model.onnx`)**:
+   Tuned LightGBM (`n_estimators = 113`, `learning_rate = 0.0884`,
+   `num_leaves = 29`, `min_child_samples = 19`, `subsample = 0.8759`,
+   `colsample_bytree = 0.6774`).
+
+### Dataset, generators & evaluation results
+
+- **Human source (`aalto_keystrokes`)**: `997` valid participants (`14,941`
+  sentence windows, `725,436` key events) streamed from the Aalto 136M
+  Keystrokes benchmark (`--max-participants 1000`, `seed = 0`).
+- **Synthetic bot generators (`synthetic_keyboard`)**:
+  - `K1` (Constant-interval typing with tiny Gaussian jitter, in-distribution);
+  - `K2` (Uniform-random dwell/flight intervals, in-distribution);
+  - `K3` (**Held-out log-normal human-distribution mimic**, fitted strictly on
+    positive dwell/flight intervals of training-split human windows and
+    **completely excluded from training**, `4,980` evaluation windows);
+  - `K4` (Superhuman copy-paste burst with mid-form pause, in-distribution).
+
+Full evaluation tables with 200-resample group-bootstrap 95% CIs are saved
+under `results/keyboard/`:
+
+1. **In-Distribution vs. Overall With Held-Out `K3` (`results/keyboard/evaluation_splits.csv`)**:
+   - `logistic_regression` (`in_dist_K1_K2_K4`, `5,778` test windows): **ROC-AUC `1.0000` `[1.0000, 1.0000]`**, PR-AUC `1.0000`, Recall@1%FPR `1.0000`, Balanced Accuracy `0.9989`, Brier `0.0007` (`0.0003` after isotonic calibration).
+   - `logistic_regression` (`overall_with_K3`, `10,758` test windows): **ROC-AUC `0.9011` `[0.8880, 0.9138]`**, PR-AUC `0.9611` `[0.9540, 0.9683]`, Recall@1%FPR `0.3982`, Recall@5%FPR `0.5316`.
+   - `lightgbm_tuned` (`in_dist_K1_K2_K4`): **ROC-AUC `1.0000` `[1.0000, 1.0000]`**, PR-AUC `1.0000`, Recall@1%FPR `1.0000`, Balanced Accuracy `1.0000`.
+   - `lightgbm_tuned` (`overall_with_K3`): **ROC-AUC `0.9969` `[0.9935, 0.9993]`**, PR-AUC `0.9986` `[0.9968, 0.9997]`, Recall@1%FPR `0.9907`, Recall@5%FPR `0.9992`.
+
+2. **Per-Generator Recall & Zero-Shot `K3` Generalization (`results/keyboard/per_generator.csv`)**:
+   - `K1`, `K2`, `K4` (in-distribution): Both `logistic_regression` and `lightgbm_tuned` achieve **ROC-AUC `1.0000`** and **Recall@1%FPR `1.0000`**.
+   - `K3` (held-out log-normal mimicry): `logistic_regression` achieves **ROC-AUC `0.8415` `[0.8191, 0.8640]`** (`Recall@5%FPR = 0.2492`), whereas **`lightgbm_tuned` achieves ROC-AUC `0.9951` `[0.9884, 0.9988]` and Recall@1%FPR `0.9851` (`0.9988` at 5% FPR)** by capturing higher-order structure absent from independent log-normal draws (`rollover_ratio = 0`, `backspace_ratio = 0`, and missing digram autocorrelation).
+
+3. **Typing-Speed Tercile Fairness (`results/keyboard/speed_terciles.csv`)**:
+   - `tercile_1_slow` (`0.51`–`3.36 cps`, `632` humans / `2,954` bots): LR ROC-AUC `0.8813` (human FPR `0.16%` at 1%-FPR threshold), LightGBM ROC-AUC `0.9842`.
+   - `tercile_2_medium` (`3.36`–`4.28 cps`, `539` humans / `3,047` bots): LR ROC-AUC `0.9551` (human FPR `0.93%`), LightGBM ROC-AUC `0.9971`.
+   - `tercile_3_fast` (`4.28`–`77.18 cps`, `1,604` humans / `1,982` bots): LR ROC-AUC `0.9971` (human FPR `1.37%`), LightGBM ROC-AUC `0.9999`.
 
 ## Desktop score fusion
 
-Fusion is evaluated as a pseudo-session experiment: mouse and keyboard
-windows are paired within the same class using a fixed seed. These pairings
-are simulated, not observations from the same real session. The comparison
-includes mouse-only, keyboard-only, the average of calibrated probabilities,
-noisy-OR, and a Logistic Regression stacker trained on a validation split.
-Missing modalities are omitted from the fusion calculation; absence is never
-treated as evidence of bot activity. Fusion metadata labels results as
-`pseudo-session evaluation (simulated pairing)`.
+Fusion is evaluated as a pseudo-session experiment (`results/fusion/fusion_comparison.csv`,
+`2,462` held-out test pseudo-sessions: `969` human, `1,493` bot): mouse and
+keyboard windows from the held-out test partitions are paired within the same
+class using a fixed seed (`seed = 42`). These pairings are simulated, not
+observations from the same real session, and are explicitly labelled in
+`backend/models/fusion-v1/metadata.json` as
+`pseudo-session evaluation (simulated pairing)`:
 
-The keyboard and fusion components remain research-stage. Human review,
-complete source-data evaluation, calibration checks, privacy review, and the
-later backend risk policy are required before any deployment decision.
+- `mouse_only`: ROC-AUC `1.0000`, PR-AUC `1.0000`, Recall@1%FPR `0.9993`, Balanced Accuracy `0.9974`, Brier `0.0021`
+- `keyboard_only`: ROC-AUC `1.0000`, PR-AUC `1.0000`, Recall@1%FPR `1.0000`, Balanced Accuracy `1.0000`, Brier `0.0000`
+- `average`: ROC-AUC `1.0000`, PR-AUC `1.0000`, Recall@1%FPR `1.0000`, Balanced Accuracy `1.0000`, Brier `0.0005`
+- `noisy_or`: ROC-AUC `1.0000`, PR-AUC `1.0000`, Recall@1%FPR `1.0000`, Balanced Accuracy `0.9985`, Brier `0.0011`
+- `stacker` (Logistic Regression on validation scores): **ROC-AUC `1.0000`, PR-AUC `1.0000`, Recall@1%FPR `1.0000`, Balanced Accuracy `1.0000`, Brier `0.0001`**
+
+All four modality-availability regimes (`both_available`, `mouse_only_available`,
+`keyboard_only_available`, `neither_available`) are verified in
+`results/fusion/modality_availability.csv`: missing modalities are omitted from
+the fusion calculation, and absence is never treated as evidence of bot
+activity (`treated_as_bot_on_missing = False`).

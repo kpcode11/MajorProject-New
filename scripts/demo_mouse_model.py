@@ -26,7 +26,9 @@ MODEL_DIR = ROOT / "backend" / "models" / "mouse-v1"
 FEATURES_DIR = ROOT / "data" / "processed" / "mouse_features"
 
 
-def load_model_bundle(model_dir: Path = MODEL_DIR) -> tuple[ort.InferenceSession, dict[str, Any]]:
+def load_model_bundle(
+    model_dir: Path = MODEL_DIR,
+) -> tuple[ort.InferenceSession, dict[str, Any]]:
     """Load the exported LightGBM ONNX model and its metadata.json."""
     onnx_path = model_dir / "model.onnx"
     meta_path = model_dir / "metadata.json"
@@ -68,7 +70,9 @@ def score_feature_dict(
     vec = np.zeros((1, len(feature_order)), dtype=np.float32)
     for i, col in enumerate(feature_order):
         val = feat_dict.get(col)
-        if val is None or (isinstance(val, float) and (math.isnan(val) or math.isinf(val))):
+        if val is None or (
+            isinstance(val, float) and (math.isnan(val) or math.isinf(val))
+        ):
             val = medians.get(col, 0.0)
         vec[0, i] = float(val)
 
@@ -101,15 +105,33 @@ def generate_linear_bot_events() -> list[dict[str, Any]]:
             x = sx + dx * u
             y = sy + dy * u
             events.append(
-                {"t_ms": t_ms, "x": round(x, 2), "y": round(y, 2), "event": "move", "button": "none"}
+                {
+                    "t_ms": t_ms,
+                    "x": round(x, 2),
+                    "y": round(y, 2),
+                    "event": "move",
+                    "button": "none",
+                }
             )
         t_ms += 16
         events.append(
-            {"t_ms": t_ms, "x": round(x, 2), "y": round(y, 2), "event": "down", "button": "left"}
+            {
+                "t_ms": t_ms,
+                "x": round(x, 2),
+                "y": round(y, 2),
+                "event": "down",
+                "button": "left",
+            }
         )
         t_ms += 20
         events.append(
-            {"t_ms": t_ms, "x": round(x, 2), "y": round(y, 2), "event": "up", "button": "left"}
+            {
+                "t_ms": t_ms,
+                "x": round(x, 2),
+                "y": round(y, 2),
+                "event": "up",
+                "button": "left",
+            }
         )
     return events
 
@@ -146,19 +168,27 @@ def print_case_report(
     for col, label in key_feats:
         val = feat_dict.get(col, float("nan"))
         val_str = (
-            f"{val:10.4f}" if isinstance(val, (int, float)) and not math.isnan(val) else "       NaN"
+            f"{val:10.4f}"
+            if isinstance(val, (int, float)) and not math.isnan(val)
+            else "       NaN"
         )
         print(f"    - {col:<26} : {val_str}   ({label})")
 
     print()
-    print(f"  -> Raw LightGBM ONNX Score    : {raw_prob:.4f}  ({raw_prob * 100:.2f}% bot likelihood)")
-    print(f"  -> Calibrated Bot Probability : {cal_prob:.4f}  ({cal_prob * 100:.2f}% calibrated risk)")
+    print(
+        f"  -> Raw LightGBM ONNX Score    : {raw_prob:.4f}  ({raw_prob * 100:.2f}% bot likelihood)"
+    )
+    print(
+        f"  -> Calibrated Bot Probability : {cal_prob:.4f}  ({cal_prob * 100:.2f}% calibrated risk)"
+    )
     print(f"  -> BotGuard Policy Decision   : {decision}")
     print("-" * 78)
     print()
 
 
-def load_reference_profiles(metadata: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+def load_reference_profiles(
+    metadata: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
     """Return a real human baseline feature dict and a bot baseline feature dict."""
     if FEATURES_DIR.exists():
         shards = sorted(FEATURES_DIR.glob("*.parquet"))
@@ -202,15 +232,37 @@ def run_default_demo(session: ort.InferenceSession, metadata: dict[str, Any]) ->
         if shards:
             df = pd.concat([pd.read_parquet(p) for p in shards], ignore_index=True)
             print("=" * 78)
-            print("  REAL HELD-OUT SAMPLES FROM PUBLIC DATASETS (Bournemouth, IEEE, DELBOT)")
+            print(
+                "  REAL HELD-OUT SAMPLES FROM PUBLIC DATASETS (Bournemouth, IEEE, DELBOT)"
+            )
             print("=" * 78)
             print()
 
             sample_specs = [
-                ("2. Real Human Session (Bournemouth Web Bot Detection)", "web_bot_detection", 0, "human"),
-                ("3. Real Advanced Bot Session (Bournemouth Phase 2)", "web_bot_detection", 1, "advanced"),
-                ("4. Real Human Blog Reader (IEEE Blog Bots)", "ieee_blog_bots", 0, "human"),
-                ("5. Real Human-Mimicry Bot (IEEE 'mimic' generator)", "ieee_blog_bots", 1, "mimic"),
+                (
+                    "2. Real Human Session (Bournemouth Web Bot Detection)",
+                    "web_bot_detection",
+                    0,
+                    "human",
+                ),
+                (
+                    "3. Real Advanced Bot Session (Bournemouth Phase 2)",
+                    "web_bot_detection",
+                    1,
+                    "advanced",
+                ),
+                (
+                    "4. Real Human Blog Reader (IEEE Blog Bots)",
+                    "ieee_blog_bots",
+                    0,
+                    "human",
+                ),
+                (
+                    "5. Real Human-Mimicry Bot (IEEE 'mimic' generator)",
+                    "ieee_blog_bots",
+                    1,
+                    "mimic",
+                ),
             ]
             for title, ds_name, label_val, btype in sample_specs:
                 sub = df[
@@ -284,7 +336,9 @@ def apply_feature_overrides(
     return modified
 
 
-def run_interactive_mode(session: ort.InferenceSession, metadata: dict[str, Any]) -> None:
+def run_interactive_mode(
+    session: ort.InferenceSession, metadata: dict[str, Any]
+) -> None:
     """Allow the user/professor to enter custom feature values and see the live score."""
     human_base, bot_base = load_reference_profiles(metadata)
     feature_order: list[str] = metadata["feature_order"]
@@ -292,11 +346,19 @@ def run_interactive_mode(session: ort.InferenceSession, metadata: dict[str, Any]
     print("  INTERACTIVE PROFESSOR DEMO - 'WHAT-IF' FEATURE EXPLORER")
     print("=" * 78)
     print("  Enter custom mouse behaviour parameters below to watch the ONNX model")
-    print("  transition across ALLOW (Low Risk), CHALLENGE (Medium Risk), and DENY (Bot)!")
+    print(
+        "  transition across ALLOW (Low Risk), CHALLENGE (Medium Risk), and DENY (Bot)!"
+    )
     print("  Suggested test presets to try in front of your professor:")
-    print("    - Natural Human : straightness=0.70, dt_mode_frac=0.36, dt_cv=0.35, speed=720")
-    print("    - Suspicious    : straightness=0.89, dt_mode_frac=0.72, dt_cv=0.14, speed=680")
-    print("    - Automated Bot : straightness=0.99, dt_mode_frac=0.95, dt_cv=0.02, speed=850")
+    print(
+        "    - Natural Human : straightness=0.70, dt_mode_frac=0.36, dt_cv=0.35, speed=720"
+    )
+    print(
+        "    - Suspicious    : straightness=0.89, dt_mode_frac=0.72, dt_cv=0.14, speed=680"
+    )
+    print(
+        "    - Automated Bot : straightness=0.99, dt_mode_frac=0.95, dt_cv=0.02, speed=850"
+    )
     print("=" * 78)
 
     while True:
@@ -316,7 +378,9 @@ def run_interactive_mode(session: ort.InferenceSession, metadata: dict[str, Any]
             ).strip()
             dt_cv = float(c_in) if c_in else 0.35
 
-            v_in = input("  4. Mean Cursor Speed (px/s) [200 .. 2500] (default 720): ").strip()
+            v_in = input(
+                "  4. Mean Cursor Speed (px/s) [200 .. 2500] (default 720): "
+            ).strip()
             speed = float(v_in) if v_in else 720.0
         except (ValueError, EOFError):
             print("  Exiting interactive mode.")

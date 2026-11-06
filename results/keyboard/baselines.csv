@@ -1,0 +1,5 @@
+model,accuracy,balanced_accuracy,roc_auc,n_train,n_test,n_train_groups,n_test_groups
+majority,0.480269989615784,0.5,0.5,24104,5778,12750,3188
+logistic_regression,0.9996538594669436,0.9996396396396396,1.0,24104,5778,12750,3188
+random_forest,1.0,1.0,1.0,24104,5778,12750,3188
+lightgbm,1.0,1.0,1.0,24104,5778,12750,3188

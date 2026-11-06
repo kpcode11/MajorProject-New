@@ -40,7 +40,12 @@ def task_rows() -> list[dict[str, object]]:
 def main() -> None:
     """Print branch, task, handoff, working-tree, and recent-commit details."""
     rows = task_rows()
-    print("branch:", shell("git", "branch", "--show-current"), "| last:", shell("git", "log", "-1", "--oneline"))
+    print(
+        "branch:",
+        shell("git", "branch", "--show-current"),
+        "| last:",
+        shell("git", "log", "-1", "--oneline"),
+    )
     counts: dict[str, int] = {}
     for row in rows:
         state = str(row["status"])
@@ -56,7 +61,11 @@ def main() -> None:
         print("next TODO:", next_task["id"], next_task["text"])
     print("\n--- HANDOFF.md (first 40 lines) ---")
     handoff = ROOT / "HANDOFF.md"
-    print("\n".join(handoff.read_text(encoding="utf-8").splitlines()[:40]) if handoff.exists() else "(missing)")
+    print(
+        "\n".join(handoff.read_text(encoding="utf-8").splitlines()[:40])
+        if handoff.exists()
+        else "(missing)"
+    )
     print("\n--- git status ---")
     print("\n".join(shell("git", "status", "--short").splitlines()[:20]) or "(clean)")
     print("\n--- recent commits ---")

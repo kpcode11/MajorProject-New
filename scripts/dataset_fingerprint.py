@@ -204,16 +204,22 @@ def run(input_root: Path, output: Path, max_sessions: int, seed: int) -> None:
             if len(targets)
             else "No human-only windows with at least 20 move events were found."
         ),
-        "results": pairwise_results(features, targets, groups, seed) if len(targets) else [],
+        "results": pairwise_results(features, targets, groups, seed)
+        if len(targets)
+        else [],
     }
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    output.write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input-root", type=Path, default=Path("data/interim"))
-    parser.add_argument("--output", type=Path, default=Path("results/mouse/fingerprint.json"))
+    parser.add_argument(
+        "--output", type=Path, default=Path("results/mouse/fingerprint.json")
+    )
     parser.add_argument("--max-sessions", type=int, default=100)
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args()

@@ -27,9 +27,7 @@ class Session:
     t_ms: list[float] = field(default_factory=list)
 
 
-def collect_sessions(
-    shard: Path, *, max_sessions: int, max_points: int
-) -> list[Session]:
+def collect_sessions(shard: Path, *, max_sessions: int, max_points: int) -> list[Session]:
     """Read move events from a shard while retaining bounded session samples."""
     sessions: dict[str, Session] = {}
     parquet = pq.ParquetFile(shard)
@@ -58,10 +56,7 @@ def collect_sessions(
             t_ms = columns["t_ms"][index]
             if x is None or y is None or t_ms is None:
                 continue
-            if any(
-                isinstance(value, float) and not math.isfinite(value)
-                for value in (x, y, t_ms)
-            ):
+            if any(isinstance(value, float) and not math.isfinite(value) for value in (x, y, t_ms)):
                 continue
             session.x.append(float(x))
             session.y.append(float(y))
@@ -159,9 +154,7 @@ def run(input_root: Path, output_root: Path, max_sessions: int, max_points: int)
             remaining = max_sessions - len(sessions)
             if remaining <= 0:
                 break
-            sessions.extend(
-                collect_sessions(shard, max_sessions=remaining, max_points=max_points)
-            )
+            sessions.extend(collect_sessions(shard, max_sessions=remaining, max_points=max_points))
         if not sessions:
             continue
         _save_trajectory_figure(dataset_root.name, sessions, output_root)

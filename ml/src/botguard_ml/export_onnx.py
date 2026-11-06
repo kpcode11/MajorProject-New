@@ -113,6 +113,8 @@ def export_keyboard_onnx(
     version: str = "v1",
     data_manifest_hash: str = "unknown",
     seed: int = 42,
+    metrics: dict[str, Any] | None = None,
+    calibration: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Fit the fixed keyboard Logistic Regression model and export it."""
     training = rows[rows["bot_type"] != "K3"]
@@ -121,11 +123,10 @@ def export_keyboard_onnx(
         raise ValueError("feature_columns must not be empty")
     if len(np.unique(labels)) < 2:
         raise ValueError("training data must contain both labels")
-    model = make_pipeline(
-        SimpleImputer(strategy="median", keep_empty_features=True),
-        StandardScaler(),
-        LogisticRegression(max_iter=1000, random_state=seed),
-    )
+    imputer = SimpleImputer(strategy="median", keep_empty_features=True)
+    scaler = StandardScaler()
+    clf = LogisticRegression(max_iter=1000, random_state=seed)
+    model = make_pipeline(imputer, scaler, clf)
     model.fit(training[feature_columns], labels)
     output_dir.mkdir(parents=True, exist_ok=True)
     onnx_path = output_dir / "model.onnx"
@@ -134,15 +135,24 @@ def export_keyboard_onnx(
         initial_types=[("features", SklearnFloatTensorType([None, len(feature_columns)]))],
     )
     onnxmltools.save_model(onnx_model, str(onnx_path))
-    metadata = {
+    medians = {
+        col: (float(val) if np.isfinite(val) else 0.0)
+        for col, val in zip(feature_columns, imputer.statistics_, strict=False)
+    }
+    metadata: dict[str, Any] = {
         "version": version,
         "feature_order": feature_columns,
         "data_manifest_hash": data_manifest_hash,
         "git_commit": _git_commit(),
         "model": "logistic_regression",
         "preprocessing": ["median_imputation", "standard_scaling"],
+        "imputer_medians": medians,
         "k3_policy": "excluded_from_training",
         "seed": seed,
     }
+    if metrics is not None:
+        metadata["metrics"] = metrics
+    if calibration is not None:
+        metadata["calibration"] = calibration
     (output_dir / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
     return metadata

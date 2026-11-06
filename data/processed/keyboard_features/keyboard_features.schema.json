@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "metadata_columns": [
+    "dataset",
+    "domain",
+    "session_id",
+    "subject_id",
+    "split_group",
+    "label",
+    "bot_type"
+  ],
+  "feature_columns": [
+    "pause_mean",
+    "lag1_autocorr_flight",
+    "flight_cv",
+    "pause_count",
+    "typing_speed_cps",
+    "paste_events",
+    "dwell_median",
+    "dd_mean",
+    "flight_median",
+    "burst_count",
+    "burst_len_mean",
+    "n_keys",
+    "flight_mad",
+    "flight_skew",
+    "flight_p5",
+    "flight_p95",
+    "dwell_skew",
+    "dwell_mad",
+    "dwell_flight_corr",
+    "dwell_kurt",
+    "backspace_ratio",
+    "flight_min",
+    "dwell_mean",
+    "dwell_std",
+    "flight_kurt",
+    "dd_std",
+    "flight_mean",
+    "identical_interval_fraction",
+    "dwell_cv",
+    "rollover_ratio",
+    "flight_std"
+  ],
+  "held_out_bot_types": [
+    "K3"
+  ]
+}

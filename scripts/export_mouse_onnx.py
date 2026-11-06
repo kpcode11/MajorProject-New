@@ -13,9 +13,15 @@ from botguard_ml.export_onnx import export_mouse_onnx
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input-root", type=Path, default=Path("data/processed/mouse_features"))
-    parser.add_argument("--output-dir", type=Path, default=Path("backend/models/mouse-v1"))
-    parser.add_argument("--hparams", type=Path, default=Path("results/mouse/hparams.json"))
+    parser.add_argument(
+        "--input-root", type=Path, default=Path("data/processed/mouse_features")
+    )
+    parser.add_argument(
+        "--output-dir", type=Path, default=Path("backend/models/mouse-v1")
+    )
+    parser.add_argument(
+        "--hparams", type=Path, default=Path("results/mouse/hparams.json")
+    )
     parser.add_argument("--version", default="v1")
     parser.add_argument("--manifest-hash", default="unknown")
     parser.add_argument("--seed", type=int, default=42)

@@ -1,0 +1,19 @@
+{
+  "method": "isotonic",
+  "raw_brier": 0.00071,
+  "isotonic_brier": 0.000346,
+  "platt_brier": 0.000676,
+  "x_thresholds": [
+    0.0,
+    0.815739,
+    0.845084,
+    1.0
+  ],
+  "y_thresholds": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+  ],
+  "single_human_source_limitation": "Aalto 136M Keystrokes is the sole configured human keyboard source (prescribed sentence typing test); no second human dataset (BB-MAS/CMU) is locally available."
+}

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import random
 from collections.abc import Iterator
 from pathlib import Path
@@ -81,21 +82,21 @@ def _window(
         return []
     events: list[dict[str, Any]] = []
     for row in rows:
-        down_ms = _number(row["PRESS_TIME"], field="PRESS_TIME", source=source)
-        up_ms = _number(row["RELEASE_TIME"], field="RELEASE_TIME", source=source)
+        down_ms = _number(row.get("PRESS_TIME") or "", field="PRESS_TIME", source=source)
+        up_ms = _number(row.get("RELEASE_TIME") or "", field="RELEASE_TIME", source=source)
         if up_ms < down_ms:
             raise ValueError(f"{source}: RELEASE_TIME precedes PRESS_TIME")
         events.append(
             {
                 "dataset": DATASET,
-                "session_id": f"{participant_id}/{row['TEST_SECTION_ID']}",
+                "session_id": f"{participant_id}/{row.get('TEST_SECTION_ID', '')}",
                 "subject_id": participant_id,
                 "split_group": participant_id,
                 "label": 0,
                 "bot_type": "human",
                 "down_ms": down_ms,
                 "up_ms": up_ms,
-                "key_class": key_class(row["LETTER"], row["KEYCODE"]),
+                "key_class": key_class(row.get("LETTER"), row.get("KEYCODE")),
                 "domain": "typing_test",
             }
         )
@@ -107,7 +108,7 @@ def participant_windows(
 ) -> Iterator[list[dict[str, Any]]]:
     """Yield sentence windows from one participant file without retaining text."""
     with source.open("r", encoding="utf-8", errors="replace", newline="") as handle:
-        reader = csv.DictReader(handle, delimiter="\t")
+        reader = csv.DictReader(handle, delimiter="\t", quoting=csv.QUOTE_NONE)
         if reader.fieldnames is None or not REQUIRED_COLUMNS.issubset(reader.fieldnames):
             raise ValueError(f"{source}: missing required columns")
         current_section: str | None = None
@@ -137,7 +138,14 @@ def _participant_paths(root: Path, max_participants: int | None, seed: int) -> l
     files_root = root / "files"
     if not files_root.is_dir():
         files_root = root / "Keystrokes" / "files"
-    paths = sorted(files_root.glob("*_keystrokes.txt"))
+    if not files_root.is_dir():
+        return []
+    names = sorted(
+        entry.name
+        for entry in os.scandir(files_root)
+        if entry.is_file() and entry.name.endswith("_keystrokes.txt")
+    )
+    paths = [files_root / name for name in names]
     if max_participants is None or max_participants >= len(paths):
         return paths
     return sorted(random.Random(seed).sample(paths, max_participants))
@@ -161,12 +169,15 @@ def load(
     )
     completed = set(state.get("completed", []))
     stats = {
-        "participants": 0,
+        "participants": int(
+            state.get("participants", len(completed) - int(state.get("malformed", 0)))
+        ),
         "malformed": int(state.get("malformed", 0)),
         "windows": int(state.get("windows", 0)),
         "events": int(state.get("events", 0)),
     }
-    for source in _participant_paths(root, max_participants, seed):
+    selected_paths = _participant_paths(root, max_participants, seed)
+    for idx, source in enumerate(selected_paths, start=1):
         participant_id = source.stem.split("_", 1)[0]
         if participant_id in completed:
             continue
@@ -182,11 +193,12 @@ def load(
             stats["windows"] += len(windows)
             stats["events"] += len(rows)
             completed.add(participant_id)
-        except (OSError, UnicodeError, ValueError):
+        except (OSError, UnicodeError, ValueError, csv.Error):
             stats["malformed"] += 1
             completed.add(participant_id)
-        state = {**stats, "completed": sorted(completed)}
-        state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+        if idx % 100 == 0 or idx == len(selected_paths):
+            state = {**stats, "completed": sorted(completed)}
+            state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
     return stats
 
 

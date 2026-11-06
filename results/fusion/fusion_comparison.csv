@@ -1,0 +1,6 @@
+group,roc_auc,pr_auc,balanced_accuracy,accuracy,brier_score,eer,thr_1pct_fpr,recall_at_1pct_fpr,actual_fpr_at_1pct_thr,thr_5pct_fpr,recall_at_5pct_fpr,actual_fpr_at_5pct_thr,bot_recall_at_05,tp,fp,tn,fn,n_rows,n_humans,n_bots,evaluation_label
+mouse_only,1.0,1.0,0.9974,0.9976,0.0021,0.0026,0.1508,0.9993,0.0103,0.0,1.0,1.0,0.998,1490,3,966,3,2462,969,1493,pseudo-session evaluation (simulated pairing)
+keyboard_only,1.0,1.0,1.0,1.0,0.0,0.0,0.0,1.0,1.0,0.0,1.0,1.0,1.0,1493,0,969,0,2462,969,1493,pseudo-session evaluation (simulated pairing)
+average,1.0,1.0,1.0,1.0,0.0005,0.0,0.0754,1.0,0.0103,0.0,1.0,1.0,1.0,1493,0,969,0,2462,969,1493,pseudo-session evaluation (simulated pairing)
+noisy_or,1.0,1.0,0.9985,0.9988,0.0011,0.0,0.1508,1.0,0.0103,0.0,1.0,1.0,1.0,1493,3,966,0,2462,969,1493,pseudo-session evaluation (simulated pairing)
+stacker,1.0,1.0,1.0,1.0,0.0001,0.0,0.0123,1.0,0.0103,0.0052,1.0,1.0,1.0,1493,0,969,0,2462,969,1493,pseudo-session evaluation (simulated pairing)

@@ -11,8 +11,12 @@ from botguard_ml.baselines import load_feature_rows
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input-root", type=Path, default=Path("data/processed/mouse_features"))
-    parser.add_argument("--output", type=Path, default=Path("results/mouse/ablations.csv"))
+    parser.add_argument(
+        "--input-root", type=Path, default=Path("data/processed/mouse_features")
+    )
+    parser.add_argument(
+        "--output", type=Path, default=Path("results/mouse/ablations.csv")
+    )
     parser.add_argument("--test-size", type=float, default=0.2)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()

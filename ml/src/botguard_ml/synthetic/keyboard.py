@@ -20,19 +20,19 @@ class TimingProfile:
 
 def fit_human_timing(windows: list[list[dict[str, Any]]]) -> TimingProfile:
     """Fit K3 timing parameters from training human windows only."""
-    dwell: list[float] = []
-    flight: list[float] = []
+    raw_dwell: list[float] = []
+    raw_flight: list[float] = []
     for window in windows:
         ordered = sorted(window, key=lambda event: float(event["down_ms"]))
-        dwell.extend(
-            max(0.001, float(event["up_ms"]) - float(event["down_ms"])) for event in ordered
-        )
-        flight.extend(
-            max(0.001, float(current["down_ms"]) - float(previous["up_ms"]))
+        raw_dwell.extend(float(event["up_ms"]) - float(event["down_ms"]) for event in ordered)
+        raw_flight.extend(
+            float(current["down_ms"]) - float(previous["up_ms"])
             for previous, current in zip(ordered, ordered[1:])
         )
-    if not dwell or not flight:
+    if not raw_dwell or not raw_flight:
         raise ValueError("training human windows must contain dwell and flight intervals")
+    dwell = [d for d in raw_dwell if 1.0 <= d <= 2000.0] or [max(0.001, d) for d in raw_dwell]
+    flight = [f for f in raw_flight if 1.0 <= f <= 5000.0] or [max(0.001, f) for f in raw_flight]
     log_dwell = np.log(dwell)
     log_flight = np.log(flight)
     return TimingProfile(

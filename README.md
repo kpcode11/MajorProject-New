@@ -167,7 +167,7 @@ Raw datasets remain read-only outside the repository (configured via `config/dat
 | **IEEE Blog Bots (`ieee_blog_bots`)** | Mouse | Cross-dataset & LOBO generalization (`human`, `fallible`, `humanish`, `mimic`) | **126 sessions / 1,114 windows** |
 | **DELBOT-Mouse (`delbot_mouse`)** | Mouse | Multi-generator bot & human trajectories (`human`, `gan`, `naturalmousemotion`, `pyhm`, `pynput`) | **3,493 sessions / 4,432 windows** |
 | **CaptchaSolve30k (`captchasolve30k`)** | Mouse | **Human-only FPR stress test** across 3 high-speed 240 Hz game tasks (`polygon-stacking`, `sheep-herding`, `thread-the-needle`) | **300 sessions / 662 windows** (held out from training) |
-| **Aalto 136M Keystrokes (`aalto_keystrokes`)** | Keyboard | Human typing dynamics paired with synthetic bot generators `K1`–`K4` (`K3` held out) | Streamed per-participant shards |
+| **Aalto 136M Keystrokes (`aalto_keystrokes`)** | Keyboard | Human typing dynamics paired with synthetic bot generators `K1`–`K4` (`K3` held out) | **997 participants / 14,941 human windows / 725,436 key events** (`+ 19,921` synthetic bot windows) |
 
 ### Key Data Engineering Safeguards
 - **Chunk-Boundary Timestamp Repair**: Raw Bournemouth Phase 2 MongoDB exports contain 6,933 timestamp tokens truncated to 9 digits at chunk boundaries (which previously created `-50.9`-year timestamp gaps and caused naive windowing loops to hang for 9+ hours). [`parse_times`](ml/src/botguard_ml/loaders/web_bot_detection.py) repairs truncated millisecond prefixes against the session's median 13-digit epoch prefix before sorting.
@@ -269,11 +269,42 @@ Each row in [`results/mouse/lobo_evaluation.csv`](results/mouse/lobo_evaluation.
 
 ### 5.6 Keyboard Behaviour Model & Desktop Score Fusion
 
-- **Keyboard Model** ([`ml/src/botguard_ml/features/keyboard.py`](ml/src/botguard_ml/features/keyboard.py), [`ml/src/botguard_ml/keyboard_onnx.py`](ml/src/botguard_ml/keyboard_onnx.py)):
-  - Extracts **32 text-agnostic timing features** from key-class windows: hold-time (`up_ms - down_ms`) and flight-time (`next_down_ms - up_ms`) quantiles, IQR, coefficient of variation, pause counts, burst lengths, lag-1 autocorrelation, backspace/correction ratio, and rollover fraction.
-  - Trained against four synthetic bot generators (`K1` constant-interval, `K2` uniform-random, `K3` human-distribution mimic held out for evaluation only, and `K4` copy-paste burst bot) and exported to [`backend/models/keyboard-v1/model.onnx`](backend/models/keyboard-v1/model.onnx).
-- **Desktop Score Fusion** ([`ml/src/botguard_ml/fusion.py`](ml/src/botguard_ml/fusion.py)):
-  - Pairs calibrated mouse and keyboard probabilities in a deterministic same-class pseudo-session experiment, comparing `mouse_only`, `keyboard_only`, `mean`, `noisy_or`, and a validation-trained `logistic_stacker` while gracefully handling missing modalities.
+All keyboard and desktop fusion metrics below are reproducible via [`ml/scripts/train_keyboard_efficient.py`](ml/scripts/train_keyboard_efficient.py) and saved under [`results/keyboard/`](results/keyboard/) and [`results/fusion/`](results/fusion/).
+
+- **Privacy-Safe Feature Pipeline** ([`ml/src/botguard_ml/features/keyboard.py`](ml/src/botguard_ml/features/keyboard.py)):
+  - Extracts **31 text-agnostic timing features** from `key_class`-only windows (`997` Aalto participants, `14,941` human windows, `725,436` key events; `0` prohibited character/keycode columns verified in [`results/keyboard/privacy_scan.json`](results/keyboard/privacy_scan.json)): dwell (`up_ms - down_ms`) and flight (`next_down_ms - up_ms`) quantiles, IQR, skewness, kurtosis, coefficient of variation, pause ratios (`>500 ms` and `>1000 ms`), burst lengths, lag-1 autocorrelation, backspace/modifier/navigation ratios, rollover fraction, and identical-interval fraction.
+  - Evaluated across four synthetic bot generators (`K1` constant-interval, `K2` uniform-random, **`K3` held-out log-normal human-distribution mimic** fitted strictly on training-split human intervals and excluded from training, and `K4` copy-paste burst bot).
+  - Exported to [`backend/models/keyboard-v1/model.onnx`](backend/models/keyboard-v1/model.onnx) (Scaled Logistic Regression reference, ONNX parity `max_abs_diff = 8.04e-08 < 1e-4`) and [`backend/models/keyboard-lgbm-v1/model.onnx`](backend/models/keyboard-lgbm-v1/model.onnx) (Tuned LightGBM).
+
+#### Keyboard Benchmark & Zero-Shot `K3` Generalization ([`results/keyboard/evaluation_splits.csv`](results/keyboard/evaluation_splits.csv), [`results/keyboard/per_generator.csv`](results/keyboard/per_generator.csv))
+
+| Model | Evaluation Split / Generator | Windows ($N$) | ROC-AUC (95% Group-Bootstrap CI) | PR-AUC | Recall @ 1% FPR | Recall @ 5% FPR |
+| :--- | :--- | ---: | :--- | ---: | ---: | ---: |
+| `logistic_regression` (`keyboard-v1`) | **In-Distribution (`K1`, `K2`, `K4`)** | 5,778 | **`1.0000` `[1.0000, 1.0000]`** | `1.0000` | `1.0000` | `1.0000` |
+| `logistic_regression` (`keyboard-v1`) | **Held-Out `K3` (Zero-Shot)** | 7,755 | **`0.8415` `[0.8191, 0.8640]`** | `0.8676` | `0.0353` | `0.2492` |
+| `logistic_regression` (`keyboard-v1`) | **Overall (`K1`–`K4` Combined)** | 10,758 | **`0.9011` `[0.8880, 0.9138]`** | `0.9611` | `0.3982` | `0.5316` |
+| **`lightgbm_tuned` (`keyboard-lgbm-v1`)** | **In-Distribution (`K1`, `K2`, `K4`)** | 5,778 | **`1.0000` `[1.0000, 1.0000]`** | **`1.0000`** | **`1.0000`** | **`1.0000`** |
+| **`lightgbm_tuned` (`keyboard-lgbm-v1`)** | **Held-Out `K3` (Zero-Shot)** | 7,755 | **`0.9951` `[0.9884, 0.9988]`** | **`0.9939`** | **`0.9851`** | **`0.9988`** |
+| **`lightgbm_tuned` (`keyboard-lgbm-v1`)** | **Overall (`K1`–`K4` Combined)** | 10,758 | **`0.9969` `[0.9935, 0.9993]`** | **`0.9986`** | **`0.9907`** | **`0.9992`** |
+
+#### Typing-Speed Tercile Fairness ([`results/keyboard/speed_terciles.csv`](results/keyboard/speed_terciles.csv))
+
+| Speed Tercile | Typing Speed Range (`cps`) | Humans / Bots | LR ROC-AUC | LR Human FPR @ Global 1% Thr | LightGBM ROC-AUC |
+| :--- | :--- | ---: | ---: | ---: | ---: |
+| `tercile_1_slow` | `0.51` – `3.36 cps` | `632` / `2,954` | `0.8813` | `0.0016` (`0.16%`) | **`0.9842`** |
+| `tercile_2_medium` | `3.36` – `4.28 cps` | `539` / `3,047` | `0.9551` | `0.0093` (`0.93%`) | **`0.9971`** |
+| `tercile_3_fast` | `4.28` – `77.18 cps` | `1,604` / `1,982` | `0.9971` | `0.0137` (`1.37%`) | **`0.9999`** |
+
+#### Desktop Score Fusion ([`results/fusion/fusion_comparison.csv`](results/fusion/fusion_comparison.csv), `2,462` Held-Out Pseudo-Sessions)
+Pairs calibrated mouse (`mouse-v1`) and keyboard (`keyboard-v1`) test windows in a deterministic same-class pseudo-session experiment (`seed = 42`, labelled `pseudo-session evaluation (simulated pairing)` in [`backend/models/fusion-v1/metadata.json`](backend/models/fusion-v1/metadata.json)):
+
+| Fusion Method | ROC-AUC | PR-AUC | Recall @ 1% FPR | Balanced Acc | Brier Score |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| `mouse_only` | `1.0000` | `1.0000` | `0.9993` | `0.9974` | `0.0021` |
+| `keyboard_only` | `1.0000` | `1.0000` | `1.0000` | `1.0000` | `0.0000` |
+| `average` | `1.0000` | `1.0000` | `1.0000` | `1.0000` | `0.0005` |
+| `noisy_or` | `1.0000` | `1.0000` | `1.0000` | `0.9985` | `0.0011` |
+| **`stacker` (Validation LR)** | **`1.0000`** | **`1.0000`** | **`1.0000`** | **`1.0000`** | **`0.0001`** |
 
 ---
 

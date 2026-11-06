@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "shards_scanned": 997,
+  "total_events_scanned": 725436,
+  "participants_completed": 997,
+  "malformed_skipped": 3,
+  "windows_extracted": 14941,
+  "prohibited_columns_found": 0
+}

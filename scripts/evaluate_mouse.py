@@ -13,10 +13,17 @@ from botguard_ml.eval import evaluate_scores
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", type=Path)
-    parser.add_argument("--output", type=Path, default=Path("results/mouse/evaluation.csv"))
+    parser.add_argument(
+        "--output", type=Path, default=Path("results/mouse/evaluation.csv")
+    )
     parser.add_argument(
         "--split",
-        choices=("in_distribution", "cross_phase", "cross_dataset", "leave_one_bot_type_out"),
+        choices=(
+            "in_distribution",
+            "cross_phase",
+            "cross_dataset",
+            "leave_one_bot_type_out",
+        ),
         default="in_distribution",
     )
     parser.add_argument("--test-phase", default="wiki_part2")

@@ -25,7 +25,11 @@ def human_size(size: int) -> str:
 
 def read_config(path: pathlib.Path) -> tuple[pathlib.Path, dict[str, str]]:
     """Read the small datasets YAML subset without requiring global dependencies."""
-    root_match = re.search(r"^datasets_root:\s*['\"]?(.+?)['\"]?\s*$", path.read_text(encoding="utf-8"), re.M)
+    root_match = re.search(
+        r"^datasets_root:\s*['\"]?(.+?)['\"]?\s*$",
+        path.read_text(encoding="utf-8"),
+        re.M,
+    )
     if not root_match:
         raise ValueError("datasets_root is missing from configuration")
     entries: dict[str, str] = {}
@@ -44,7 +48,9 @@ def inventory(key: str) -> str:
     base = base_root / datasets[key]
     lines = [f"dataset: {key}", f"path: {base}", f"exists: {base.exists()}"]
     tree_lines: list[str] = []
-    stats: collections.defaultdict[str, list[int]] = collections.defaultdict(lambda: [0, 0])
+    stats: collections.defaultdict[str, list[int]] = collections.defaultdict(
+        lambda: [0, 0]
+    )
     biggest: list[tuple[int, pathlib.Path]] = []
     samples: list[pathlib.Path] = []
 
@@ -69,7 +75,9 @@ def inventory(key: str) -> str:
                 stats[ext][1] += size
                 biggest.append((size, path))
                 if len(tree_lines) < 80:
-                    tree_lines.append(f"{'  ' * depth}{entry.name} ({human_size(size)})")
+                    tree_lines.append(
+                        f"{'  ' * depth}{entry.name} ({human_size(size)})"
+                    )
                 if size < 5_000_000 and ext in TEXT_EXTENSIONS and len(samples) < 3:
                     samples.append(path)
 
@@ -78,9 +86,15 @@ def inventory(key: str) -> str:
     if len(tree_lines) >= 80:
         lines.append("... tree output capped at 80 entries ...")
     lines.append("\nby extension:")
-    lines.extend(f"{ext or '(none)'}: {count} files, {human_size(total)}" for ext, (count, total) in sorted(stats.items()))
+    lines.extend(
+        f"{ext or '(none)'}: {count} files, {human_size(total)}"
+        for ext, (count, total) in sorted(stats.items())
+    )
     lines.append("\nlargest files:")
-    lines.extend(f"{human_size(size)} {path.name}" for size, path in sorted(biggest, reverse=True)[:10])
+    lines.extend(
+        f"{human_size(size)} {path.name}"
+        for size, path in sorted(biggest, reverse=True)[:10]
+    )
     for path in samples:
         lines.append(f"\n--- first lines of {path.name} ---")
         with path.open("r", encoding="utf-8", errors="replace") as handle:
@@ -89,7 +103,10 @@ def inventory(key: str) -> str:
         if path.suffix.lower() == ".zip":
             with zipfile.ZipFile(path) as archive:
                 lines.append(f"\nzip {path.name}: first members")
-                lines.extend(f"  {item.filename} ({human_size(item.file_size)})" for item in archive.infolist()[:20])
+                lines.extend(
+                    f"  {item.filename} ({human_size(item.file_size)})"
+                    for item in archive.infolist()[:20]
+                )
     return "\n".join(lines[:120]) + "\n"
 
 

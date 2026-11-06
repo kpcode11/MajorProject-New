@@ -14,7 +14,9 @@ from botguard_ml.calibrate import calibrate_scores
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", type=Path)
-    parser.add_argument("--output", type=Path, default=Path("results/mouse/calibration.json"))
+    parser.add_argument(
+        "--output", type=Path, default=Path("results/mouse/calibration.json")
+    )
     parser.add_argument("--score-column", default="score")
     parser.add_argument("--method", choices=("isotonic", "platt"), default="isotonic")
     parser.add_argument("--calibration-size", type=float, default=0.15)

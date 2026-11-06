@@ -42,7 +42,14 @@ class NumericSummary:
 
     def as_dict(self) -> dict[str, float | int | None]:
         if not self.count:
-            return {"count": 0, "min": None, "max": None, "mean": None, "p50": None, "p95": None}
+            return {
+                "count": 0,
+                "min": None,
+                "max": None,
+                "mean": None,
+                "p50": None,
+                "p95": None,
+            }
         ordered = sorted(self.sample)
         return {
             "count": self.count,
@@ -108,7 +115,10 @@ def audit_file(path: Path) -> dict[str, Any]:
     subjects: set[str] = set()
     session_ids: set[str] = set()
     sessions: dict[str, list[float]] = defaultdict(list)
-    numeric = {field: NumericSummary() for field in ("t_ms", "x", "y", "dt_ms", "events_per_second")}
+    numeric = {
+        field: NumericSummary()
+        for field in ("t_ms", "x", "y", "dt_ms", "events_per_second")
+    }
     missing: Counter[str] = Counter()
     total_rows = 0
     previous_t: dict[str, float] = {}
@@ -156,7 +166,12 @@ def audit_file(path: Path) -> dict[str, Any]:
         "sessions": len(session_ids),
         "subjects": len(subjects),
         "counts": {name: dict(counter) for name, counter in counts.items()},
-        "windows": {"window_s": 10, "hop_s": 5, "min_moves": MIN_MOVES, "count": windows},
+        "windows": {
+            "window_s": 10,
+            "hop_s": 5,
+            "min_moves": MIN_MOVES,
+            "count": windows,
+        },
         "numeric": {name: summary.as_dict() for name, summary in numeric.items()},
         "missing_values": {
             name: {"count": count, "rate": count / total_rows if total_rows else 0.0}
@@ -186,7 +201,9 @@ def write_markdown(report: dict[str, Any], destination: Path) -> None:
     lines.extend(["", "## Numeric summaries", "", "| Field | Summary |", "|---|---|"])
     for name, summary in report["numeric"].items():
         lines.append(f"| {name} | `{json.dumps(summary, sort_keys=True)}` |")
-    lines.extend(["", "## Missing values", "", "| Field | Count | Rate |", "|---|---:|---:|"])
+    lines.extend(
+        ["", "## Missing values", "", "| Field | Count | Rate |", "|---|---:|---:|"]
+    )
     for name, summary in report["missing_values"].items():
         lines.append(f"| {name} | {summary['count']} | {summary['rate']:.6f} |")
     destination.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -209,12 +226,16 @@ def audit_root(input_root: Path, output_root: Path) -> list[Path]:
             combined["windows"]["count"] += report["windows"]["count"]
             for dimension, values in report["counts"].items():
                 for key, value in values.items():
-                    combined["counts"][dimension][key] = combined["counts"][dimension].get(key, 0) + value
+                    combined["counts"][dimension][key] = (
+                        combined["counts"][dimension].get(key, 0) + value
+                    )
         combined["dataset"] = dataset_root.name
         combined["shards"] = len(shards)
         output_json = output_root / f"audit_{dataset_root.name}.json"
         output_md = output_root / f"audit_{dataset_root.name}.md"
-        output_json.write_text(json.dumps(combined, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        output_json.write_text(
+            json.dumps(combined, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
         write_markdown(combined, output_md)
         outputs.extend((output_json, output_md))
     return outputs

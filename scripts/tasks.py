@@ -53,10 +53,16 @@ def setup() -> None:
 
 def lint() -> None:
     """Run Ruff checks, format checks, and strict mypy for both Python packages."""
-    for package, source, tests in ((PACKAGES[0], "src", "tests"), (PACKAGES[1], "app", "tests")):
+    for package, source, tests in (
+        (PACKAGES[0], "src", "tests"),
+        (PACKAGES[1], "app", "tests"),
+    ):
         interpreter = require_environment(package)
         run([str(interpreter), "-m", "ruff", "check", source, tests], cwd=package)
-        run([str(interpreter), "-m", "ruff", "format", "--check", source, tests], cwd=package)
+        run(
+            [str(interpreter), "-m", "ruff", "format", "--check", source, tests],
+            cwd=package,
+        )
         run([str(interpreter), "-m", "mypy", source], cwd=package)
 
 
@@ -64,7 +70,14 @@ def test() -> None:
     """Run the complete test suites for both Python packages."""
     for package in PACKAGES:
         run(
-            [str(require_environment(package)), "-m", "pytest", "-q", "-x", "--maxfail=3"],
+            [
+                str(require_environment(package)),
+                "-m",
+                "pytest",
+                "-q",
+                "-x",
+                "--maxfail=3",
+            ],
             cwd=package,
         )
 
@@ -132,7 +145,13 @@ def train_keyboard(stage: str, max_participants: int | None) -> None:
                 "--input-root",
                 str(ROOT / "data" / "interim" / "aalto_keystrokes"),
                 "--output",
-                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+                str(
+                    ROOT
+                    / "data"
+                    / "processed"
+                    / "keyboard_features"
+                    / "features.parquet"
+                ),
             ]
         )
     elif stage == "evaluate":
@@ -141,7 +160,13 @@ def train_keyboard(stage: str, max_participants: int | None) -> None:
                 str(interpreter),
                 str(ROOT / "scripts" / "evaluate_keyboard.py"),
                 "--input",
-                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+                str(
+                    ROOT
+                    / "data"
+                    / "processed"
+                    / "keyboard_features"
+                    / "features.parquet"
+                ),
                 "--output",
                 str(ROOT / "results" / "keyboard" / "evaluation.csv"),
             ]
@@ -152,13 +177,21 @@ def train_keyboard(stage: str, max_participants: int | None) -> None:
                 str(interpreter),
                 str(ROOT / "scripts" / "export_keyboard_onnx.py"),
                 "--input",
-                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+                str(
+                    ROOT
+                    / "data"
+                    / "processed"
+                    / "keyboard_features"
+                    / "features.parquet"
+                ),
                 "--output-dir",
                 str(ROOT / "backend" / "models" / "keyboard-v1"),
             ]
         )
     else:
-        raise ValueError("train-keyboard supports --stage events, features, evaluate, or onnx")
+        raise ValueError(
+            "train-keyboard supports --stage events, features, evaluate, or onnx"
+        )
 
 
 def keyboard_privacy() -> None:
@@ -186,7 +219,11 @@ def train_mouse(stage: str, max_sessions: int | None) -> None:
                 str(ROOT / "data" / "interim"),
                 "--output-root",
                 str(ROOT / "data" / "processed" / "mouse_features"),
-                *([] if max_sessions is None else ["--max-sessions", str(max_sessions)]),
+                *(
+                    []
+                    if max_sessions is None
+                    else ["--max-sessions", str(max_sessions)]
+                ),
             ]
         )
     elif stage == "baselines":
@@ -256,6 +293,7 @@ def main() -> int:
     parser.add_argument("command", choices=(*IMPLEMENTED, *PLANNED))
     parser.add_argument("--stage", default="features")
     parser.add_argument("--max-sessions", type=int, default=None)
+    parser.add_argument("--max-participants", type=int, default=None)
     args = parser.parse_args()
     command = args.command
     try:

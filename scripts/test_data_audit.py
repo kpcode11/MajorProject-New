@@ -29,7 +29,16 @@ def test_audits_counts_windows_and_missing_values(tmp_path: Path) -> None:
                 "touchscreen": False,
             }
         )
-    rows.append({**rows[0], "session_id": "s2", "subject_id": "bot-1", "label": 1, "bot_type": "naive", "event": "click"})
+    rows.append(
+        {
+            **rows[0],
+            "session_id": "s2",
+            "subject_id": "bot-1",
+            "label": 1,
+            "bot_type": "naive",
+            "event": "click",
+        }
+    )
     path = tmp_path / "fixture.parquet"
     pq.write_table(pa.Table.from_pylist(rows), path)
 

@@ -10,8 +10,12 @@ from botguard_ml.hparams import optimise_feature_shards
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input-root", type=Path, default=Path("data/processed/mouse_features"))
-    parser.add_argument("--output", type=Path, default=Path("results/mouse/hparams.json"))
+    parser.add_argument(
+        "--input-root", type=Path, default=Path("data/processed/mouse_features")
+    )
+    parser.add_argument(
+        "--output", type=Path, default=Path("results/mouse/hparams.json")
+    )
     parser.add_argument("--n-trials", type=int, default=30)
     parser.add_argument("--timeout-seconds", type=int, default=600)
     parser.add_argument("--test-size", type=float, default=0.2)

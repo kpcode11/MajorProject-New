@@ -1,0 +1,109 @@
+{
+  "logistic_regression": {
+    "best_C": 0.1,
+    "best_cv_roc_auc": 0.999996,
+    "grid": [
+      {
+        "C": 0.001,
+        "cv_roc_auc": 0.999977
+      },
+      {
+        "C": 0.005,
+        "cv_roc_auc": 0.999989
+      },
+      {
+        "C": 0.01,
+        "cv_roc_auc": 0.999991
+      },
+      {
+        "C": 0.05,
+        "cv_roc_auc": 0.999995
+      },
+      {
+        "C": 0.1,
+        "cv_roc_auc": 0.999996
+      },
+      {
+        "C": 0.25,
+        "cv_roc_auc": 0.999992
+      },
+      {
+        "C": 0.5,
+        "cv_roc_auc": 0.999945
+      },
+      {
+        "C": 1.0,
+        "cv_roc_auc": 0.999924
+      },
+      {
+        "C": 2.0,
+        "cv_roc_auc": 0.999922
+      },
+      {
+        "C": 5.0,
+        "cv_roc_auc": 0.999927
+      },
+      {
+        "C": 10.0,
+        "cv_roc_auc": 0.999929
+      },
+      {
+        "C": 50.0,
+        "cv_roc_auc": 0.999931
+      }
+    ]
+  },
+  "lightgbm": {
+    "best_params": {
+      "n_estimators": 242,
+      "learning_rate": 0.08062301657687199,
+      "num_leaves": 21,
+      "min_child_samples": 33,
+      "subsample": 0.8219199357289628,
+      "colsample_bytree": 0.8715615135196103
+    },
+    "best_cv_roc_auc": 0.9999998966023533,
+    "n_trials_requested": 25,
+    "n_trials_completed": 25,
+    "timeout_seconds": 300,
+    "seed": 42,
+    "cv_folds": 5,
+    "n_train_rows": 24104,
+    "n_test_rows": 5778,
+    "n_train_groups": 12750,
+    "n_test_groups": 3188,
+    "feature_columns": [
+      "n_keys",
+      "typing_speed_cps",
+      "dwell_mean",
+      "dwell_std",
+      "dwell_median",
+      "dwell_mad",
+      "dwell_cv",
+      "dwell_skew",
+      "dwell_kurt",
+      "flight_mean",
+      "flight_std",
+      "flight_median",
+      "flight_mad",
+      "flight_cv",
+      "flight_skew",
+      "flight_kurt",
+      "flight_min",
+      "flight_p5",
+      "flight_p95",
+      "dd_mean",
+      "dd_std",
+      "rollover_ratio",
+      "burst_count",
+      "burst_len_mean",
+      "pause_count",
+      "pause_mean",
+      "lag1_autocorr_flight",
+      "dwell_flight_corr",
+      "identical_interval_fraction",
+      "backspace_ratio",
+      "paste_events"
+    ]
+  }
+}

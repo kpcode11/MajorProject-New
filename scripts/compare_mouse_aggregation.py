@@ -13,7 +13,9 @@ from botguard_ml.aggregation import compare_aggregators
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", type=Path)
-    parser.add_argument("--output", type=Path, default=Path("results/mouse/aggregation.csv"))
+    parser.add_argument(
+        "--output", type=Path, default=Path("results/mouse/aggregation.csv")
+    )
     parser.add_argument("--score-column", default="score")
     parser.add_argument("--test-size", type=float, default=0.2)
     parser.add_argument("--seed", type=int, default=42)
