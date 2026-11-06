@@ -1,6 +1,6 @@
 # Progress
 
-**Current phase:** 4  |  **Branch:** main  |  **Last updated:** 2026-10-14  |  **Last agent/tool:** Copilot
+**Current phase:** 6  |  **Branch:** main  |  **Last updated:** 2026-11-06  |  **Last agent/tool:** Antigravity
 
 ## Task table
 
@@ -59,17 +59,17 @@
 | P5-01 | 5 | Settings and score store | DONE | b8ffaae | |
 | P5-02 | 5 | API schemas and limits | DONE | 3bdbfd7 | |
 | P5-03 | 5 | Nonces | DONE | 55f1fc0 | |
-| P5-04 | 5 | Model scoring | TODO | | |
+| P5-04 | 5 | Model scoring | DONE | pending | Startup ONNX loading with metadata checks, botguard_ml.features extraction, calibration, fusion, rule combination, top-3 attribution, and 27 tests. |
 | P5-05 | 5 | Risk policy | DONE | ddc4dab | |
-| P5-06 | 5 | Human tokens | TODO | | |
-| P5-07 | 5 | Rate limiting | TODO | | |
-| P5-08 | 5 | Persistence and migrations | TODO | | |
-| P5-09 | 5 | Scoring API endpoints | TODO | | |
-| P5-10 | 5 | Protected-route dependency | TODO | | |
-| P5-11 | 5 | Failure policy | TODO | | |
-| P5-12 | 5 | Privacy-safe logging | TODO | | |
-| P5-13 | 5 | Backend tests | TODO | | |
-| P5-14 | 5 | Latency benchmark | TODO | | |
+| P5-06 | 5 | Human tokens | DONE | pending | JWT issuance and verification (HS256, RS256, ES256) with single-use JTI tracking and 11 tests. |
+| P5-07 | 5 | Rate limiting | DONE | pending | Sliding-window rate limiting per IP bucket, session ID, and endpoint (/v1/nonce, /v1/assess, /v1/assess/challenge) with tests. |
+| P5-08 | 5 | Persistence and migrations | DONE | pending | SQLAlchemy 2.0 assessments/challenges models, migration, optional TTL feature storage, raw-trace guard, and DB-down write buffer with tests. |
+| P5-09 | 5 | Scoring API endpoints | DONE | pending | FastAPI /v1/nonce, /v1/assess, /v1/assess/challenge, /v1/token/verify, /v1/health with 64 KB body cap and OpenAPI docs. |
+| P5-10 | 5 | Protected-route dependency | DONE | pending | require_human_token(action) dependency verifying signature, exp, act, and single-use jti. |
+| P5-11 | 5 | Failure policy | DONE | pending | Degraded-mode policy for Redis/Store outage, ONNX model error, and DB write buffering documented in docs/architecture.md. |
+| P5-12 | 5 | Privacy-safe logging | DONE | pending | Structured JSON logging with /24 and /48 IP coarsening and redaction of raw traces/payloads. |
+| P5-13 | 5 | Backend tests | DONE | pending | Comprehensive API, security, replay, fail-safe, oversize payload, rate-limit, and logging tests in backend/tests/test_api.py. |
+| P5-14 | 5 | Latency benchmark | DONE | pending | 1,000-call micro-benchmark in backend/bench_scoring.py (p50=1.65 ms, p95=15.16 ms < 200 ms) saved to results/system/scoring_latency.json. |
 | P6-01 | 6 | SDK package and CI | TODO | | |
 | P6-02 | 6 | Environment collector | TODO | | |
 | P6-03 | 6 | Mouse collector | TODO | | |
@@ -160,4 +160,6 @@ Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 
 ## Results index (files under results/)
 
-- (none yet)
+- `results/mouse/` — `baselines.csv`, `hparams.json`, `evaluation_splits.csv`, `lobo_evaluation.csv`, `human_fpr_captchasolve30k.csv`, `aggregation.csv`, `calibration.json`, `ablations.csv`, `shap_summary.csv`, `shap_top3_examples.json`, `fingerprint.json`
+- `results/keyboard/` — `privacy_scan.json`, `baselines.csv`, `hparams.json`, `evaluation.csv`, `evaluation_splits.csv`, `per_generator.csv`, `speed_terciles.csv`, `calibration.json`, `feature_importance.csv`, `failure_analysis.md`, `summary.json`
+- `results/fusion/` — `fusion_comparison.csv`, `modality_availability.csv`

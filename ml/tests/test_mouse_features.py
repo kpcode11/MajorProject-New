@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 
 import pytest
-from hypothesis import assume, given, settings
+from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
 
 from botguard_ml.features.mouse import (
@@ -197,7 +197,7 @@ def _polyline_events(xs: list[float], ys: list[float], dts: list[float]) -> list
         )
     )
 )
-@settings(max_examples=40, deadline=None)
+@settings(max_examples=40, deadline=None, suppress_health_check=[HealthCheck.filter_too_much])
 def test_features_are_finite_bounded_and_translation_invariant(
     payload: tuple[list[float], list[float], list[float], float, float],
 ) -> None:

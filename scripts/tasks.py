@@ -20,8 +20,9 @@ IMPLEMENTED = (
     "train-mouse",
     "train-keyboard",
     "keyboard-privacy",
+    "serve",
 )
-PLANNED = ("train-touch", "eval-all", "serve", "demo", "loadtest")
+PLANNED = ("train-touch", "eval-all", "demo", "loadtest")
 
 
 def package_python(package: Path) -> Path:
@@ -49,6 +50,19 @@ def setup() -> None:
         if not interpreter.exists():
             run([sys.executable, "-m", "venv", str(package / ".venv")])
         run([str(interpreter), "-m", "pip", "install", "-e", ".[dev]"], cwd=package)
+    backend_interpreter = package_python(PACKAGES[1])
+    run(
+        [
+            str(backend_interpreter),
+            "-m",
+            "pip",
+            "install",
+            "--no-deps",
+            "-e",
+            str(ROOT / "ml"),
+        ],
+        cwd=PACKAGES[1],
+    )
 
 
 def lint() -> None:
@@ -77,6 +91,8 @@ def test() -> None:
                 "-q",
                 "-x",
                 "--maxfail=3",
+                "-p",
+                "no:cacheprovider",
             ],
             cwd=package,
         )
@@ -287,6 +303,24 @@ def train_mouse(stage: str, max_sessions: int | None) -> None:
         )
 
 
+def serve() -> None:
+    """Start the FastAPI scoring and token backend via uvicorn."""
+    interpreter = require_environment(PACKAGES[1])
+    run(
+        [
+            str(interpreter),
+            "-m",
+            "uvicorn",
+            "app.main:app",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "8000",
+        ],
+        cwd=PACKAGES[1],
+    )
+
+
 def main() -> int:
     """Parse a task command and dispatch it."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -315,6 +349,8 @@ def main() -> int:
             keyboard_privacy()
         elif command == "train-mouse":
             train_mouse(args.stage, args.max_sessions)
+        elif command == "serve":
+            serve()
         else:
             print(f"{command}: not implemented yet")
     except (RuntimeError, subprocess.CalledProcessError) as error:

@@ -1,0 +1,31 @@
+{
+  "benchmark": "backend_model_and_rule_scoring",
+  "task_id": "P5-14",
+  "timestamp_utc": "2026-11-06T15:28:16.885930+00:00",
+  "n_calls": 1000,
+  "total_elapsed_s": 3.0714,
+  "throughput_calls_per_sec": 325.58,
+  "latency_ms": {
+    "min": 1.4755,
+    "p50": 1.6498,
+    "mean": 3.0707,
+    "p95": 15.1606,
+    "p99": 22.069,
+    "max": 36.7004
+  },
+  "target_p95_ms": 200.0,
+  "passes_target": true,
+  "models_loaded": {
+    "mouse": "lightgbm-v1",
+    "keyboard": "logistic_regression-v1",
+    "touch": null,
+    "fusion": "v1"
+  },
+  "hardware": {
+    "os": "Windows 11",
+    "python_version": "3.14.7",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "machine": "AMD64",
+    "cpu_count": 24
+  }
+}

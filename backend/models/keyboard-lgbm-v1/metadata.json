@@ -126,5 +126,38 @@
       1.0
     ],
     "single_human_source_limitation": "Aalto 136M Keystrokes is the sole configured human keyboard source (prescribed sentence typing test); no second human dataset (BB-MAS/CMU) is locally available."
+  },
+  "feature_importance": {
+    "flight_p5": 32.0,
+    "dwell_skew": 388.0,
+    "rollover_ratio": 19.0,
+    "burst_len_mean": 165.0,
+    "typing_speed_cps": 222.0,
+    "flight_median": 29.0,
+    "burst_count": 69.0,
+    "identical_interval_fraction": 49.0,
+    "flight_p95": 75.0,
+    "dwell_kurt": 326.0,
+    "dwell_mean": 104.0,
+    "dwell_median": 60.0,
+    "flight_mean": 35.0,
+    "backspace_ratio": 1.0,
+    "dwell_mad": 178.0,
+    "n_keys": 159.0,
+    "pause_count": 0.0,
+    "flight_min": 371.0,
+    "dwell_cv": 40.0,
+    "flight_mad": 97.0,
+    "flight_kurt": 20.0,
+    "flight_std": 134.0,
+    "dd_mean": 26.0,
+    "pause_mean": 11.0,
+    "dwell_flight_corr": 325.0,
+    "flight_cv": 136.0,
+    "dd_std": 30.0,
+    "lag1_autocorr_flight": 125.0,
+    "dwell_std": 209.0,
+    "flight_skew": 54.0,
+    "paste_events": 0.0
   }
 }

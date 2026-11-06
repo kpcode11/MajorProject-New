@@ -1,98 +1,48 @@
 # Handoff
 
-**Updated:** 2026-10-27  |  **By:** Kiro  |  **Branch:** main  |  **Last commit:** ddc4dab
+## Last completed task
+- **ID:** P5-14 (completing Phase 5: P5-01..P5-14)
+- **Branch:** main
+- **Summary:** Completed all remaining Phase 5 tasks (`P5-04`, `P5-06`, `P5-07`, `P5-08`, `P5-09`, `P5-10`, `P5-11`, `P5-12`, `P5-13`, `P5-14`) for the FastAPI risk-scoring and token backend:
+  - **`P5-04` (`backend/app/scoring.py`, `backend/tests/test_scoring.py`)**: Startup ONNX model loading (`mouse-v1`, `keyboard-v1`, `fusion-v1`), metadata schema/version validation, feature extraction via `botguard_ml.features`, calibration, missing-modality-safe score fusion, rule combination (`R01..R14`), and top-3 feature attribution (27 tests).
+  - **`P5-06` (`backend/app/tokens.py`, `backend/tests/test_tokens.py`)**: JWT human-token issuance and single-use `jti` verification supporting `HS256`, `RS256`, and `ES256` with action binding (11 tests).
+  - **`P5-07` (`backend/app/ratelimit.py`, `backend/tests/test_ratelimit.py`)**: Sliding-window rate limiting per coarse IP bucket (`/24` IPv4, `/48` IPv6) and session ID across `/v1/nonce`, `/v1/assess`, and `/v1/assess/challenge` (4 tests).
+  - **`P5-08` (`backend/app/db.py`, `backend/migrations/versions/0001_initial_schema.py`, `backend/tests/test_db.py`)**: SQLAlchemy 2.0 `assessments` and `challenges` tables, raw-trace prohibition (`sanitize_derived_features`), optional TTL-limited feature storage, and in-memory write buffering when DB is unreachable (4 tests).
+  - **`P5-09`..`P5-13` (`backend/app/main.py`, `backend/tests/test_api.py`, `docs/architecture.md`, `docs/api.md`)**: FastAPI service with `GET /v1/nonce`, `POST /v1/assess`, `POST /v1/assess/challenge`, `POST /v1/token/verify`, `GET /v1/health`, 64 KB body-size cap (`MaxBodySizeMiddleware`), `require_human_token(action)` dependency, configurable degraded-mode fail-safe policy, privacy-safe structured logging, and 12 end-to-end API/security tests.
+  - **`P5-14` (`backend/bench_scoring.py`, `results/system/scoring_latency.json`, `scripts/tasks.py`)**: 1,000-call latency micro-benchmark (`p50 = 1.650 ms`, `p95 = 15.161 ms < 200 ms`, `p99 = 22.069 ms`, `325.6 req/s`) and `python scripts/tasks.py serve` command.
 
-## Current task
+## Current / next task
+- **ID:** P6-01
+- **Status:** TODO
+- **Phase file:** `docs/plan/phase_6.md`
+- **Exact next step:**
+  1. Read `docs/plan/phase_6.md` for `P6-01` (`SDK package and CI`).
+  2. Set up the TypeScript browser SDK package under `sdk/` with build, lint, test, and bundle-size scripts.
 
-- ID: P5-06 — Human tokens (JWT)
-- State: ready to start.
+## Files touched in the last session
+- `backend/app/scoring.py`
+- `backend/app/tokens.py`
+- `backend/app/ratelimit.py`
+- `backend/app/db.py`
+- `backend/app/main.py`
+- `backend/migrations/versions/0001_initial_schema.py`
+- `backend/bench_scoring.py`
+- `backend/tests/test_scoring.py`
+- `backend/tests/test_tokens.py`
+- `backend/tests/test_ratelimit.py`
+- `backend/tests/test_db.py`
+- `backend/tests/test_api.py`
+- `docs/architecture.md`
+- `docs/api.md`
+- `results/system/scoring_latency.json`
+- `scripts/tasks.py`
+- `PROGRESS.md`
+- `HANDOFF.md`
 
-## Done in this session (P5-01, P5-02, P5-03, P5-05)
+## Commands run and results
+- `ml\.venv\Scripts\python.exe scripts\tasks.py lint` -> exit code 0 (`All checks passed!`, 0 ruff or mypy issues across `ml` and `backend`).
+- `ml\.venv\Scripts\python.exe scripts\tasks.py test-fast` -> exit code 0 (66 passed in `ml`, 335 passed in `backend`).
+- `backend\.venv\Scripts\python.exe backend\bench_scoring.py` -> exit code 0 (`p50=1.650 ms | p95=15.161 ms | p99=22.069 ms`, saved to `results/system/scoring_latency.json`).
 
-**P5-01:** Settings and score store
-- Expanded `backend/app/config.py` with full `Settings` dataclass and
-  `load_settings()` (env > YAML > defaults). 20 settings: store backend,
-  Redis/DB URLs, JWT config, model paths, nonce TTL, rate limits, body size,
-  feature storage, retention TTLs.
-- Implemented `backend/app/store.py`: abstract `Store`, `InMemoryStore`
-  (thread-safe, TTL via `time.monotonic()`), `RedisStore` (uses `GETDEL`,
-  pipelined `INCR`/`EXPIRE`, sorted-set sliding windows). 
-- 63 tests (19 settings + 44 store, parametrised over both backends).
-
-**P5-02:** API schemas and limits
-- Complete Pydantic v2 schemas in `backend/app/schemas.py` covering Appendix B:
-  `EnvSignals` (with new field limits), `MouseBehaviour`, `KeyBehaviour`,
-  `TouchBehaviour`, `TimingSignals`, `BehaviourPayload`, `AssessRequest`,
-  `AssessResponse`, `ChallengeInfo`, `ChallengeAssessRequest`,
-  `TokenVerifyRequest/Response`, `NonceResponse`, `HealthResponse`,
-  `ErrorResponse`.
-- Enforced limits: max 600 mouse points, 300 key events, 20 gestures × 100
-  points; numeric ranges; string lengths; key class validation.
-- Fixed one pre-existing test (`test_rules.py`) that passed an out-of-range
-  timezone_offset_min — now uses `model_construct` to bypass validation and
-  test the rule directly.
-- 64 schema tests + 156 existing = 220 total.
-
-**P5-03:** Nonces
-- Implemented `backend/app/nonce.py`: `issue_nonce()`, `verify_nonce()`,
-  `make_context_hash()` (BLAKE2b of coarse IP /24 or /48 + User-Agent),
-  `NonceError` exception, `context_hash_from_headers()` helper.
-- Single-use enforcement via `store.get_and_delete`; context binding prevents
-  cross-client replay.
-- 23 nonce tests.
-
-**P5-05:** Risk policy
-- Created `backend/config/policy.yaml` (Appendix C.1 structure): action classes
-  (low/medium/high with allow_below/deny_at_or_above thresholds), action
-  mappings, fail-safe modes, band cutoffs.
-- Implemented `backend/app/policy.py`: `PolicyEngine`, `load_policy()`,
-  `decide()`, `score_to_band()`, `decide_redis_down()`,
-  `decide_model_error()`. Returns `Decision(verdict, band, degraded)`.
-- 34 policy tests covering all action classes, boundaries, fail-safe modes.
-
-**Summary:** 277 backend tests pass, 0 failures. Lint clean.
-
-## Exact next step
-
-- Implement `backend/app/tokens.py` (P5-06): JWT issuance with claims `iss`,
-  `aud`, `act`, `iat`, `exp`, `jti`, `band`. Support HS256 (dev, HMAC secret)
-  and RS256/ES256 (production, key files). Single-use `jti` tracking via Store.
-  Verification function with signature check, expiry check, `jti` replay
-  prevention, and optional `act` claim match.
-
-## Files touched in this session
-
-- `backend/app/config.py` — expanded to full settings
-- `backend/app/store.py` — implemented Store + 2 backends
-- `backend/app/schemas.py` — complete API schemas
-- `backend/app/nonce.py` — nonce issuance and verification
-- `backend/app/policy.py` — risk policy engine
-- `backend/config/policy.yaml` — new policy config
-- `backend/tests/test_settings.py` — new
-- `backend/tests/test_store.py` — new
-- `backend/tests/test_schemas.py` — new
-- `backend/tests/test_nonce.py` — new
-- `backend/tests/test_policy.py` — new
-- `backend/tests/test_rules.py` — fixed one test for schema validation
-- `PROGRESS.md` — P5-01, P5-02, P5-03, P5-05 marked DONE with commit hashes
-
-## Commands to run first
-
-    cd backend
-    .\.venv\Scripts\Activate.ps1
-    python -m pytest -q --tb=short
-    python -m ruff check app/ tests/
-
-## Known problems / gotchas
-
-- P5-04 (model scoring) is still TODO — it requires importing ML feature code
-  from the `ml` package and loading the ONNX model at
-  `backend/models/mouse-v1/model.onnx`. The model files exist, but the ML
-  package needs to be installed as a local dependency first.
-- `fakeredis` 2.x doesn't support Lua scripting; `RedisStore` uses only native
-  commands (`GETDEL`, `INCR`, sorted sets) which works fine for Redis 6.2+.
-- The pytest cache directory has a Windows permissions warning (harmless).
-
-## Questions for the human
-
-- None.
+## Known issues / open questions
+- None. All Phase 0–5 deliverables, lint checks, and tests pass.
