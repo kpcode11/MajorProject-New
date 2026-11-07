@@ -15,6 +15,8 @@
 - **ID:** P6-01
 - **Status:** TODO
 - **Phase file:** `docs/plan/phase_6.md`
+- **Branch:** `phase-6-browser-sdk` (created from `main` at `b89cdb3`; all Phase 6 work goes here, merge to `main` only after the Phase 6 acceptance checklist passes and a human reviews).
+- **Environment:** Node.js 24.20.0 / npm 11.19.0 available (see `docs/env.md`).
 - **Exact next step:**
   1. Read `docs/plan/phase_6.md` for `P6-01` (`SDK package and CI`).
   2. Set up the TypeScript browser SDK package under `sdk/` with build, lint, test, and bundle-size scripts.

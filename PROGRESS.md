@@ -1,6 +1,6 @@
 # Progress
 
-**Current phase:** 6  |  **Branch:** main  |  **Last updated:** 2026-11-06  |  **Last agent/tool:** Antigravity
+**Current phase:** 6  |  **Branch:** phase-6-browser-sdk  |  **Last updated:** 2026-11-07  |  **Last agent/tool:** Antigravity
 
 ## Task table
 
