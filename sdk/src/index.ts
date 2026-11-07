@@ -13,4 +13,5 @@ export {
   resolveConfig,
 } from './config';
 export type { BotGuardConfig, BotGuardOptions, EndpointPaths } from './config';
-
+export { collectEnv, deviceClass } from './collectors/env';
+export type { EnvSignals } from './collectors/env';
