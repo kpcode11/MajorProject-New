@@ -114,4 +114,3 @@ class TestDatabasePersistenceAndPrivacy:
         assert chal.assessment_id == rec_id
         assert chal.outcome == "passed"
         assert chal.completed_at is not None
-
