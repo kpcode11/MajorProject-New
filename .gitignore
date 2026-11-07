@@ -48,6 +48,10 @@ results/*
 *.parquet
 *.zip
 *.onnx
+!backend/models/**/*.onnx
+*.db
+*.sqlite
+*.sqlite3
 
 # Operating-system and editor files
 .DS_Store
