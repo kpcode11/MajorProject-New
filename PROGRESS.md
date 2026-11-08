@@ -79,8 +79,8 @@
 | P6-07 | 6 | SDK public API | DONE | b7676cb | BotGuardClient class and BotGuard singleton (start, assess, runChallenge, stop, setChallengeHandler, prefetchNonce) with idempotent lifecycle and requestIdleCallback snapshot scheduling; 5 tests. |
 | P6-08 | 6 | SDK challenge UI | DONE | 6c46c30 | Pluggable step-up challenge UI (renderPressHoldChallenge, createChallengeHandler, defaultPressHoldRenderer) with accessible dialog, mouse/touch/keyboard hold, single-press keyboard alternative, and custom renderer support; 5 tests. |
 | P6-09 | 6 | React SDK integration | DONE | 1417f3f | BotGuardProvider and useBotGuard() hook in @botguard/sdk/react with auto-start/stop lifecycle, assess, runChallenge, and assessWithStepUp; 3 React 19 tests. |
-| P6-10 | 6 | SDK performance controls | DONE | pending | Passive listener enforcement, throttle gate, scheduleIdleTask with timeout fallback, bounded ring buffers, and zero-listener-leak stop() cleanup; 4 stress/performance tests. |
-| P6-11 | 6 | SDK tests | TODO | | |
+| P6-10 | 6 | SDK performance controls | DONE | 30a8a73 | Passive listener enforcement, throttle gate, scheduleIdleTask with timeout fallback, bounded ring buffers, and zero-listener-leak stop() cleanup; 4 stress/performance tests. |
+| P6-11 | 6 | SDK tests | DONE | pending | 98 vitest + happy-dom tests across 11 suites: bounded collectors, form/typed-string privacy guarantees, throttling, <64 KB stress test, and window/document stop() listener cleanup. |
 | P6-12 | 6 | SDK bundle report | TODO | | |
 | P6-13 | 6 | SDK/backend contract test | TODO | | |
 | P7-01 | 7 | Demo portal scaffold | TODO | | |
