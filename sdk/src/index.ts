@@ -15,3 +15,5 @@ export {
 export type { BotGuardConfig, BotGuardOptions, EndpointPaths } from './config';
 export { collectEnv, deviceClass } from './collectors/env';
 export type { EnvSignals } from './collectors/env';
+export { MouseCollector } from './collectors/mouse';
+export type { MouseBehaviour, MouseCollectorOptions } from './collectors/mouse';
