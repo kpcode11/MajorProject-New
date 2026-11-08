@@ -21,10 +21,10 @@
     },
     "react": {
       "file": "dist/react/index.js",
-      "raw_bytes": 3123,
-      "raw_kb": 3.05,
-      "gzip_bytes": 1043,
-      "gzip_kb": 1.02
+      "raw_bytes": 3273,
+      "raw_kb": 3.2,
+      "gzip_bytes": 1073,
+      "gzip_kb": 1.05
     }
   }
 }

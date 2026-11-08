@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = (ROOT / "ml", ROOT / "backend")
 SDK = ROOT / "sdk"
+PORTAL = ROOT / "portal"
 IMPLEMENTED = (
     "setup",
     "lint",
@@ -45,14 +46,16 @@ def require_environment(package: Path) -> Path:
     return interpreter
 
 
-def sdk_npm(*scripts: str) -> None:
-    """Run npm scripts in ``sdk/``; skip with a notice when Node or dependencies are missing."""
+def node_npm(pkg_dir: Path, *scripts: str) -> None:
+    """Run npm scripts in ``pkg_dir``; skip with a notice when Node or dependencies are missing."""
     npm = shutil.which("npm")
-    if npm is None or not (SDK / "node_modules").exists():
-        print("sdk: skipped (install Node.js and run: python scripts/tasks.py setup)")
+    if npm is None or not (pkg_dir / "node_modules").exists():
+        print(
+            f"{pkg_dir.name}: skipped (install Node.js and run: python scripts/tasks.py setup)"
+        )
         return
     for script in scripts:
-        run([npm, "run", "--silent", script], cwd=SDK)
+        run([npm, "run", "--silent", script], cwd=pkg_dir)
 
 
 def setup() -> None:
@@ -78,10 +81,13 @@ def setup() -> None:
     npm = shutil.which("npm")
     if npm is not None and (SDK / "package-lock.json").exists():
         run([npm, "ci", "--no-fund", "--no-audit"], cwd=SDK)
+        run([npm, "run", "--silent", "build"], cwd=SDK)
+    if npm is not None and (PORTAL / "package-lock.json").exists():
+        run([npm, "ci", "--no-fund", "--no-audit"], cwd=PORTAL)
 
 
 def lint() -> None:
-    """Run Ruff, strict mypy, and the SDK ESLint/Prettier/tsc checks."""
+    """Run Ruff, strict mypy, and the SDK/portal ESLint/Prettier/tsc checks."""
     for package, source, tests in (
         (PACKAGES[0], "src", "tests"),
         (PACKAGES[1], "app", "tests"),
@@ -93,11 +99,12 @@ def lint() -> None:
             cwd=package,
         )
         run([str(interpreter), "-m", "mypy", source], cwd=package)
-    sdk_npm("lint", "typecheck")
+    node_npm(SDK, "lint", "typecheck")
+    node_npm(PORTAL, "lint", "typecheck")
 
 
 def test() -> None:
-    """Run the complete test suites for both Python packages and the SDK."""
+    """Run the complete test suites for both Python packages, the SDK, and the portal."""
     for package in PACKAGES:
         run(
             [
@@ -112,7 +119,8 @@ def test() -> None:
             ],
             cwd=package,
         )
-    sdk_npm("test")
+    node_npm(SDK, "test")
+    node_npm(PORTAL, "test")
 
 
 def test_fast() -> None:
