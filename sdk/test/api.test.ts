@@ -157,11 +157,17 @@ describe('BotGuard public API & BotGuardClient (P6-07)', () => {
     });
   });
 
-  it('runChallenge returns a degraded response when no handler or hold timestamps are provided', async () => {
+  it('runChallenge uses the default challenge UI and returns degraded when cancelled', async () => {
     BotGuard.setChallengeHandler(undefined);
     BotGuard.start({ now });
-    const res = await BotGuard.runChallenge(SAMPLE_CHALLENGE_INFO, 'otp_request');
+    const promise = BotGuard.runChallenge(SAMPLE_CHALLENGE_INFO, 'otp_request');
+    const cancelBtn = document.querySelector(
+      '.botguard-challenge-cancel-btn',
+    ) as HTMLButtonElement | null;
+    expect(cancelBtn).not.toBeNull();
+    cancelBtn?.click();
+    const res = await promise;
     expect(res.degraded).toBe(true);
-    expect(res.request_id).toContain('challenge_handler_missing');
+    expect(res.request_id).toContain('challenge_cancelled');
   });
 });

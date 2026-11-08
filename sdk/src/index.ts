@@ -12,6 +12,17 @@
  * - When `useIdleCallback` is enabled and `requestIdleCallback` is available, snapshot assembly yields
  *   to an idle callback (with a 50 ms timeout) so UI frames are not delayed.
  */
+import {
+  BotGuardChallengeCancelledError,
+  type ChallengeHandler,
+  type ChallengeInteractionResult,
+  type ChallengeRenderContext,
+  type ChallengeRenderer,
+  type ChallengeUIOptions,
+  createChallengeHandler,
+  defaultPressHoldRenderer,
+  renderPressHoldChallenge,
+} from './challenge';
 import { type CollectEnvOptions, type EnvSignals, collectEnv, deviceClass } from './collectors/env';
 import {
   type KeyBehaviour,
@@ -73,6 +84,7 @@ import {
 } from './transport';
 
 export {
+  BotGuardChallengeCancelledError,
   BotGuardConfigError,
   BotGuardTransportError,
   DEFAULT_CONFIG,
@@ -87,6 +99,8 @@ export {
   buildAssessPayload,
   buildChallengePayload,
   collectEnv,
+  createChallengeHandler,
+  defaultPressHoldRenderer,
   degradedFallbackResponse,
   deviceClass,
   endpointUrl,
@@ -94,6 +108,7 @@ export {
   keyClass,
   postAssess,
   postChallenge,
+  renderPressHoldChallenge,
   resolveConfig,
   safeAssess,
   safeSubmitChallenge,
@@ -109,7 +124,12 @@ export type {
   BuildAssessPayloadInput,
   BuildChallengePayloadInput,
   ChallengeAssessRequestPayload,
+  ChallengeHandler,
   ChallengeInfo,
+  ChallengeInteractionResult,
+  ChallengeRenderContext,
+  ChallengeRenderer,
+  ChallengeUIOptions,
   CollectEnvOptions,
   DeviceClass,
   EndpointPaths,
@@ -128,18 +148,6 @@ export type {
   TouchPointTuple,
   TransportDeps,
 };
-
-/** Timing result captured by a step-up challenge UI (P6-08). */
-export interface ChallengeInteractionResult {
-  holdStartMs: number;
-  holdEndMs: number;
-}
-
-/** Pluggable step-up challenge UI handler (P6-08). */
-export type ChallengeHandler = (
-  challenge: ChallengeInfo,
-  action: string,
-) => Promise<ChallengeInteractionResult>;
 
 /** Options accepted by `BotGuard.start()` and `new BotGuardClient()`. */
 export interface BotGuardStartOptions extends BotGuardOptions {
@@ -379,10 +387,8 @@ export class BotGuardClient {
     let holdEndMs = options.holdEndMs;
 
     if (holdStartMs === undefined || holdEndMs === undefined) {
-      const handler = options.handler ?? this.challengeHandler;
-      if (!handler) {
-        return degradedFallbackResponse('challenge_handler_missing');
-      }
+      const handler =
+        options.handler ?? this.challengeHandler ?? createChallengeHandler({ now: this.nowFn });
       try {
         const interaction = await handler(challenge, action);
         holdStartMs = interaction.holdStartMs;
