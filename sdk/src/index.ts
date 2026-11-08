@@ -54,6 +54,7 @@ import {
   endpointUrl,
   resolveConfig,
 } from './config';
+import { type IdleScheduleOptions, createThrottleGate, scheduleIdleTask } from './performance';
 import { RingBuffer } from './ringbuffer';
 import {
   type AssessRequestPayload,
@@ -100,6 +101,7 @@ export {
   buildChallengePayload,
   collectEnv,
   createChallengeHandler,
+  createThrottleGate,
   defaultPressHoldRenderer,
   degradedFallbackResponse,
   deviceClass,
@@ -112,6 +114,7 @@ export {
   resolveConfig,
   safeAssess,
   safeSubmitChallenge,
+  scheduleIdleTask,
   utf8ByteLength,
 };
 export type {
@@ -134,6 +137,7 @@ export type {
   DeviceClass,
   EndpointPaths,
   EnvSignals,
+  IdleScheduleOptions,
   KeyBehaviour,
   KeyClass,
   KeyboardCollectorOptions,
@@ -177,26 +181,6 @@ export interface RunChallengeOptions {
   nonce?: string;
   /** Optional challenge UI handler for this call. */
   handler?: ChallengeHandler;
-}
-
-type IdleCallbackFn = (cb: () => void, opts?: { timeout: number }) => unknown;
-
-function runInIdle<T>(enabled: boolean, compute: () => T): Promise<T> {
-  if (!enabled || typeof window === 'undefined') {
-    return Promise.resolve(compute());
-  }
-  const ric = (window as Window & { requestIdleCallback?: IdleCallbackFn }).requestIdleCallback;
-  if (typeof ric !== 'function') {
-    return Promise.resolve(compute());
-  }
-  return new Promise<T>((resolve) => {
-    ric(
-      () => {
-        resolve(compute());
-      },
-      { timeout: 50 },
-    );
-  });
 }
 
 /**
@@ -355,9 +339,9 @@ export class BotGuardClient {
       }
     }
 
-    const { env, behaviour } = await runInIdle(this.config.useIdleCallback, () =>
-      this.collectSnapshot(),
-    );
+    const { env, behaviour } = await scheduleIdleTask(() => this.collectSnapshot(), {
+      enabled: this.config.useIdleCallback,
+    });
 
     return safeAssess(
       this.config,
@@ -398,9 +382,9 @@ export class BotGuardClient {
       }
     }
 
-    const { env, behaviour } = await runInIdle(this.config.useIdleCallback, () =>
-      this.collectSnapshot(),
-    );
+    const { env, behaviour } = await scheduleIdleTask(() => this.collectSnapshot(), {
+      enabled: this.config.useIdleCallback,
+    });
 
     return safeSubmitChallenge(
       this.config,
