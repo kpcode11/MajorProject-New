@@ -102,7 +102,7 @@ describe('Mock portal scaffold and pages (P7-01, P7-02)', () => {
             decision: 'allow',
             score: 0.12,
             band: 'low',
-            action: 'login',
+            action: 'otp_request',
             token: 'tok_human_login_123',
             reasons: [],
           }),
@@ -149,7 +149,7 @@ describe('Mock portal scaffold and pages (P7-01, P7-02)', () => {
     expect(portalCalls[0]?.headers['X-Human-Token']).toBe('tok_human_login_123');
     expect(portalCalls[0]?.body).not.toContain(secretIdentifier);
     expect(JSON.parse(portalCalls[0]?.body ?? '{}')).toEqual({
-      action: 'login',
+      action: 'otp_request',
       identifier_length: 12,
     });
 
@@ -175,7 +175,7 @@ describe('Mock portal scaffold and pages (P7-01, P7-02)', () => {
             decision: 'allow',
             score: 0.08,
             band: 'low',
-            action: 'update_details',
+            action: 'details_update',
             token: 'tok_human_portal_456',
             reasons: [],
           }),

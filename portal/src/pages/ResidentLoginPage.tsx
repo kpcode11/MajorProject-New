@@ -28,10 +28,10 @@ export function ResidentLoginPage(): ReactNode {
       const apiResult = await callPortalEndpoint(
         '/portal-api/otp/request',
         {
-          action: 'login',
+          action: 'otp_request',
           identifier_length: trimmed.length,
         },
-        () => assessWithStepUp('login'),
+        () => assessWithStepUp('otp_request'),
       );
       setResult(apiResult);
     } finally {

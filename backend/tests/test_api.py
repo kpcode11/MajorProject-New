@@ -9,16 +9,16 @@ from typing import Any
 
 import numpy as np
 import pytest
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 
 from app.config import Settings, load_rule_config, load_settings
 from app.db import DatabaseManager
 from app.main import app as default_app
-from app.main import create_app, format_safe_log_record, require_human_token
+from app.main import create_app, format_safe_log_record
 from app.schemas import EnvSignals
 from app.scoring import ModelScorer
 from app.store import InMemoryStore, Store
-from app.tokens import TokenClaims, issue_token
+from app.tokens import issue_token
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 
@@ -273,13 +273,6 @@ def test_app(test_settings: Settings) -> FastAPI:
         scorer=default_app.state.scorer,
         db=db,
     )
-
-    @app.post("/portal-api/otp/request")
-    async def protected_otp(
-        claims: TokenClaims = Depends(require_human_token("otp_request")),
-    ) -> dict[str, Any]:
-        return {"status": "otp_sent", "action": claims.act, "band": claims.band}
-
     return app
 
 

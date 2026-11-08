@@ -42,13 +42,13 @@ export function UpdateDetailsPage(): ReactNode {
       const apiResult = await callPortalEndpoint(
         '/portal-api/details/update',
         {
-          action: 'update_details',
+          action: 'details_update',
           fields_updated: fieldsUpdated,
           city_code: city,
           language_code: language,
           confirmed: true,
         },
-        () => assessWithStepUp('update_details'),
+        () => assessWithStepUp('details_update'),
       );
       setResult(apiResult);
     } finally {

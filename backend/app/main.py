@@ -808,6 +808,10 @@ def create_app(
             db_ok=db_ok,
         )
 
+    from app.portal import create_portal_router
+
+    app.include_router(create_portal_router())
+
     return app
 
 

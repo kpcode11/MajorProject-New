@@ -24,7 +24,7 @@ const SERVICE_CARDS: ReadonlyArray<{
     actionLabel: 'Open Resident login',
     description:
       'Enter a synthetic 12-digit identifier and request a one-time password (OTP) protected against automated OTP flooding.',
-    actionCode: 'action: login',
+    actionCode: 'action: otp_request',
   },
   {
     id: 'update-details',
@@ -33,7 +33,7 @@ const SERVICE_CARDS: ReadonlyArray<{
     actionLabel: 'Open Update details',
     description:
       'Submit a demographic update form (name, address, PIN code, city, language) exercising natural mouse and keystroke timing.',
-    actionCode: 'action: update_details',
+    actionCode: 'action: details_update',
   },
   {
     id: 'centre-search',
