@@ -83,8 +83,8 @@
 | P6-11 | 6 | SDK tests | DONE | b03e6c3 | 98 vitest + happy-dom tests across 11 suites: bounded collectors, form/typed-string privacy guarantees, throttling, <64 KB stress test, and window/document stop() listener cleanup. |
 | P6-12 | 6 | SDK bundle report | DONE | 0ae5bef | ES module (10.90 KB gzip), UMD (10.05 KB gzip), and React wrapper (1.02 KB gzip) built and reported in results/system/sdk_size.json (< 30 KB target). |
 | P6-13 | 6 | SDK/backend contract test | DONE | c667d49 | Exported backend Pydantic JSON Schema (data/fixtures/backend_contract_schema.json) and validated live SDK AssessRequest and ChallengeAssessRequest payloads in sdk/test/contract.test.ts and backend/tests/test_sdk_contract.py. |
-| P7-01 | 7 | Demo portal scaffold | DONE | pending | React 19 + Vite 8 + TypeScript 6 portal scaffold in portal/ labelled 'DEMO — not a government portal', wrapped in BotGuardProvider, with CI job and unit test. |
-| P7-02 | 7 | Demo portal pages | TODO | | |
+| P7-01 | 7 | Demo portal scaffold | DONE | 556745c | React 19 + Vite 8 + TypeScript 6 portal scaffold in portal/ labelled 'DEMO — not a government portal', wrapped in BotGuardProvider, with CI job and unit test. |
+| P7-02 | 7 | Demo portal pages | DONE | pending | Landing, Resident login (identifier + Send OTP), Update details form, and Centre search pages in portal/src/pages/ with X-Human-Token forwarding and zero raw-text transmission; 4 unit tests. |
 | P7-03 | 7 | Protected portal API | TODO | | |
 | P7-04 | 7 | Portal API statistics | TODO | | |
 | P7-05 | 7 | Protection-mode switch | TODO | | |

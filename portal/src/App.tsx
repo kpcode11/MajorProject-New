@@ -1,14 +1,54 @@
 /**
- * Mock Resident Services Portal — DEMO — not a government portal (P7-01).
+ * Mock Resident Services Portal — DEMO — not a government portal (P7-01, P7-02).
  *
- * Wraps the portal shell in `BotGuardProvider` and renders a prominent disclaimer banner
+ * Wraps the portal shell in `BotGuardProvider`, renders a prominent disclaimer banner
  * stating that this application is a local research demonstration and not affiliated with
- * UIDAI or any government portal.
+ * UIDAI or any government portal, and provides navigation between:
+ *  - Landing (`landing`)
+ *  - Resident login (`login`)
+ *  - Update details (`update-details`)
+ *  - Centre search (`centre-search`)
  */
 import { BotGuardProvider, useBotGuard } from '@botguard/sdk/react';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import { CentreSearchPage } from './pages/CentreSearchPage.js';
+import { LandingPage, type PortalPageId } from './pages/LandingPage.js';
+import { ResidentLoginPage } from './pages/ResidentLoginPage.js';
+import { UpdateDetailsPage } from './pages/UpdateDetailsPage.js';
 
 export const DEMO_DISCLAIMER_TEXT = 'DEMO — not a government portal';
+
+const NAV_ITEMS: ReadonlyArray<{ id: PortalPageId; label: string; testId: string }> = [
+  { id: 'landing', label: 'Overview', testId: 'nav-landing' },
+  { id: 'login', label: 'Resident login', testId: 'nav-login' },
+  { id: 'update-details', label: 'Update details', testId: 'nav-update-details' },
+  { id: 'centre-search', label: 'Centre search', testId: 'nav-centre-search' },
+];
+
+function resolveInitialPage(explicitPage?: PortalPageId): PortalPageId {
+  if (explicitPage) return explicitPage;
+  if (typeof window === 'undefined') return 'landing';
+  const params = new URLSearchParams(window.location.search);
+  const queryPage = params.get('page');
+  if (
+    queryPage === 'landing' ||
+    queryPage === 'login' ||
+    queryPage === 'update-details' ||
+    queryPage === 'centre-search'
+  ) {
+    return queryPage;
+  }
+  const hashPage = window.location.hash.replace(/^#\/?/, '');
+  if (
+    hashPage === 'landing' ||
+    hashPage === 'login' ||
+    hashPage === 'update-details' ||
+    hashPage === 'centre-search'
+  ) {
+    return hashPage;
+  }
+  return 'landing';
+}
 
 export function PortalStatusBadge(): ReactNode {
   const { running, assessing, lastResponse } = useBotGuard();
@@ -39,7 +79,13 @@ export function PortalStatusBadge(): ReactNode {
   );
 }
 
-export function PortalShell(): ReactNode {
+export interface PortalShellProps {
+  initialPage?: PortalPageId;
+}
+
+export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
+  const [activePage, setActivePage] = useState<PortalPageId>(() => resolveInitialPage(initialPage));
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <div
@@ -67,21 +113,56 @@ export function PortalShell(): ReactNode {
           borderBottom: '1px solid #e2e8f0',
           padding: '16px 24px',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '12px',
+          flexDirection: 'column',
+          gap: '14px',
         }}
       >
-        <div>
-          <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 700, color: '#0f172a' }}>
-            Mock Resident Self-Service Portal
-          </h1>
-          <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#475569' }}>
-            Protected by passive behavioural verification — no CAPTCHA puzzles
-          </p>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '12px',
+          }}
+        >
+          <div>
+            <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 700, color: '#0f172a' }}>
+              Mock Resident Self-Service Portal
+            </h1>
+            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#475569' }}>
+              Protected by passive behavioural verification — no CAPTCHA puzzles
+            </p>
+          </div>
+          <PortalStatusBadge />
         </div>
-        <PortalStatusBadge />
+
+        <nav aria-label="Portal sections" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {NAV_ITEMS.map((item) => {
+            const isActive = activePage === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                data-testid={item.testId}
+                aria-current={isActive ? 'page' : undefined}
+                onClick={() => setActivePage(item.id)}
+                style={{
+                  padding: '8px 14px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: isActive ? '1px solid #0284c7' : '1px solid #cbd5e1',
+                  background: isActive ? '#0284c7' : '#f8fafc',
+                  color: isActive ? '#ffffff' : '#1e293b',
+                }}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </nav>
       </header>
 
       <main
@@ -94,24 +175,10 @@ export function PortalShell(): ReactNode {
           boxSizing: 'border-box',
         }}
       >
-        <section
-          aria-labelledby="portal-welcome-heading"
-          style={{
-            background: '#ffffff',
-            border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            padding: '24px',
-            boxShadow: '0 1px 3px rgba(15,23,42,0.05)',
-          }}
-        >
-          <h2 id="portal-welcome-heading" style={{ marginTop: 0, fontSize: '18px' }}>
-            Welcome to the Mock Citizen Portal
-          </h2>
-          <p style={{ color: '#334155', lineHeight: 1.6, marginBottom: 0 }}>
-            This mock portal demonstrates passive bot detection for resident login (OTP request),
-            demographic detail updates, and enrolment centre search without visual CAPTCHA puzzles.
-          </p>
-        </section>
+        {activePage === 'landing' && <LandingPage onNavigate={setActivePage} />}
+        {activePage === 'login' && <ResidentLoginPage />}
+        {activePage === 'update-details' && <UpdateDetailsPage />}
+        {activePage === 'centre-search' && <CentreSearchPage />}
       </main>
 
       <footer
@@ -130,10 +197,14 @@ export function PortalShell(): ReactNode {
   );
 }
 
-export function App(): ReactNode {
+export interface AppProps {
+  initialPage?: PortalPageId;
+}
+
+export function App({ initialPage }: AppProps = {}): ReactNode {
   return (
     <BotGuardProvider>
-      <PortalShell />
+      <PortalShell initialPage={initialPage} />
     </BotGuardProvider>
   );
 }

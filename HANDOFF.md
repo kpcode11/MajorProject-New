@@ -1,25 +1,24 @@
 # Handoff
 
-**Updated:** 2026-11-08 21:45  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-08 21:53  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P7-02 — Demo portal pages (`portal/src/`)
-- State: not started (`TODO`; P7-01 is DONE)
+- ID: P7-03 — Protected portal API (`backend/app/`)
+- State: not started (`TODO`; P7-02 is DONE)
 
 ## Done in Phase 7 so far
-- **P7-01:** Created `portal/` React 19 + Vite 8 + TypeScript 6 + Vitest 5 + ESLint 10 + Prettier scaffold linking `@botguard/sdk` (`file:../sdk`). Added prominent `"DEMO — not a government portal"` disclaimer banner, `<BotGuardProvider>` root wrapper with reactive `running` state in `sdk/src/react/index.tsx`, Vite `/v1` and `/portal-api` dev proxy to `http://127.0.0.1:8000`, `portal/test/app.test.tsx`, `scripts/tasks.py` integration (`setup`, `lint`, `test`), and `.github/workflows/ci.yml` `portal` job.
+- **P7-01 (`556745c`):** Created `portal/` React 19 + Vite 8 + TypeScript 6 + Vitest 5 + ESLint 10 + Prettier scaffold linking `@botguard/sdk` (`file:../sdk`). Added prominent `"DEMO — not a government portal"` disclaimer banner, `<BotGuardProvider>` root wrapper with reactive `running` state in `sdk/src/react/index.tsx`, Vite `/v1` and `/portal-api` dev proxy to `http://127.0.0.1:8000`, `portal/test/app.test.tsx`, `scripts/tasks.py` integration, and `.github/workflows/ci.yml` `portal` job.
+- **P7-02:** Added mock portal pages in `portal/src/pages/` (`LandingPage.tsx`, `ResidentLoginPage.tsx` with identifier text field and **Send OTP** button, `UpdateDetailsPage.tsx` form, `CentreSearchPage.tsx`), client helper `portal/src/api.ts` (`callPortalEndpoint`), top/card navigation in `portal/src/App.tsx`, and 4 unit tests in `portal/test/app.test.tsx`.
 
 ## Exact next step
-- Start **P7-02** (`Demo portal pages`): implement the mock citizen portal pages in `portal/src/`:
-  1. Landing page (navigation cards + explanation of passive verification)
-  2. "Resident login" page with an identifier text field and "Send OTP" button
-  3. "Update details" form (mouse + keyboard heavy)
-  4. "Centre search" page (rapid query endpoint targeted by bots)
-  Add component/page unit tests in `portal/test/`.
+- Start **P7-03** (`Protected portal API`): add FastAPI routes under `/portal-api/`:
+  - `POST /portal-api/otp/request` (`action="login"`)
+  - `POST /portal-api/details/update` (`action="update_details"`)
+  - `POST /portal-api/centres/search` (`action="centre_search"`)
+  Each route requires a valid `X-Human-Token` for its action via `require_human_token(action)` (and prepares for `P7-04` `/portal-api/stats` and `P7-05` protection mode switch). Add unit tests in `backend/tests/test_portal_api.py`.
 
 ## Files touched (recent)
-- `portal/package.json`, `portal/package-lock.json`, `portal/tsconfig.json`, `portal/vite.config.ts`, `portal/vitest.config.ts`, `portal/eslint.config.js`, `portal/.prettierrc.json`, `portal/.prettierignore`, `portal/index.html`, `portal/src/main.tsx`, `portal/src/App.tsx`, `portal/test/app.test.tsx` (new); `portal/.gitkeep` (deleted)
-- `sdk/src/react/index.tsx`, `results/system/sdk_size.json`, `scripts/tasks.py`, `.github/workflows/ci.yml`, `PROGRESS.md`, `HANDOFF.md`
+- `portal/src/api.ts`, `portal/src/pages/LandingPage.tsx`, `portal/src/pages/ResidentLoginPage.tsx`, `portal/src/pages/UpdateDetailsPage.tsx`, `portal/src/pages/CentreSearchPage.tsx` (new); `portal/src/App.tsx`, `portal/test/app.test.tsx`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/tasks.py lint
@@ -28,7 +27,6 @@
 
 ## Known problems / gotchas
 - Run `npm` inside `sdk/` or `portal/`, never the repository root.
-- When `sdk/src/` changes, run `npm run build` in `sdk/` so `portal/` picks up the updated `@botguard/sdk` build.
 - Git writes require elevated permissions outside the sandbox.
 
 ## Dataset / long-job state
