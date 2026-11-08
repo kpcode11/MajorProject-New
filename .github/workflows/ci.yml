@@ -19,3 +19,27 @@ jobs:
         run: python scripts/tasks.py lint
       - name: Fast tests
         run: python scripts/tasks.py test-fast
+
+  sdk:
+    name: SDK lint, typecheck, tests and build
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: sdk
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: sdk/package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Tests
+        run: npm test
+      - name: Build
+        run: npm run build

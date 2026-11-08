@@ -1,6 +1,6 @@
 # Progress
 
-**Current phase:** 6  |  **Branch:** main  |  **Last updated:** 2026-11-06  |  **Last agent/tool:** Antigravity
+**Current phase:** 7  |  **Branch:** phase-6-browser-sdk  |  **Last updated:** 2026-11-08  |  **Last agent/tool:** Antigravity
 
 ## Task table
 
@@ -70,19 +70,19 @@
 | P5-12 | 5 | Privacy-safe logging | DONE | pending | Structured JSON logging with /24 and /48 IP coarsening and redaction of raw traces/payloads. |
 | P5-13 | 5 | Backend tests | DONE | pending | Comprehensive API, security, replay, fail-safe, oversize payload, rate-limit, and logging tests in backend/tests/test_api.py. |
 | P5-14 | 5 | Latency benchmark | DONE | pending | 1,000-call micro-benchmark in backend/bench_scoring.py (p50=1.65 ms, p95=15.16 ms < 200 ms) saved to results/system/scoring_latency.json. |
-| P6-01 | 6 | SDK package and CI | TODO | | |
-| P6-02 | 6 | Environment collector | TODO | | |
-| P6-03 | 6 | Mouse collector | TODO | | |
-| P6-04 | 6 | Keyboard collector | TODO | | |
-| P6-05 | 6 | Scroll and timing collectors | TODO | | |
-| P6-06 | 6 | SDK transport | TODO | | |
-| P6-07 | 6 | SDK public API | TODO | | |
-| P6-08 | 6 | SDK challenge UI | TODO | | |
-| P6-09 | 6 | React SDK integration | TODO | | |
-| P6-10 | 6 | SDK performance controls | TODO | | |
-| P6-11 | 6 | SDK tests | TODO | | |
-| P6-12 | 6 | SDK bundle report | TODO | | |
-| P6-13 | 6 | SDK/backend contract test | TODO | | |
+| P6-01 | 6 | SDK package and CI | DONE | 9f0c704 | Vite 8 + TS 6 strict + vitest 5 (happy-dom) + ESLint 10 + Prettier; config.ts with contract hard limits; CI sdk job; tasks.py lint/test/setup run SDK scripts. |
+| P6-02 | 6 | Environment collector | DONE | d1f02a4 | Appendix B.2 coarse environment snapshot, bucketing helpers, UA/WebGL classification, native integrity check, deviceClass, and 20 unit tests. |
+| P6-03 | 6 | Mouse collector | DONE | 8b92328 | Passive throttled mousemove/down/up/click/wheel listeners, bounded RingBuffer, windowed snapshot matching backend MouseBehaviour, untrusted events counted not stored; 8 tests. |
+| P6-04 | 6 | Keyboard collector | DONE | 115c28f | Key class only (mapped in keyClass, identity never stored; class-FIFO pairing), auto-repeat ignored, paste count, autofill flag for text fields, untrusted count; backend KeyBehaviour gains untrusted_count so R11 sees it; 23 SDK tests incl. typed-string privacy test. |
+| P6-05 | 6 | Scroll and timing collectors | DONE | 714e96c | ScrollCollector (passive capture scroll counter) and TimingCollector (ms_since_load, ms_to_first_interaction, ms_since_nonce, scroll_events, focus_changes via focus/blur/visibilitychange); 5 unit tests. |
+| P6-06 | 6 | SDK transport | DONE | 044bd2c | Nonce fetch, 64 KB-bounded payload builders, POST /v1/assess and /v1/assess/challenge with AbortController timeouts, exponential backoff retries, and non-throwing safeAssess/safeSubmitChallenge; 10 tests. |
+| P6-07 | 6 | SDK public API | DONE | b7676cb | BotGuardClient class and BotGuard singleton (start, assess, runChallenge, stop, setChallengeHandler, prefetchNonce) with idempotent lifecycle and requestIdleCallback snapshot scheduling; 5 tests. |
+| P6-08 | 6 | SDK challenge UI | DONE | 6c46c30 | Pluggable step-up challenge UI (renderPressHoldChallenge, createChallengeHandler, defaultPressHoldRenderer) with accessible dialog, mouse/touch/keyboard hold, single-press keyboard alternative, and custom renderer support; 5 tests. |
+| P6-09 | 6 | React SDK integration | DONE | 1417f3f | BotGuardProvider and useBotGuard() hook in @botguard/sdk/react with auto-start/stop lifecycle, assess, runChallenge, and assessWithStepUp; 3 React 19 tests. |
+| P6-10 | 6 | SDK performance controls | DONE | 30a8a73 | Passive listener enforcement, throttle gate, scheduleIdleTask with timeout fallback, bounded ring buffers, and zero-listener-leak stop() cleanup; 4 stress/performance tests. |
+| P6-11 | 6 | SDK tests | DONE | b03e6c3 | 98 vitest + happy-dom tests across 11 suites: bounded collectors, form/typed-string privacy guarantees, throttling, <64 KB stress test, and window/document stop() listener cleanup. |
+| P6-12 | 6 | SDK bundle report | DONE | 0ae5bef | ES module (10.90 KB gzip), UMD (10.05 KB gzip), and React wrapper (1.02 KB gzip) built and reported in results/system/sdk_size.json (< 30 KB target). |
+| P6-13 | 6 | SDK/backend contract test | DONE | pending | Exported backend Pydantic JSON Schema (data/fixtures/backend_contract_schema.json) and validated live SDK AssessRequest and ChallengeAssessRequest payloads in sdk/test/contract.test.ts and backend/tests/test_sdk_contract.py. |
 | P7-01 | 7 | Demo portal scaffold | TODO | | |
 | P7-02 | 7 | Demo portal pages | TODO | | |
 | P7-03 | 7 | Protected portal API | TODO | | |
@@ -163,3 +163,4 @@ Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 - `results/mouse/` — `baselines.csv`, `hparams.json`, `evaluation_splits.csv`, `lobo_evaluation.csv`, `human_fpr_captchasolve30k.csv`, `aggregation.csv`, `calibration.json`, `ablations.csv`, `shap_summary.csv`, `shap_top3_examples.json`, `fingerprint.json`
 - `results/keyboard/` — `privacy_scan.json`, `baselines.csv`, `hparams.json`, `evaluation.csv`, `evaluation_splits.csv`, `per_generator.csv`, `speed_terciles.csv`, `calibration.json`, `feature_importance.csv`, `failure_analysis.md`, `summary.json`
 - `results/fusion/` — `fusion_comparison.csv`, `modality_availability.csv`
+- `results/system/` — `scoring_latency.json`, `sdk_size.json`

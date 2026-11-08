@@ -45,9 +45,14 @@ results/*
 !results/fusion/.gitkeep
 !results/system/
 !results/system/.gitkeep
+!results/system/**
 *.parquet
 *.zip
 *.onnx
+!backend/models/**/*.onnx
+*.db
+*.sqlite
+*.sqlite3
 
 # Operating-system and editor files
 .DS_Store

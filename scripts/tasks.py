@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import argparse
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = (ROOT / "ml", ROOT / "backend")
+SDK = ROOT / "sdk"
 IMPLEMENTED = (
     "setup",
     "lint",
@@ -43,6 +45,16 @@ def require_environment(package: Path) -> Path:
     return interpreter
 
 
+def sdk_npm(*scripts: str) -> None:
+    """Run npm scripts in ``sdk/``; skip with a notice when Node or dependencies are missing."""
+    npm = shutil.which("npm")
+    if npm is None or not (SDK / "node_modules").exists():
+        print("sdk: skipped (install Node.js and run: python scripts/tasks.py setup)")
+        return
+    for script in scripts:
+        run([npm, "run", "--silent", script], cwd=SDK)
+
+
 def setup() -> None:
     """Create local package environments and install their development dependencies."""
     for package in PACKAGES:
@@ -63,10 +75,13 @@ def setup() -> None:
         ],
         cwd=PACKAGES[1],
     )
+    npm = shutil.which("npm")
+    if npm is not None and (SDK / "package-lock.json").exists():
+        run([npm, "ci", "--no-fund", "--no-audit"], cwd=SDK)
 
 
 def lint() -> None:
-    """Run Ruff checks, format checks, and strict mypy for both Python packages."""
+    """Run Ruff, strict mypy, and the SDK ESLint/Prettier/tsc checks."""
     for package, source, tests in (
         (PACKAGES[0], "src", "tests"),
         (PACKAGES[1], "app", "tests"),
@@ -78,10 +93,11 @@ def lint() -> None:
             cwd=package,
         )
         run([str(interpreter), "-m", "mypy", source], cwd=package)
+    sdk_npm("lint", "typecheck")
 
 
 def test() -> None:
-    """Run the complete test suites for both Python packages."""
+    """Run the complete test suites for both Python packages and the SDK."""
     for package in PACKAGES:
         run(
             [
@@ -96,6 +112,7 @@ def test() -> None:
             ],
             cwd=package,
         )
+    sdk_npm("test")
 
 
 def test_fast() -> None:

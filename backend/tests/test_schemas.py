@@ -203,6 +203,13 @@ class TestKeyBehaviour:
         with pytest.raises(ValidationError):
             KeyBehaviour(events=[["letter", 100.0]])  # only 2 elements
 
+    def test_untrusted_count_kept_and_bounded(self) -> None:
+        kb = KeyBehaviour(untrusted_count=3)
+        assert kb.model_dump()["untrusted_count"] == 3
+        assert KeyBehaviour().untrusted_count == 0
+        with pytest.raises(ValidationError):
+            KeyBehaviour(untrusted_count=301)
+
 
 # ---------------------------------------------------------------------------
 # TouchBehaviour

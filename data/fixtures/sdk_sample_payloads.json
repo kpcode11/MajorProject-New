@@ -1,0 +1,457 @@
+{
+  "assess_request": {
+    "nonce": "nonce-contract-123456",
+    "action": "otp_request",
+    "sdk_version": "1.0.0",
+    "schema_version": 1,
+    "client_ts": 1760000000000,
+    "env": {
+      "webdriver": true,
+      "ua_family": "other",
+      "ua_os": "linux",
+      "platform": "X11; Win32 x64",
+      "languages_count": 2,
+      "lang_primary": "en-US",
+      "timezone_offset_min": -330,
+      "screen_w_bucket": 1024,
+      "screen_h_bucket": 768,
+      "viewport_w": 1024,
+      "viewport_h": 768,
+      "outer_w": 1024,
+      "outer_h": 768,
+      "dpr_bucket": 1,
+      "hw_concurrency_bucket": 8,
+      "webgl_renderer_class": "unknown",
+      "plugins_count": 0,
+      "max_touch_points": 0,
+      "touch_event_supported": false,
+      "native_fn_integrity_ok": true,
+      "storage_available": true,
+      "visibility": "visible"
+    },
+    "behaviour": {
+      "device_class": "desktop",
+      "mouse": {
+        "points": [
+          [
+            120,
+            240,
+            100
+          ],
+          [
+            128,
+            253,
+            125
+          ],
+          [
+            136,
+            254,
+            150
+          ],
+          [
+            144,
+            242,
+            175
+          ],
+          [
+            152,
+            229,
+            200
+          ],
+          [
+            160,
+            226,
+            225
+          ],
+          [
+            168,
+            236,
+            250
+          ],
+          [
+            176,
+            250,
+            275
+          ],
+          [
+            184,
+            255,
+            300
+          ],
+          [
+            192,
+            246,
+            325
+          ],
+          [
+            200,
+            232,
+            350
+          ],
+          [
+            208,
+            225,
+            375
+          ],
+          [
+            216,
+            232,
+            400
+          ],
+          [
+            224,
+            246,
+            425
+          ],
+          [
+            232,
+            255,
+            450
+          ],
+          [
+            240,
+            250,
+            475
+          ],
+          [
+            248,
+            236,
+            500
+          ],
+          [
+            256,
+            226,
+            525
+          ],
+          [
+            264,
+            229,
+            550
+          ],
+          [
+            272,
+            242,
+            575
+          ],
+          [
+            280,
+            254,
+            600
+          ],
+          [
+            288,
+            253,
+            625
+          ],
+          [
+            296,
+            240,
+            650
+          ],
+          [
+            304,
+            227,
+            675
+          ],
+          [
+            312,
+            226,
+            700
+          ],
+          [
+            320,
+            250,
+            800
+          ],
+          [
+            320,
+            250,
+            875
+          ]
+        ],
+        "clicks": [
+          [
+            320,
+            250,
+            800,
+            875
+          ]
+        ],
+        "untrusted_count": 0,
+        "wheel_events": 0
+      },
+      "keys": {
+        "events": [
+          [
+            "letter",
+            935,
+            1010
+          ],
+          [
+            "letter",
+            1070,
+            1145
+          ],
+          [
+            "letter",
+            1205,
+            1280
+          ],
+          [
+            "digit",
+            1340,
+            1415
+          ],
+          [
+            "space",
+            1475,
+            1550
+          ],
+          [
+            "enter",
+            1610,
+            1685
+          ]
+        ],
+        "paste_events": 0,
+        "autofill_suspected": false,
+        "untrusted_count": 0
+      },
+      "timing": {
+        "ms_since_load": 2400,
+        "scroll_events": 1,
+        "focus_changes": 0,
+        "ms_to_first_interaction": 100,
+        "ms_since_nonce": 0
+      }
+    }
+  },
+  "challenge_assess_request": {
+    "nonce": "nonce-contract-123456",
+    "challenge_id": "chal-contract-001",
+    "action": "otp_request",
+    "sdk_version": "1.0.0",
+    "hold_start_ms": 2500,
+    "hold_end_ms": 3680,
+    "env": {
+      "webdriver": true,
+      "ua_family": "other",
+      "ua_os": "linux",
+      "platform": "X11; Win32 x64",
+      "languages_count": 2,
+      "lang_primary": "en-US",
+      "timezone_offset_min": -330,
+      "screen_w_bucket": 1024,
+      "screen_h_bucket": 768,
+      "viewport_w": 1024,
+      "viewport_h": 768,
+      "outer_w": 1024,
+      "outer_h": 768,
+      "dpr_bucket": 1,
+      "hw_concurrency_bucket": 8,
+      "webgl_renderer_class": "unknown",
+      "plugins_count": 0,
+      "max_touch_points": 0,
+      "touch_event_supported": false,
+      "native_fn_integrity_ok": true,
+      "storage_available": true,
+      "visibility": "visible"
+    },
+    "behaviour": {
+      "device_class": "desktop",
+      "mouse": {
+        "points": [
+          [
+            120,
+            240,
+            100
+          ],
+          [
+            128,
+            253,
+            125
+          ],
+          [
+            136,
+            254,
+            150
+          ],
+          [
+            144,
+            242,
+            175
+          ],
+          [
+            152,
+            229,
+            200
+          ],
+          [
+            160,
+            226,
+            225
+          ],
+          [
+            168,
+            236,
+            250
+          ],
+          [
+            176,
+            250,
+            275
+          ],
+          [
+            184,
+            255,
+            300
+          ],
+          [
+            192,
+            246,
+            325
+          ],
+          [
+            200,
+            232,
+            350
+          ],
+          [
+            208,
+            225,
+            375
+          ],
+          [
+            216,
+            232,
+            400
+          ],
+          [
+            224,
+            246,
+            425
+          ],
+          [
+            232,
+            255,
+            450
+          ],
+          [
+            240,
+            250,
+            475
+          ],
+          [
+            248,
+            236,
+            500
+          ],
+          [
+            256,
+            226,
+            525
+          ],
+          [
+            264,
+            229,
+            550
+          ],
+          [
+            272,
+            242,
+            575
+          ],
+          [
+            280,
+            254,
+            600
+          ],
+          [
+            288,
+            253,
+            625
+          ],
+          [
+            296,
+            240,
+            650
+          ],
+          [
+            304,
+            227,
+            675
+          ],
+          [
+            312,
+            226,
+            700
+          ],
+          [
+            320,
+            250,
+            800
+          ],
+          [
+            320,
+            250,
+            875
+          ]
+        ],
+        "clicks": [
+          [
+            320,
+            250,
+            800,
+            875
+          ]
+        ],
+        "untrusted_count": 0,
+        "wheel_events": 0
+      },
+      "keys": {
+        "events": [
+          [
+            "letter",
+            935,
+            1010
+          ],
+          [
+            "letter",
+            1070,
+            1145
+          ],
+          [
+            "letter",
+            1205,
+            1280
+          ],
+          [
+            "digit",
+            1340,
+            1415
+          ],
+          [
+            "space",
+            1475,
+            1550
+          ],
+          [
+            "enter",
+            1610,
+            1685
+          ]
+        ],
+        "paste_events": 0,
+        "autofill_suspected": false,
+        "untrusted_count": 0
+      },
+      "timing": {
+        "ms_since_load": 3800,
+        "scroll_events": 1,
+        "focus_changes": 0,
+        "ms_to_first_interaction": 100,
+        "ms_since_nonce": 1400
+      }
+    }
+  }
+}

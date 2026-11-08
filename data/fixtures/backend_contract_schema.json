@@ -1,0 +1,1703 @@
+{
+  "AssessRequest": {
+    "$defs": {
+      "BehaviourPayload": {
+        "description": "Combined behaviour payload (Appendix B.3).\n\nAll modality sub-objects are optional; missing modalities are handled\nby the missing-modality policy (absent \u2260 bot).",
+        "properties": {
+          "device_class": {
+            "anyOf": [
+              {
+                "enum": [
+                  "desktop",
+                  "mobile",
+                  "tablet",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Device class reported by the SDK.",
+            "title": "Device Class"
+          },
+          "keys": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/KeyBehaviour"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "mouse": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/MouseBehaviour"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "timing": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/TimingSignals"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "touch": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/TouchBehaviour"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "title": "BehaviourPayload",
+        "type": "object"
+      },
+      "EnvSignals": {
+        "description": "Privacy-safe, coarse environment signals collected by the SDK.\n\nEvery field is optional so that a missing or partial payload can be\nhandled by the rule layer (rule R01_NO_PAYLOAD fires when the entire\nobject is absent or empty).  Values are bucketed or categorical \u2014 no\nraw high-entropy strings are accepted.",
+        "properties": {
+          "device_memory_bucket": {
+            "anyOf": [
+              {
+                "maximum": 256.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.deviceMemory in GB, bucketed (0.25, 0.5, 1, 2, 4, 8).",
+            "title": "Device Memory Bucket"
+          },
+          "dpr_bucket": {
+            "anyOf": [
+              {
+                "maximum": 10.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "window.devicePixelRatio, bucketed (1, 1.5, 2, 3).",
+            "title": "Dpr Bucket"
+          },
+          "hints_brands": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 10,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Client-hints brand names, e.g. ['Chromium', 'Google Chrome'].",
+            "title": "Hints Brands"
+          },
+          "hints_platform": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Client-hints platform string, e.g. 'Windows', 'macOS'.",
+            "title": "Hints Platform"
+          },
+          "hw_concurrency_bucket": {
+            "anyOf": [
+              {
+                "maximum": 1024,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.hardwareConcurrency, bucketed.",
+            "title": "Hw Concurrency Bucket"
+          },
+          "lang_primary": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "First language tag, e.g. 'en-IN'. Used for timezone plausibility.",
+            "title": "Lang Primary"
+          },
+          "languages_count": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Length of navigator.languages.",
+            "title": "Languages Count"
+          },
+          "max_touch_points": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.maxTouchPoints.",
+            "title": "Max Touch Points"
+          },
+          "native_fn_integrity_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "True when toString() of key native functions matches the expected pattern; false when they have been overridden/proxied.",
+            "title": "Native Fn Integrity Ok"
+          },
+          "outer_h": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "window.outerHeight in pixels.",
+            "title": "Outer H"
+          },
+          "outer_w": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "window.outerWidth in pixels.",
+            "title": "Outer W"
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.platform value, e.g. 'Win32', 'MacIntel', 'Linux x86_64'.",
+            "title": "Platform"
+          },
+          "plugins_count": {
+            "anyOf": [
+              {
+                "maximum": 500,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.plugins.length.",
+            "title": "Plugins Count"
+          },
+          "screen_h_bucket": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "screen.height rounded to the nearest common resolution.",
+            "title": "Screen H Bucket"
+          },
+          "screen_w_bucket": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "screen.width rounded to the nearest common resolution.",
+            "title": "Screen W Bucket"
+          },
+          "storage_available": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "True when localStorage / sessionStorage are accessible.",
+            "title": "Storage Available"
+          },
+          "timezone_offset_min": {
+            "anyOf": [
+              {
+                "maximum": 840,
+                "minimum": -840,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "new Date().getTimezoneOffset() in minutes (negative = east of UTC).",
+            "title": "Timezone Offset Min"
+          },
+          "touch_event_supported": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "'ontouchstart' in window or similar probe result.",
+            "title": "Touch Event Supported"
+          },
+          "ua_family": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Browser family in lowercase, e.g. 'chrome', 'firefox', 'safari'.",
+            "title": "Ua Family"
+          },
+          "ua_major": {
+            "anyOf": [
+              {
+                "maximum": 9999,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Major version of the browser parsed from the UA string.",
+            "title": "Ua Major"
+          },
+          "ua_os": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "OS family in lowercase, e.g. 'windows', 'macos', 'linux', 'android', 'ios'.",
+            "title": "Ua Os"
+          },
+          "viewport_h": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "window.innerHeight in pixels.",
+            "title": "Viewport H"
+          },
+          "viewport_w": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "window.innerWidth in pixels.",
+            "title": "Viewport W"
+          },
+          "visibility": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "document.visibilityState at collection time: 'visible', 'hidden', etc.",
+            "title": "Visibility"
+          },
+          "webdriver": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.webdriver flag; true in most automation frameworks.",
+            "title": "Webdriver"
+          },
+          "webgl_renderer_class": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Classified WebGL renderer: 'hardware', 'software', 'virtual', 'unknown'.",
+            "title": "Webgl Renderer Class"
+          }
+        },
+        "title": "EnvSignals",
+        "type": "object"
+      },
+      "KeyBehaviour": {
+        "description": "Keyboard timing events (Appendix B.3).",
+        "properties": {
+          "autofill_suspected": {
+            "default": false,
+            "description": "True when a browser autofill was detected.",
+            "title": "Autofill Suspected",
+            "type": "boolean"
+          },
+          "events": {
+            "description": "At most 300 [key_class, down_ms, up_ms] events.",
+            "items": {
+              "items": {},
+              "type": "array"
+            },
+            "maxItems": 300,
+            "title": "Events",
+            "type": "array"
+          },
+          "paste_events": {
+            "default": 0,
+            "description": "Count of paste/autofill paste events.",
+            "maximum": 1000,
+            "minimum": 0,
+            "title": "Paste Events",
+            "type": "integer"
+          },
+          "untrusted_count": {
+            "default": 0,
+            "description": "Number of key events where isTrusted was false (read by rule R11).",
+            "maximum": 300,
+            "minimum": 0,
+            "title": "Untrusted Count",
+            "type": "integer"
+          }
+        },
+        "title": "KeyBehaviour",
+        "type": "object"
+      },
+      "MouseBehaviour": {
+        "description": "Mouse movement and click events (Appendix B.3).",
+        "properties": {
+          "clicks": {
+            "description": "[x, y, down_ms, up_ms] click events.",
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "maxItems": 600,
+            "title": "Clicks",
+            "type": "array"
+          },
+          "points": {
+            "description": "At most 600 [x, y, t_ms] samples.",
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "maxItems": 600,
+            "title": "Points",
+            "type": "array"
+          },
+          "untrusted_count": {
+            "default": 0,
+            "description": "Number of events where isTrusted was false.",
+            "maximum": 600,
+            "minimum": 0,
+            "title": "Untrusted Count",
+            "type": "integer"
+          },
+          "wheel_events": {
+            "default": 0,
+            "description": "Total count of wheel/scroll events.",
+            "maximum": 10000,
+            "minimum": 0,
+            "title": "Wheel Events",
+            "type": "integer"
+          }
+        },
+        "title": "MouseBehaviour",
+        "type": "object"
+      },
+      "TimingSignals": {
+        "description": "Page-level timing signals (Appendix B.3).",
+        "properties": {
+          "focus_changes": {
+            "anyOf": [
+              {
+                "maximum": 10000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Number of focus/blur transitions.",
+            "title": "Focus Changes"
+          },
+          "ms_since_load": {
+            "anyOf": [
+              {
+                "maximum": 3600000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Milliseconds since page load.",
+            "title": "Ms Since Load"
+          },
+          "ms_since_nonce": {
+            "anyOf": [
+              {
+                "maximum": 3600000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Milliseconds elapsed since the nonce was issued.",
+            "title": "Ms Since Nonce"
+          },
+          "ms_to_first_interaction": {
+            "anyOf": [
+              {
+                "maximum": 3600000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Milliseconds from page load to first user interaction.",
+            "title": "Ms To First Interaction"
+          },
+          "scroll_events": {
+            "anyOf": [
+              {
+                "maximum": 100000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Total scroll event count.",
+            "title": "Scroll Events"
+          }
+        },
+        "title": "TimingSignals",
+        "type": "object"
+      },
+      "TouchBehaviour": {
+        "description": "Touch gesture events (Appendix B.3, Phase 8).",
+        "properties": {
+          "gestures": {
+            "description": "At most 20 gestures.",
+            "items": {
+              "$ref": "#/$defs/TouchGesture"
+            },
+            "maxItems": 20,
+            "title": "Gestures",
+            "type": "array"
+          }
+        },
+        "title": "TouchBehaviour",
+        "type": "object"
+      },
+      "TouchGesture": {
+        "description": "A single touch gesture (tap, swipe, drag, other).",
+        "properties": {
+          "points": {
+            "description": "At most 100 [x, y, t_ms, pressure?, size?] samples.",
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "maxItems": 100,
+            "title": "Points",
+            "type": "array"
+          },
+          "type": {
+            "description": "Gesture type.",
+            "enum": [
+              "tap",
+              "swipe",
+              "drag",
+              "other"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "TouchGesture",
+        "type": "object"
+      }
+    },
+    "description": "Request body for ``POST /v1/assess`` (Appendix B.4).\n\nBody size is limited to 64 KB by middleware; field-level limits here\nprovide defence-in-depth.",
+    "properties": {
+      "action": {
+        "description": "Action identifier matching a class in policy.yaml, e.g. 'otp_request', 'centre_search'.",
+        "maxLength": 128,
+        "minLength": 1,
+        "title": "Action",
+        "type": "string"
+      },
+      "behaviour": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/BehaviourPayload"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Behaviour payload (Appendix B.3)."
+      },
+      "client_ts": {
+        "anyOf": [
+          {
+            "minimum": 0.0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Client-side Unix timestamp in milliseconds.",
+        "title": "Client Ts"
+      },
+      "env": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/EnvSignals"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Environment signals (Appendix B.2)."
+      },
+      "nonce": {
+        "description": "Single-use nonce issued by GET /v1/nonce.",
+        "maxLength": 256,
+        "minLength": 1,
+        "title": "Nonce",
+        "type": "string"
+      },
+      "schema_version": {
+        "default": 1,
+        "description": "Payload schema version for forwards compatibility.",
+        "maximum": 100,
+        "minimum": 1,
+        "title": "Schema Version",
+        "type": "integer"
+      },
+      "sdk_version": {
+        "default": "unknown",
+        "description": "SDK version string.",
+        "maxLength": 128,
+        "title": "Sdk Version",
+        "type": "string"
+      }
+    },
+    "required": [
+      "nonce",
+      "action"
+    ],
+    "title": "AssessRequest",
+    "type": "object"
+  },
+  "AssessResponse": {
+    "$defs": {
+      "ChallengeInfo": {
+        "description": "Challenge parameters returned inside an assess response.",
+        "properties": {
+          "expires_in": {
+            "description": "Seconds until the challenge expires.",
+            "maximum": 3600,
+            "minimum": 1,
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "hold_ms": {
+            "description": "Server-chosen hold duration in milliseconds (800\u20131500 ms).",
+            "maximum": 10000,
+            "minimum": 100,
+            "title": "Hold Ms",
+            "type": "integer"
+          },
+          "id": {
+            "description": "Single-use challenge id.",
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "const": "press_hold",
+            "description": "Challenge type.",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "hold_ms",
+          "expires_in"
+        ],
+        "title": "ChallengeInfo",
+        "type": "object"
+      },
+      "ModelVersions": {
+        "description": "Version strings for loaded inference models.",
+        "properties": {
+          "fusion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Fusion"
+          },
+          "keyboard": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Keyboard"
+          },
+          "mouse": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Mouse"
+          },
+          "touch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Touch"
+          }
+        },
+        "title": "ModelVersions",
+        "type": "object"
+      }
+    },
+    "description": "Response from ``POST /v1/assess`` (Appendix B.4).\n\nThe exact numeric score is **never** included; only the coarse ``band``\nis returned to untrusted callers.  The score is in logs and admin API only.",
+    "properties": {
+      "band": {
+        "description": "Risk band (coarse; the exact score is not exposed).",
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "title": "Band",
+        "type": "string"
+      },
+      "challenge": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ChallengeInfo"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Challenge parameters when decision is 'challenge'; null otherwise."
+      },
+      "decision": {
+        "description": "Access decision.",
+        "enum": [
+          "allow",
+          "challenge",
+          "deny"
+        ],
+        "title": "Decision",
+        "type": "string"
+      },
+      "degraded": {
+        "default": false,
+        "description": "True when the decision was made in degraded mode (e.g. model unavailable).",
+        "title": "Degraded",
+        "type": "boolean"
+      },
+      "model_versions": {
+        "$ref": "#/$defs/ModelVersions",
+        "description": "Versions of the inference models used."
+      },
+      "request_id": {
+        "description": "Server-assigned request UUID.",
+        "title": "Request Id",
+        "type": "string"
+      },
+      "token": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Signed JWT for 'allow' decisions; null when decision is 'challenge'.",
+        "title": "Token"
+      }
+    },
+    "required": [
+      "decision",
+      "band",
+      "request_id"
+    ],
+    "title": "AssessResponse",
+    "type": "object"
+  },
+  "ChallengeAssessRequest": {
+    "$defs": {
+      "BehaviourPayload": {
+        "description": "Combined behaviour payload (Appendix B.3).\n\nAll modality sub-objects are optional; missing modalities are handled\nby the missing-modality policy (absent \u2260 bot).",
+        "properties": {
+          "device_class": {
+            "anyOf": [
+              {
+                "enum": [
+                  "desktop",
+                  "mobile",
+                  "tablet",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Device class reported by the SDK.",
+            "title": "Device Class"
+          },
+          "keys": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/KeyBehaviour"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "mouse": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/MouseBehaviour"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "timing": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/TimingSignals"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "touch": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/TouchBehaviour"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "title": "BehaviourPayload",
+        "type": "object"
+      },
+      "EnvSignals": {
+        "description": "Privacy-safe, coarse environment signals collected by the SDK.\n\nEvery field is optional so that a missing or partial payload can be\nhandled by the rule layer (rule R01_NO_PAYLOAD fires when the entire\nobject is absent or empty).  Values are bucketed or categorical \u2014 no\nraw high-entropy strings are accepted.",
+        "properties": {
+          "device_memory_bucket": {
+            "anyOf": [
+              {
+                "maximum": 256.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.deviceMemory in GB, bucketed (0.25, 0.5, 1, 2, 4, 8).",
+            "title": "Device Memory Bucket"
+          },
+          "dpr_bucket": {
+            "anyOf": [
+              {
+                "maximum": 10.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "window.devicePixelRatio, bucketed (1, 1.5, 2, 3).",
+            "title": "Dpr Bucket"
+          },
+          "hints_brands": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 10,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Client-hints brand names, e.g. ['Chromium', 'Google Chrome'].",
+            "title": "Hints Brands"
+          },
+          "hints_platform": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Client-hints platform string, e.g. 'Windows', 'macOS'.",
+            "title": "Hints Platform"
+          },
+          "hw_concurrency_bucket": {
+            "anyOf": [
+              {
+                "maximum": 1024,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.hardwareConcurrency, bucketed.",
+            "title": "Hw Concurrency Bucket"
+          },
+          "lang_primary": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "First language tag, e.g. 'en-IN'. Used for timezone plausibility.",
+            "title": "Lang Primary"
+          },
+          "languages_count": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Length of navigator.languages.",
+            "title": "Languages Count"
+          },
+          "max_touch_points": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.maxTouchPoints.",
+            "title": "Max Touch Points"
+          },
+          "native_fn_integrity_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "True when toString() of key native functions matches the expected pattern; false when they have been overridden/proxied.",
+            "title": "Native Fn Integrity Ok"
+          },
+          "outer_h": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "window.outerHeight in pixels.",
+            "title": "Outer H"
+          },
+          "outer_w": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "window.outerWidth in pixels.",
+            "title": "Outer W"
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.platform value, e.g. 'Win32', 'MacIntel', 'Linux x86_64'.",
+            "title": "Platform"
+          },
+          "plugins_count": {
+            "anyOf": [
+              {
+                "maximum": 500,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.plugins.length.",
+            "title": "Plugins Count"
+          },
+          "screen_h_bucket": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "screen.height rounded to the nearest common resolution.",
+            "title": "Screen H Bucket"
+          },
+          "screen_w_bucket": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "screen.width rounded to the nearest common resolution.",
+            "title": "Screen W Bucket"
+          },
+          "storage_available": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "True when localStorage / sessionStorage are accessible.",
+            "title": "Storage Available"
+          },
+          "timezone_offset_min": {
+            "anyOf": [
+              {
+                "maximum": 840,
+                "minimum": -840,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "new Date().getTimezoneOffset() in minutes (negative = east of UTC).",
+            "title": "Timezone Offset Min"
+          },
+          "touch_event_supported": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "'ontouchstart' in window or similar probe result.",
+            "title": "Touch Event Supported"
+          },
+          "ua_family": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Browser family in lowercase, e.g. 'chrome', 'firefox', 'safari'.",
+            "title": "Ua Family"
+          },
+          "ua_major": {
+            "anyOf": [
+              {
+                "maximum": 9999,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Major version of the browser parsed from the UA string.",
+            "title": "Ua Major"
+          },
+          "ua_os": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "OS family in lowercase, e.g. 'windows', 'macos', 'linux', 'android', 'ios'.",
+            "title": "Ua Os"
+          },
+          "viewport_h": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "window.innerHeight in pixels.",
+            "title": "Viewport H"
+          },
+          "viewport_w": {
+            "anyOf": [
+              {
+                "maximum": 32768,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "window.innerWidth in pixels.",
+            "title": "Viewport W"
+          },
+          "visibility": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "document.visibilityState at collection time: 'visible', 'hidden', etc.",
+            "title": "Visibility"
+          },
+          "webdriver": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "navigator.webdriver flag; true in most automation frameworks.",
+            "title": "Webdriver"
+          },
+          "webgl_renderer_class": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Classified WebGL renderer: 'hardware', 'software', 'virtual', 'unknown'.",
+            "title": "Webgl Renderer Class"
+          }
+        },
+        "title": "EnvSignals",
+        "type": "object"
+      },
+      "KeyBehaviour": {
+        "description": "Keyboard timing events (Appendix B.3).",
+        "properties": {
+          "autofill_suspected": {
+            "default": false,
+            "description": "True when a browser autofill was detected.",
+            "title": "Autofill Suspected",
+            "type": "boolean"
+          },
+          "events": {
+            "description": "At most 300 [key_class, down_ms, up_ms] events.",
+            "items": {
+              "items": {},
+              "type": "array"
+            },
+            "maxItems": 300,
+            "title": "Events",
+            "type": "array"
+          },
+          "paste_events": {
+            "default": 0,
+            "description": "Count of paste/autofill paste events.",
+            "maximum": 1000,
+            "minimum": 0,
+            "title": "Paste Events",
+            "type": "integer"
+          },
+          "untrusted_count": {
+            "default": 0,
+            "description": "Number of key events where isTrusted was false (read by rule R11).",
+            "maximum": 300,
+            "minimum": 0,
+            "title": "Untrusted Count",
+            "type": "integer"
+          }
+        },
+        "title": "KeyBehaviour",
+        "type": "object"
+      },
+      "MouseBehaviour": {
+        "description": "Mouse movement and click events (Appendix B.3).",
+        "properties": {
+          "clicks": {
+            "description": "[x, y, down_ms, up_ms] click events.",
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "maxItems": 600,
+            "title": "Clicks",
+            "type": "array"
+          },
+          "points": {
+            "description": "At most 600 [x, y, t_ms] samples.",
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "maxItems": 600,
+            "title": "Points",
+            "type": "array"
+          },
+          "untrusted_count": {
+            "default": 0,
+            "description": "Number of events where isTrusted was false.",
+            "maximum": 600,
+            "minimum": 0,
+            "title": "Untrusted Count",
+            "type": "integer"
+          },
+          "wheel_events": {
+            "default": 0,
+            "description": "Total count of wheel/scroll events.",
+            "maximum": 10000,
+            "minimum": 0,
+            "title": "Wheel Events",
+            "type": "integer"
+          }
+        },
+        "title": "MouseBehaviour",
+        "type": "object"
+      },
+      "TimingSignals": {
+        "description": "Page-level timing signals (Appendix B.3).",
+        "properties": {
+          "focus_changes": {
+            "anyOf": [
+              {
+                "maximum": 10000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Number of focus/blur transitions.",
+            "title": "Focus Changes"
+          },
+          "ms_since_load": {
+            "anyOf": [
+              {
+                "maximum": 3600000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Milliseconds since page load.",
+            "title": "Ms Since Load"
+          },
+          "ms_since_nonce": {
+            "anyOf": [
+              {
+                "maximum": 3600000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Milliseconds elapsed since the nonce was issued.",
+            "title": "Ms Since Nonce"
+          },
+          "ms_to_first_interaction": {
+            "anyOf": [
+              {
+                "maximum": 3600000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Milliseconds from page load to first user interaction.",
+            "title": "Ms To First Interaction"
+          },
+          "scroll_events": {
+            "anyOf": [
+              {
+                "maximum": 100000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Total scroll event count.",
+            "title": "Scroll Events"
+          }
+        },
+        "title": "TimingSignals",
+        "type": "object"
+      },
+      "TouchBehaviour": {
+        "description": "Touch gesture events (Appendix B.3, Phase 8).",
+        "properties": {
+          "gestures": {
+            "description": "At most 20 gestures.",
+            "items": {
+              "$ref": "#/$defs/TouchGesture"
+            },
+            "maxItems": 20,
+            "title": "Gestures",
+            "type": "array"
+          }
+        },
+        "title": "TouchBehaviour",
+        "type": "object"
+      },
+      "TouchGesture": {
+        "description": "A single touch gesture (tap, swipe, drag, other).",
+        "properties": {
+          "points": {
+            "description": "At most 100 [x, y, t_ms, pressure?, size?] samples.",
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "maxItems": 100,
+            "title": "Points",
+            "type": "array"
+          },
+          "type": {
+            "description": "Gesture type.",
+            "enum": [
+              "tap",
+              "swipe",
+              "drag",
+              "other"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "TouchGesture",
+        "type": "object"
+      }
+    },
+    "description": "Request body for ``POST /v1/assess/challenge``.",
+    "properties": {
+      "action": {
+        "maxLength": 128,
+        "minLength": 1,
+        "title": "Action",
+        "type": "string"
+      },
+      "behaviour": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/BehaviourPayload"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "challenge_id": {
+        "maxLength": 256,
+        "minLength": 1,
+        "title": "Challenge Id",
+        "type": "string"
+      },
+      "env": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/EnvSignals"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "hold_end_ms": {
+        "anyOf": [
+          {
+            "minimum": 0.0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Client timestamp when the hold interaction ended.",
+        "title": "Hold End Ms"
+      },
+      "hold_start_ms": {
+        "anyOf": [
+          {
+            "minimum": 0.0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Client timestamp when the hold interaction started.",
+        "title": "Hold Start Ms"
+      },
+      "nonce": {
+        "maxLength": 256,
+        "minLength": 1,
+        "title": "Nonce",
+        "type": "string"
+      },
+      "sdk_version": {
+        "default": "unknown",
+        "maxLength": 128,
+        "title": "Sdk Version",
+        "type": "string"
+      }
+    },
+    "required": [
+      "nonce",
+      "challenge_id",
+      "action"
+    ],
+    "title": "ChallengeAssessRequest",
+    "type": "object"
+  },
+  "NonceResponse": {
+    "description": "Response from ``GET /v1/nonce``.",
+    "properties": {
+      "expires_in": {
+        "description": "Seconds until the nonce expires.",
+        "minimum": 1,
+        "title": "Expires In",
+        "type": "integer"
+      },
+      "nonce": {
+        "description": "URL-safe, single-use 32-byte nonce.",
+        "title": "Nonce",
+        "type": "string"
+      }
+    },
+    "required": [
+      "nonce",
+      "expires_in"
+    ],
+    "title": "NonceResponse",
+    "type": "object"
+  }
+}
