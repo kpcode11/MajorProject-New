@@ -1,9 +1,9 @@
 # Handoff
 
-**Updated:** 2026-11-08 21:01  |  **By:** Antigravity  |  **Branch:** phase-6-browser-sdk  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-08 21:07  |  **By:** Antigravity  |  **Branch:** phase-6-browser-sdk  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P6-09 — React SDK integration (`sdk/src/react/index.tsx`)
+- ID: P6-10 — SDK performance controls (`sdk/src/`)
 - State: not started (`TODO`)
 
 ## Done in Phase 6 so far
@@ -15,13 +15,14 @@
 - **P6-05 (`714e96c`):** `collectors/scroll.ts` (`ScrollCollector`) and `collectors/timing.ts` (`TimingCollector`).
 - **P6-06 (`044bd2c`):** `src/transport.ts` (`fetchNonce`, `buildAssessPayload`, `buildChallengePayload`, `postAssess`, `postChallenge`, `safeAssess`, `safeSubmitChallenge`, `BotGuardTransportError`).
 - **P6-07 (`b7676cb`):** `src/index.ts` (`BotGuardClient` class and `BotGuard` singleton facade).
-- **P6-08:** `src/challenge.ts` (`renderPressHoldChallenge`, `createChallengeHandler`, `defaultPressHoldRenderer`, `BotGuardChallengeCancelledError`) wired as the default handler in `BotGuardClient.runChallenge()`. Supports accessible press-and-hold (mouse, touch, keyboard `Space`/`Enter`), a single-press keyboard accessibility alternative button, `Cancel` / `Escape` handling, and custom `ChallengeRenderer` pluggability. Added `sdk/test/challenge.test.ts` (5 tests; 88 SDK tests total).
+- **P6-08 (`6c46c30`):** `src/challenge.ts` (`renderPressHoldChallenge`, `createChallengeHandler`, `defaultPressHoldRenderer`, `BotGuardChallengeCancelledError`).
+- **P6-09:** `src/react/index.tsx` (`BotGuardProvider` and `useBotGuard()` hook exported at `@botguard/sdk/react` with optional React peer dependency, keeping zero runtime dependencies in the core bundle). Added `sdk/test/react.test.tsx` (3 tests; 91 SDK tests total).
 
 ## Exact next step
-- Implement `P6-09` (`sdk/src/react/index.tsx`): `BotGuardProvider` and `useBotGuard()` hook with React as an optional peer dependency (`peerDependencies` in `package.json`, `react` + `@types/react` + `@testing-library/react` or `react-dom` in devDependencies for testing, and externalised in Vite or separate entry so core bundle keeps zero runtime dependencies). Add `sdk/test/react.test.tsx`.
+- Implement `P6-10` (`SDK performance controls`): verify and complete passive listener enforcement, throttling, `requestIdleCallback` / Web Worker aggregation helpers, bounded ring buffers, and explicit listener-leak / memory-clearing guarantees on `stop()` with dedicated performance tests in `sdk/test/performance.test.ts`.
 
 ## Files touched (recent)
-- `sdk/src/challenge.ts`, `sdk/test/challenge.test.ts` (new); `sdk/src/index.ts`; `sdk/test/api.test.ts`; `PROGRESS.md`; `HANDOFF.md`
+- `sdk/src/react/index.tsx`, `sdk/test/react.test.tsx` (new); `sdk/package.json`; `sdk/package-lock.json`; `sdk/tsconfig.build.json`; `PROGRESS.md`; `HANDOFF.md`
 
 ## Commands to run first
     python scripts/tasks.py test-fast

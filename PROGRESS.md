@@ -77,8 +77,8 @@
 | P6-05 | 6 | Scroll and timing collectors | DONE | 714e96c | ScrollCollector (passive capture scroll counter) and TimingCollector (ms_since_load, ms_to_first_interaction, ms_since_nonce, scroll_events, focus_changes via focus/blur/visibilitychange); 5 unit tests. |
 | P6-06 | 6 | SDK transport | DONE | 044bd2c | Nonce fetch, 64 KB-bounded payload builders, POST /v1/assess and /v1/assess/challenge with AbortController timeouts, exponential backoff retries, and non-throwing safeAssess/safeSubmitChallenge; 10 tests. |
 | P6-07 | 6 | SDK public API | DONE | b7676cb | BotGuardClient class and BotGuard singleton (start, assess, runChallenge, stop, setChallengeHandler, prefetchNonce) with idempotent lifecycle and requestIdleCallback snapshot scheduling; 5 tests. |
-| P6-08 | 6 | SDK challenge UI | DONE | pending | Pluggable step-up challenge UI (renderPressHoldChallenge, createChallengeHandler, defaultPressHoldRenderer) with accessible dialog, mouse/touch/keyboard hold, single-press keyboard alternative, and custom renderer support; 5 tests. |
-| P6-09 | 6 | React SDK integration | TODO | | |
+| P6-08 | 6 | SDK challenge UI | DONE | 6c46c30 | Pluggable step-up challenge UI (renderPressHoldChallenge, createChallengeHandler, defaultPressHoldRenderer) with accessible dialog, mouse/touch/keyboard hold, single-press keyboard alternative, and custom renderer support; 5 tests. |
+| P6-09 | 6 | React SDK integration | DONE | pending | BotGuardProvider and useBotGuard() hook in @botguard/sdk/react with auto-start/stop lifecycle, assess, runChallenge, and assessWithStepUp; 3 React 19 tests. |
 | P6-10 | 6 | SDK performance controls | TODO | | |
 | P6-11 | 6 | SDK tests | TODO | | |
 | P6-12 | 6 | SDK bundle report | TODO | | |
