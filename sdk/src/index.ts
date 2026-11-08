@@ -22,3 +22,32 @@ export type { KeyBehaviour, KeyClass, KeyboardCollectorOptions } from './collect
 export { ScrollCollector } from './collectors/scroll';
 export { TimingCollector } from './collectors/timing';
 export type { TimingCollectorOptions, TimingSignals } from './collectors/timing';
+export {
+  BotGuardTransportError,
+  buildAssessPayload,
+  buildChallengePayload,
+  degradedFallbackResponse,
+  fetchNonce,
+  postAssess,
+  postChallenge,
+  safeAssess,
+  safeSubmitChallenge,
+  utf8ByteLength,
+} from './transport';
+export type {
+  AssessRequestPayload,
+  AssessResponse,
+  BackendErrorDetail,
+  BehaviourPayload,
+  BuildAssessPayloadInput,
+  BuildChallengePayloadInput,
+  ChallengeAssessRequestPayload,
+  ChallengeInfo,
+  DeviceClass,
+  ModelVersions,
+  NonceResponse,
+  TouchBehaviour,
+  TouchGesture,
+  TouchPointTuple,
+  TransportDeps,
+} from './transport';
