@@ -42,6 +42,7 @@ const MAX_SCROLL = 100_000;
 const MAX_FOCUS = 10_000;
 
 const INTERACTION_EVENTS = [
+  'mousemove',
   'mousedown',
   'keydown',
   'touchstart',
