@@ -1,6 +1,6 @@
 # Progress
 
-**Current phase:** 6  |  **Branch:** phase-6-browser-sdk  |  **Last updated:** 2026-11-07  |  **Last agent/tool:** Antigravity
+**Current phase:** 7  |  **Branch:** phase-6-browser-sdk  |  **Last updated:** 2026-11-08  |  **Last agent/tool:** Antigravity
 
 ## Task table
 
@@ -81,8 +81,8 @@
 | P6-09 | 6 | React SDK integration | DONE | 1417f3f | BotGuardProvider and useBotGuard() hook in @botguard/sdk/react with auto-start/stop lifecycle, assess, runChallenge, and assessWithStepUp; 3 React 19 tests. |
 | P6-10 | 6 | SDK performance controls | DONE | 30a8a73 | Passive listener enforcement, throttle gate, scheduleIdleTask with timeout fallback, bounded ring buffers, and zero-listener-leak stop() cleanup; 4 stress/performance tests. |
 | P6-11 | 6 | SDK tests | DONE | b03e6c3 | 98 vitest + happy-dom tests across 11 suites: bounded collectors, form/typed-string privacy guarantees, throttling, <64 KB stress test, and window/document stop() listener cleanup. |
-| P6-12 | 6 | SDK bundle report | DONE | pending | ES module (10.90 KB gzip), UMD (10.05 KB gzip), and React wrapper (1.02 KB gzip) built and reported in results/system/sdk_size.json (< 30 KB target). |
-| P6-13 | 6 | SDK/backend contract test | TODO | | |
+| P6-12 | 6 | SDK bundle report | DONE | 0ae5bef | ES module (10.90 KB gzip), UMD (10.05 KB gzip), and React wrapper (1.02 KB gzip) built and reported in results/system/sdk_size.json (< 30 KB target). |
+| P6-13 | 6 | SDK/backend contract test | DONE | pending | Exported backend Pydantic JSON Schema (data/fixtures/backend_contract_schema.json) and validated live SDK AssessRequest and ChallengeAssessRequest payloads in sdk/test/contract.test.ts and backend/tests/test_sdk_contract.py. |
 | P7-01 | 7 | Demo portal scaffold | TODO | | |
 | P7-02 | 7 | Demo portal pages | TODO | | |
 | P7-03 | 7 | Protected portal API | TODO | | |
