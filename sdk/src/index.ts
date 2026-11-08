@@ -19,3 +19,6 @@ export { MouseCollector } from './collectors/mouse';
 export type { MouseBehaviour, MouseCollectorOptions } from './collectors/mouse';
 export { KeyboardCollector, keyClass } from './collectors/keyboard';
 export type { KeyBehaviour, KeyClass, KeyboardCollectorOptions } from './collectors/keyboard';
+export { ScrollCollector } from './collectors/scroll';
+export { TimingCollector } from './collectors/timing';
+export type { TimingCollectorOptions, TimingSignals } from './collectors/timing';

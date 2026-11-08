@@ -1,9 +1,9 @@
 # Handoff
 
-**Updated:** 2026-11-08 19:28  |  **By:** Antigravity  |  **Branch:** phase-6-browser-sdk  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-08 20:06  |  **By:** Antigravity  |  **Branch:** phase-6-browser-sdk  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P6-05 — Scroll and timing collectors (`sdk/src/collectors/scroll.ts`, `sdk/src/collectors/timing.ts`)
+- ID: P6-06 — SDK transport (`sdk/src/transport.ts`)
 - State: not started (`TODO`)
 
 ## Done in Phase 6 so far
@@ -11,13 +11,14 @@
 - **P6-02 (`d1f02a4`):** `collectors/env.ts` (coarse Appendix B.2 snapshot, `deviceClass()`).
 - **CI fix (`c476a63`):** track small `backend/models/**/*.onnx`; ignore `*.db`.
 - **P6-03 (`8b92328`):** `ringbuffer.ts`, `collectors/mouse.ts` (`MouseCollector`).
-- **P6-04:** `collectors/keyboard.ts` (`KeyboardCollector`, `keyClass`). Key identity is read only inside `keyClass()` and never stored; down/up pairing is FIFO per class; auto-repeat ignored; untrusted events counted only; `paste` counted; `autofill_suspected` set by `input` events on text fields with no recent key-down/paste (element kind checked, value never read); pending presses cleared on window blur / after 5 s. Backend `KeyBehaviour` gained `untrusted_count` (0..300) because `scoring.py` uses `model_dump()`, which dropped unknown keys before rule R11 read them; backend test added in `tests/test_schemas.py`.
+- **P6-04 (`115c28f`):** `collectors/keyboard.ts` (`KeyboardCollector`, `keyClass`). Backend `KeyBehaviour` gained `untrusted_count`.
+- **P6-05:** `collectors/scroll.ts` (`ScrollCollector`: passive capture scroll listener, ignores untrusted events, capped at 100,000) and `collectors/timing.ts` (`TimingCollector`: tracks `ms_since_load`, `ms_to_first_interaction` on first trusted interaction, `ms_since_nonce` via `markNonce()`, `scroll_events`, and `focus_changes` across capture `focus`/`blur` and document `visibilitychange`). Added `sdk/test/timing.test.ts` (5 tests; 68 SDK tests total).
 
 ## Exact next step
-- P6-05: `collectors/scroll.ts` (count scroll events, passive) and `collectors/timing.ts` (focus/blur and `visibilitychange` transition count, ms from page load to first trusted interaction, `ms_since_load`, `ms_since_nonce` given a nonce timestamp). Output must match backend `TimingSignals` (`ms_since_load`, `ms_to_first_interaction`, `ms_since_nonce`, `scroll_events`, `focus_changes`; all ≤ 3,600,000 ms / count caps in `schemas.py`).
+- Implement `sdk/src/transport.ts` for `P6-06`: fetch nonce (`GET /v1/nonce`), build assess/challenge payloads (`AssessRequest`, `ChallengeAssessRequest`), POST to `/v1/assess` and `/v1/assess/challenge`, handle errors, retries with exponential backoff (`maxRetries`, `retryBaseDelayMs`), timeouts (`AbortController` / `requestTimeoutMs`), and ensure transport errors never block the host page. Add `sdk/test/transport.test.ts`.
 
 ## Files touched (recent)
-- `sdk/src/collectors/keyboard.ts`, `sdk/test/keyboard.test.ts` (new); `sdk/src/index.ts`; `backend/app/schemas.py`; `backend/tests/test_schemas.py`; `PROGRESS.md`; `HANDOFF.md`
+- `sdk/src/collectors/scroll.ts`, `sdk/src/collectors/timing.ts`, `sdk/test/timing.test.ts` (new); `sdk/src/index.ts`; `PROGRESS.md`; `HANDOFF.md`
 
 ## Commands to run first
     python scripts/tasks.py test-fast

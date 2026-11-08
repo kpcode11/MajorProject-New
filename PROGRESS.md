@@ -73,8 +73,8 @@
 | P6-01 | 6 | SDK package and CI | DONE | 9f0c704 | Vite 8 + TS 6 strict + vitest 5 (happy-dom) + ESLint 10 + Prettier; config.ts with contract hard limits; CI sdk job; tasks.py lint/test/setup run SDK scripts. |
 | P6-02 | 6 | Environment collector | DONE | d1f02a4 | Appendix B.2 coarse environment snapshot, bucketing helpers, UA/WebGL classification, native integrity check, deviceClass, and 20 unit tests. |
 | P6-03 | 6 | Mouse collector | DONE | 8b92328 | Passive throttled mousemove/down/up/click/wheel listeners, bounded RingBuffer, windowed snapshot matching backend MouseBehaviour, untrusted events counted not stored; 8 tests. |
-| P6-04 | 6 | Keyboard collector | DONE | pending | Key class only (mapped in keyClass, identity never stored; class-FIFO pairing), auto-repeat ignored, paste count, autofill flag for text fields, untrusted count; backend KeyBehaviour gains untrusted_count so R11 sees it; 23 SDK tests incl. typed-string privacy test. |
-| P6-05 | 6 | Scroll and timing collectors | TODO | | |
+| P6-04 | 6 | Keyboard collector | DONE | 115c28f | Key class only (mapped in keyClass, identity never stored; class-FIFO pairing), auto-repeat ignored, paste count, autofill flag for text fields, untrusted count; backend KeyBehaviour gains untrusted_count so R11 sees it; 23 SDK tests incl. typed-string privacy test. |
+| P6-05 | 6 | Scroll and timing collectors | DONE | pending | ScrollCollector (passive capture scroll counter) and TimingCollector (ms_since_load, ms_to_first_interaction, ms_since_nonce, scroll_events, focus_changes via focus/blur/visibilitychange); 5 unit tests. |
 | P6-06 | 6 | SDK transport | TODO | | |
 | P6-07 | 6 | SDK public API | TODO | | |
 | P6-08 | 6 | SDK challenge UI | TODO | | |
