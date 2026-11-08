@@ -1,0 +1,30 @@
+{
+  "package": "@botguard/sdk",
+  "version": "1.0.0",
+  "target_max_gzip_bytes": 30720,
+  "target_max_gzip_kb": 30,
+  "within_target": true,
+  "bundles": {
+    "esm": {
+      "file": "dist/botguard.js",
+      "raw_bytes": 35902,
+      "raw_kb": 35.06,
+      "gzip_bytes": 11159,
+      "gzip_kb": 10.9
+    },
+    "umd": {
+      "file": "dist/botguard.umd.cjs",
+      "raw_bytes": 29376,
+      "raw_kb": 28.69,
+      "gzip_bytes": 10291,
+      "gzip_kb": 10.05
+    },
+    "react": {
+      "file": "dist/react/index.js",
+      "raw_bytes": 3123,
+      "raw_kb": 3.05,
+      "gzip_bytes": 1043,
+      "gzip_kb": 1.02
+    }
+  }
+}

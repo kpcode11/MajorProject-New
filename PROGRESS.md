@@ -80,8 +80,8 @@
 | P6-08 | 6 | SDK challenge UI | DONE | 6c46c30 | Pluggable step-up challenge UI (renderPressHoldChallenge, createChallengeHandler, defaultPressHoldRenderer) with accessible dialog, mouse/touch/keyboard hold, single-press keyboard alternative, and custom renderer support; 5 tests. |
 | P6-09 | 6 | React SDK integration | DONE | 1417f3f | BotGuardProvider and useBotGuard() hook in @botguard/sdk/react with auto-start/stop lifecycle, assess, runChallenge, and assessWithStepUp; 3 React 19 tests. |
 | P6-10 | 6 | SDK performance controls | DONE | 30a8a73 | Passive listener enforcement, throttle gate, scheduleIdleTask with timeout fallback, bounded ring buffers, and zero-listener-leak stop() cleanup; 4 stress/performance tests. |
-| P6-11 | 6 | SDK tests | DONE | pending | 98 vitest + happy-dom tests across 11 suites: bounded collectors, form/typed-string privacy guarantees, throttling, <64 KB stress test, and window/document stop() listener cleanup. |
-| P6-12 | 6 | SDK bundle report | TODO | | |
+| P6-11 | 6 | SDK tests | DONE | b03e6c3 | 98 vitest + happy-dom tests across 11 suites: bounded collectors, form/typed-string privacy guarantees, throttling, <64 KB stress test, and window/document stop() listener cleanup. |
+| P6-12 | 6 | SDK bundle report | DONE | pending | ES module (10.90 KB gzip), UMD (10.05 KB gzip), and React wrapper (1.02 KB gzip) built and reported in results/system/sdk_size.json (< 30 KB target). |
 | P6-13 | 6 | SDK/backend contract test | TODO | | |
 | P7-01 | 7 | Demo portal scaffold | TODO | | |
 | P7-02 | 7 | Demo portal pages | TODO | | |
@@ -163,3 +163,4 @@ Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 - `results/mouse/` — `baselines.csv`, `hparams.json`, `evaluation_splits.csv`, `lobo_evaluation.csv`, `human_fpr_captchasolve30k.csv`, `aggregation.csv`, `calibration.json`, `ablations.csv`, `shap_summary.csv`, `shap_top3_examples.json`, `fingerprint.json`
 - `results/keyboard/` — `privacy_scan.json`, `baselines.csv`, `hparams.json`, `evaluation.csv`, `evaluation_splits.csv`, `per_generator.csv`, `speed_terciles.csv`, `calibration.json`, `feature_importance.csv`, `failure_analysis.md`, `summary.json`
 - `results/fusion/` — `fusion_comparison.csv`, `modality_availability.csv`
+- `results/system/` — `scoring_latency.json`, `sdk_size.json`

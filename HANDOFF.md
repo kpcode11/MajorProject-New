@@ -1,20 +1,20 @@
 # Handoff
 
-**Updated:** 2026-11-08 21:13  |  **By:** Antigravity  |  **Branch:** phase-6-browser-sdk  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-08 21:16  |  **By:** Antigravity  |  **Branch:** phase-6-browser-sdk  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P6-12 — SDK bundle report (`results/system/sdk_size.json`)
+- ID: P6-13 — SDK/backend contract test (`sdk/test/contract.test.ts` + backend JSON Schema export)
 - State: not started (`TODO`)
 
 ## Done in Phase 6 so far
-- **P6-01 (`9f0c704`)..P6-10 (`30a8a73`):** SDK package, config, CI `sdk` job, `env`, `mouse`, `keyboard`, `scroll`, `timing` collectors, `transport`, `BotGuard` public API, pluggable `challenge` UI, `@botguard/sdk/react` (`BotGuardProvider` & `useBotGuard`), and `performance` controls.
-- **P6-11:** Completed full SDK acceptance test suite (`sdk/test/sdk_suite.test.ts` + 10 unit/integration test files = 11 test files, 98 tests total). Verifies bounded collector outputs, zero typed-character or form-field-value exposure across typed/pasted/prefilled/autofilled inputs on `BotGuard.assess()`, mouse throttling, `< 64 KB` body cap under worst-case multi-modality stress, and zero `window`/`document` listener leaks across repeated `start()`/`stop()` cycles.
+- **P6-01 (`9f0c704`)..P6-11 (`b03e6c3`):** SDK package, config, CI `sdk` job, `env`, `mouse`, `keyboard`, `scroll`, `timing` collectors, `transport`, `BotGuard` public API, pluggable `challenge` UI, `@botguard/sdk/react` (`BotGuardProvider` & `useBotGuard`), `performance` controls, and 98 vitest tests across 11 suites.
+- **P6-12:** Added `sdk/scripts/size-report.mjs` (invoked automatically by `npm run build` and `npm run size`) and generated `results/system/sdk_size.json` (plus tracked `results/system/scoring_latency.json` in `.gitignore`). Core ES bundle is `10.90 KB` gzipped (`35.06 KB` raw), UMD bundle is `10.05 KB` gzipped (`28.69 KB` raw), and React wrapper is `1.02 KB` gzipped (`3.05 KB` raw) — all well below the 30 KB gzipped target.
 
 ## Exact next step
-- Implement `P6-12` (`SDK bundle report`): build ES module and UMD bundles, write a script (`sdk/scripts/size-report.mjs`) that computes raw and gzipped sizes for `dist/botguard.js`, `dist/botguard.umd.cjs`, and `dist/react/index.js`, and saves the report to `results/system/sdk_size.json` (verifying core gzipped size < 30 KB). Then proceed to `P6-13` (`SDK/backend contract test`).
+- Implement `P6-13` (`SDK/backend contract test`): generate the canonical JSON Schema from the backend's Pydantic models (`AssessRequest`, `ChallengeAssessRequest`) and validate SDK-produced payloads (`buildAssessPayload`, `buildChallengePayload`, and live `BotGuard.assess()` / `BotGuard.runChallenge()` snapshots) against both the generated JSON Schema in `sdk/test/contract.test.ts` and the backend Pydantic validator.
 
 ## Files touched (recent)
-- `sdk/test/sdk_suite.test.ts` (new); `PROGRESS.md`; `HANDOFF.md`
+- `sdk/scripts/size-report.mjs`, `results/system/sdk_size.json` (new); `sdk/package.json`; `sdk/vite.config.ts`; `.gitignore`; `PROGRESS.md`; `HANDOFF.md`
 
 ## Commands to run first
     python scripts/tasks.py test-fast

@@ -45,6 +45,7 @@ results/*
 !results/fusion/.gitkeep
 !results/system/
 !results/system/.gitkeep
+!results/system/**
 *.parquet
 *.zip
 *.onnx

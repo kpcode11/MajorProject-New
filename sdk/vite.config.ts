@@ -13,5 +13,10 @@ export default defineConfig({
       formats: ['es', 'umd'],
       fileName: (format) => (format === 'es' ? 'botguard.js' : 'botguard.umd.cjs'),
     },
+    rolldownOptions: {
+      output: {
+        exports: 'named',
+      },
+    },
   },
 });
