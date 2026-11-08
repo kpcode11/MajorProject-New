@@ -376,6 +376,12 @@ class KeyBehaviour(BaseModel):
         default=False,
         description="True when a browser autofill was detected.",
     )
+    untrusted_count: int = Field(
+        default=0,
+        ge=0,
+        le=MAX_KEY_EVENTS,
+        description="Number of key events where isTrusted was false (read by rule R11).",
+    )
 
     @field_validator("events", mode="before")
     @classmethod

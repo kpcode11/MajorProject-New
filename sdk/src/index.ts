@@ -17,3 +17,5 @@ export { collectEnv, deviceClass } from './collectors/env';
 export type { EnvSignals } from './collectors/env';
 export { MouseCollector } from './collectors/mouse';
 export type { MouseBehaviour, MouseCollectorOptions } from './collectors/mouse';
+export { KeyboardCollector, keyClass } from './collectors/keyboard';
+export type { KeyBehaviour, KeyClass, KeyboardCollectorOptions } from './collectors/keyboard';
