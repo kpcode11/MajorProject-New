@@ -96,8 +96,8 @@
 | P7-11 | 7 | Simulator local-host safety | DONE | b65d5ae | Added simulator/allowlist.txt and simulator/safety.py (validate_target_url, load_allowlist, extract_host) refusing non-local and .gov/.nic.in/uidai hosts; 16 tests in test_simulator_safety.py. |
 | P7-12 | 7 | Simulator tier 1 | DONE | 7b234d9 | Added simulator/tier1_http.py (run_tier1_session, SimRunResult, SimOutcome, DEFAULT_TIER1_USER_AGENTS) posting directly to /portal-api/* without browser or SDK token after local-host validation; 2 tests in test_simulator_tier1.py. |
 | P7-13 | 7 | Simulator tier 2 | DONE | f5e438f | Added simulator/tier2_playwright.py (run_tier2_session, drive_tier2_playwright_page, build_tier2_env_signals, build_tier2_behaviour_payload, PlaywrightPageLike) performing default Playwright direct fills and clicks after local-host validation; 3 tests in test_simulator_tier2.py. |
-| P7-14 | 7 | Simulator tier 3 | DONE | pending | Added simulator/tier3_stealth.py (run_tier3_session, drive_tier3_playwright_page, apply_tier3_context_adjustments, build_tier3_env_signals, build_tier3_behaviour_payload, TIER3_INIT_SCRIPT) testing rule & behavioural layers under basic stealth adjustments; 4 tests in test_simulator_tier3.py. |
-| P7-15 | 7 | Simulator tier 4 | TODO | | |
+| P7-14 | 7 | Simulator tier 3 | DONE | ea2e017 | Added simulator/tier3_stealth.py (run_tier3_session, drive_tier3_playwright_page, apply_tier3_context_adjustments, build_tier3_env_signals, build_tier3_behaviour_payload, TIER3_INIT_SCRIPT) testing rule & behavioural layers under basic stealth adjustments; 4 tests in test_simulator_tier3.py. |
+| P7-15 | 7 | Simulator tier 4 | DONE | pending | Added simulator/humanlike.py (bezier_path, generate_humanlike_mouse_trajectory, generate_humanlike_key_events) and simulator/tier4_humanlike.py (run_tier4_session, drive_tier4_playwright_page); 4 tests in test_simulator_tier4.py. |
 | P7-16 | 7 | Simulator batch runner | TODO | | |
 | P7-17 | 7 | Human-like reference run | TODO | | |
 | P7-18 | 7 | Portal end-to-end tests | TODO | | |

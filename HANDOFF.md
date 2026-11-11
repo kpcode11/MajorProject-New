@@ -1,9 +1,9 @@
 # Handoff
 
-**Updated:** 2026-11-11 14:32  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-11 15:00  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P7-15 — Simulator tier 4 (`simulator/humanlike.py` and `simulator/tier4_humanlike.py`)
+- ID: P7-16 — Simulator batch runner (`simulator/run_all.py`)
 - State: `TODO`
 
 ## Done in Phase 7 so far
@@ -20,13 +20,14 @@
 - **P7-11 (`b65d5ae`):** Added `simulator/allowlist.txt`, `simulator/safety.py` (`validate_target_url`, `load_allowlist`, `extract_host`, `SimulatorTargetError`), `simulator/__init__.py`, `backend/tests/test_simulator_safety.py` (16 unit tests), and wired `simulator/` into `scripts/tasks.py` `lint()`.
 - **P7-12 (`7b234d9`):** Added `simulator/tier1_http.py` (`run_tier1_session`, `SimRunResult`, `SimOutcome`, `DEFAULT_TIER1_USER_AGENTS`), exported them in `simulator/__init__.py`, and added unit tests in `backend/tests/test_simulator_tier1.py`.
 - **P7-13 (`f5e438f`):** Added `simulator/tier2_playwright.py` (`run_tier2_session`, `drive_tier2_playwright_page`, `build_tier2_env_signals`, `build_tier2_behaviour_payload`, `PlaywrightPageLike`) and 3 unit tests in `backend/tests/test_simulator_tier2.py`.
-- **P7-14:** Added `simulator/tier3_stealth.py` (`run_tier3_session`, `drive_tier3_playwright_page`, `apply_tier3_context_adjustments`, `build_tier3_env_signals`, `build_tier3_behaviour_payload`, `TIER3_INIT_SCRIPT`, `TIER3_PROFILES`) and 4 unit tests in `backend/tests/test_simulator_tier3.py`.
+- **P7-14 (`ea2e017`):** Added `simulator/tier3_stealth.py` (`run_tier3_session`, `drive_tier3_playwright_page`, `apply_tier3_context_adjustments`, `build_tier3_env_signals`, `build_tier3_behaviour_payload`, `TIER3_INIT_SCRIPT`, `TIER3_PROFILES`) and 4 unit tests in `backend/tests/test_simulator_tier3.py`.
+- **P7-15:** Added `simulator/humanlike.py` (`bezier_path`, `generate_humanlike_mouse_trajectory`, `generate_humanlike_key_events`) and `simulator/tier4_humanlike.py` (`run_tier4_session`, `drive_tier4_playwright_page`, `build_tier4_env_signals`, `build_tier4_behaviour_payload`) and 4 unit tests in `backend/tests/test_simulator_tier4.py`.
 
 ## Exact next step
-- Start **P7-15** (`Simulator tier 4`): implement `simulator/humanlike.py` (Bezier mouse paths with smoothstep ease-in/out and Gaussian jitter per Appendix D.3, plus randomised typing delays) and `simulator/tier4_humanlike.py` (`run_tier4_session`, `drive_tier4_playwright_page`).
+- Start **P7-16** (`Simulator batch runner`): implement `simulator/run_all.py` running N sessions per tier (Tiers 1-4) with seeded parameter randomisation across `off` and `passive` protection modes, writing `results/system/sim_runs.jsonl` (tier, params, outcome: allowed / challenged / denied / blocked-at-api).
 
 ## Files touched (recent)
-- `simulator/tier3_stealth.py`, `backend/tests/test_simulator_tier3.py` (new); `simulator/__init__.py`, `PROGRESS.md`, `HANDOFF.md`
+- `simulator/humanlike.py`, `simulator/tier4_humanlike.py`, `backend/tests/test_simulator_tier4.py` (new); `simulator/__init__.py`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/tasks.py lint
