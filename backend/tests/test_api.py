@@ -514,6 +514,89 @@ def test_challenge_rescoring_rejects_untrusted_or_bot_challenge_behaviour(
     assert chal_data["token"] is None
 
 
+def test_challenge_single_use_and_endpoint_rate_limiting(
+    test_settings: Settings,
+) -> None:
+    """Verify P7-08: single-use/short-lived challenge IDs and challenge rate limits."""
+    cfg = dataclasses.replace(
+        test_settings,
+        rate_limit_challenge_per_min=5,
+        rate_limit_challenge_session_per_min=2,
+        challenge_ttl_seconds=45,
+    )
+    store = InMemoryStore()
+    db = DatabaseManager(cfg.database_url)
+    app = create_app(
+        settings=cfg,
+        store=store,
+        scorer=default_app.state.scorer,
+        db=db,
+    )
+    client = _client(app)
+
+    nonce1 = client.get("/v1/nonce").json()["nonce"]
+    assess_resp = client.post(
+        "/v1/assess",
+        json={
+            "nonce": nonce1,
+            "action": "otp_request",
+            "env": {"webdriver": True},
+            "behaviour": {"keys": {"events": _make_human_key_events()}},
+        },
+    )
+    assert assess_resp.status_code == 200
+    chal = assess_resp.json()["challenge"]
+    assert chal is not None
+    assert chal["expires_in"] == 45
+    hold_ms = float(chal["hold_ms"])
+
+    # 1. First challenge submission consumes challenge_id
+    nonce2 = client.get("/v1/nonce").json()["nonce"]
+    first_chal = client.post(
+        "/v1/assess/challenge",
+        json={
+            "nonce": nonce2,
+            "challenge_id": chal["id"],
+            "action": "otp_request",
+            "hold_start_ms": 100.0,
+            "hold_end_ms": 100.0 + hold_ms + 30.0,
+        },
+    )
+    assert first_chal.status_code == 200
+    assert first_chal.json()["decision"] == "allow"
+
+    # 2. Replaying the same challenge_id with a fresh nonce is rejected (401 single-use)
+    nonce3 = client.get("/v1/nonce").json()["nonce"]
+    replay_chal = client.post(
+        "/v1/assess/challenge",
+        json={
+            "nonce": nonce3,
+            "challenge_id": chal["id"],
+            "action": "otp_request",
+            "hold_start_ms": 100.0,
+            "hold_end_ms": 100.0 + hold_ms + 30.0,
+        },
+    )
+    assert replay_chal.status_code == 401
+    assert replay_chal.json()["error"]["code"] == "invalid_or_expired_challenge"
+
+    # 3. Third challenge attempt in the same session exceeds session limit=2 -> 429
+    nonce4 = client.get("/v1/nonce").json()["nonce"]
+    rl_chal = client.post(
+        "/v1/assess/challenge",
+        json={
+            "nonce": nonce4,
+            "challenge_id": "any_id",
+            "action": "otp_request",
+            "hold_start_ms": 100.0,
+            "hold_end_ms": 1200.0,
+        },
+    )
+    assert rl_chal.status_code == 429
+    assert rl_chal.json()["error"]["code"] == "rate_limit_exceeded"
+    assert rl_chal.headers.get("Retry-After") is not None
+
+
 def test_token_verify_endpoint_and_wrong_action_rejection(
     test_app: FastAPI, test_settings: Settings
 ) -> None:

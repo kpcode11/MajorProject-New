@@ -617,11 +617,12 @@ def create_app(
             hold_ms = CHALLENGE_HOLD_MIN_MS + secrets.randbelow(
                 CHALLENGE_HOLD_MAX_MS - CHALLENGE_HOLD_MIN_MS + 1
             )
+            chal_ttl = app.state.settings.challenge_ttl_seconds
             issued_challenge = ChallengeInfo(
                 id=chal_id,
                 type="press_hold",
                 hold_ms=hold_ms,
-                expires_in=CHALLENGE_TTL_SECONDS,
+                expires_in=chal_ttl,
             )
             chal_state = json.dumps(
                 {
@@ -635,7 +636,7 @@ def create_app(
             app.state.store.set(
                 f"{_CHALLENGE_PREFIX}{chal_id}",
                 chal_state,
-                ttl=CHALLENGE_TTL_SECONDS,
+                ttl=chal_ttl,
             )
 
         latency_ms = (time.perf_counter() - t0) * 1000.0

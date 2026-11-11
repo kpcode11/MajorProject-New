@@ -53,6 +53,12 @@ _DEFAULTS: dict[str, object] = {
     "RATE_LIMIT_NONCE_PER_MIN": "60",
     # Rate-limit: max assess requests per IP bucket per minute
     "RATE_LIMIT_ASSESS_PER_MIN": "30",
+    # Rate-limit: max challenge attempts per IP bucket per minute (P7-08)
+    "RATE_LIMIT_CHALLENGE_PER_MIN": "10",
+    # Rate-limit: max challenge attempts per session per minute (P7-08)
+    "RATE_LIMIT_CHALLENGE_SESSION_PER_MIN": "5",
+    # Challenge ID lifetime in seconds (single-use, short-lived, P7-08)
+    "CHALLENGE_TTL_SECONDS": "60",
     # Max request body size in bytes (64 KB)
     "MAX_BODY_BYTES": "65536",
     # Enable optional feature storage in the DB (TTL-limited)
@@ -95,6 +101,9 @@ class Settings:
     feature_ttl_seconds: int
     assessment_ttl_seconds: int
     protection_mode: str = "passive"  # "off" | "passive"
+    rate_limit_challenge_per_min: int = 10
+    rate_limit_challenge_session_per_min: int = 5
+    challenge_ttl_seconds: int = 60
 
     def jwt_private_key(self) -> str | None:
         """Return the PEM private key string, or None if not configured."""
@@ -196,6 +205,13 @@ def load_settings(yaml_path: Path | None = None) -> Settings:
         feature_ttl_seconds=_int(get("FEATURE_TTL_SECONDS"), "FEATURE_TTL_SECONDS"),
         assessment_ttl_seconds=_int(get("ASSESSMENT_TTL_SECONDS"), "ASSESSMENT_TTL_SECONDS"),
         protection_mode=protection_mode,
+        rate_limit_challenge_per_min=_int(
+            get("RATE_LIMIT_CHALLENGE_PER_MIN"), "RATE_LIMIT_CHALLENGE_PER_MIN"
+        ),
+        rate_limit_challenge_session_per_min=_int(
+            get("RATE_LIMIT_CHALLENGE_SESSION_PER_MIN"), "RATE_LIMIT_CHALLENGE_SESSION_PER_MIN"
+        ),
+        challenge_ttl_seconds=_int(get("CHALLENGE_TTL_SECONDS"), "CHALLENGE_TTL_SECONDS"),
     )
 
 
