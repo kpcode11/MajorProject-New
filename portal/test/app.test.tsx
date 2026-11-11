@@ -251,4 +251,133 @@ describe('Mock portal scaffold and pages (P7-01, P7-02)', () => {
     expect(portalCalls[1]?.body).not.toContain('560001-Indiranagar');
     expect(container?.querySelector('[data-testid="centre-results"]')).not.toBeNull();
   });
+
+  it('presents the accessible press-and-hold step-up UI with keyboard alternative and no image/text puzzles (P7-06)', async () => {
+    vi.useFakeTimers();
+    try {
+      const challengePayloads: Array<Record<string, unknown>> = [];
+      const portalHeaders: Array<Record<string, string>> = [];
+
+      globalThis.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = typeof input === 'string' ? input : input.toString();
+        if (url.endsWith('/v1/nonce')) {
+          return new Response(JSON.stringify({ nonce: 'nonce_stepup_123456', expires_in: 120 }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        if (url.endsWith('/v1/assess')) {
+          return new Response(
+            JSON.stringify({
+              decision: 'challenge',
+              band: 'medium',
+              challenge: {
+                id: 'chal_portal_900',
+                type: 'press_hold',
+                hold_ms: 900,
+                expires_in: 60,
+              },
+            }),
+            { status: 200, headers: { 'Content-Type': 'application/json' } },
+          );
+        }
+        if (url.endsWith('/v1/assess/challenge')) {
+          const parsed = JSON.parse(typeof init?.body === 'string' ? init.body : '{}') as Record<
+            string,
+            unknown
+          >;
+          challengePayloads.push(parsed);
+          return new Response(
+            JSON.stringify({
+              decision: 'allow',
+              band: 'low',
+              token: 'tok_after_stepup_789',
+            }),
+            { status: 200, headers: { 'Content-Type': 'application/json' } },
+          );
+        }
+        if (url.endsWith('/portal-api/otp/request')) {
+          portalHeaders.push((init?.headers as Record<string, string>) ?? {});
+          return new Response(
+            JSON.stringify({ status: 'otp_sent', message: 'OTP sent after step-up challenge.' }),
+            { status: 200, headers: { 'Content-Type': 'application/json' } },
+          );
+        }
+        return new Response('{}', { status: 404 });
+      }) as typeof fetch;
+
+      act(() => {
+        root?.render(<App initialPage="login" />);
+      });
+
+      const input = container?.querySelector(
+        '[data-testid="identifier-input"]',
+      ) as HTMLInputElement | null;
+      const sendBtn = container?.querySelector(
+        '[data-testid="send-otp-btn"]',
+      ) as HTMLButtonElement | null;
+
+      act(() => {
+        if (input) setInputValue(input, '999900001234');
+      });
+
+      act(() => {
+        sendBtn?.click();
+      });
+
+      // Flush microtasks so /v1/assess resolves and mounts the step-up dialog
+      await act(async () => {
+        await Promise.resolve();
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+
+      const dialog = document.querySelector('[data-testid="stepup-dialog"]');
+      expect(dialog).not.toBeNull();
+      expect(dialog?.getAttribute('role')).toBe('dialog');
+      expect(dialog?.getAttribute('aria-modal')).toBe('true');
+      expect(dialog?.getAttribute('data-hold-ms')).toBe('900');
+
+      // Verify no image or text puzzle inputs exist inside the step-up dialog
+      expect(dialog?.querySelectorAll('img')).toHaveLength(0);
+      expect(dialog?.querySelectorAll('input')).toHaveLength(0);
+
+      const holdBtn = dialog?.querySelector('[data-testid="stepup-hold-btn"]');
+      const kbBtn = dialog?.querySelector(
+        '[data-testid="stepup-kb-btn"]',
+      ) as HTMLButtonElement | null;
+      expect(holdBtn).not.toBeNull();
+      expect(kbBtn).not.toBeNull();
+
+      // Activate keyboard single-press alternative with Enter key
+      const enterEvt = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        bubbles: true,
+        cancelable: true,
+      });
+      Object.defineProperty(enterEvt, 'isTrusted', { value: true });
+      act(() => {
+        kbBtn?.dispatchEvent(enterEvt);
+      });
+
+      // Advance timer past the server-chosen 900 ms hold duration
+      await act(async () => {
+        vi.advanceTimersByTime(950);
+        await Promise.resolve();
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+
+      expect(challengePayloads).toHaveLength(1);
+      expect(challengePayloads[0]?.challenge_id).toBe('chal_portal_900');
+      expect(portalHeaders).toHaveLength(1);
+      expect(portalHeaders[0]?.['X-Human-Token']).toBe('tok_after_stepup_789');
+
+      const otpResult = container?.querySelector('[data-testid="otp-result"]');
+      expect(otpResult?.getAttribute('data-outcome')).toBe('accepted');
+      expect(otpResult?.textContent).toContain('OTP sent after step-up challenge.');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

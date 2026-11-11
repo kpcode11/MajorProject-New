@@ -87,8 +87,8 @@
 | P7-02 | 7 | Demo portal pages | DONE | 47e287c | Landing, Resident login (identifier + Send OTP), Update details form, and Centre search pages in portal/src/pages/ with X-Human-Token forwarding and zero raw-text transmission; 4 unit tests. |
 | P7-03 | 7 | Protected portal API | DONE | 1d9bd4a | Mounted /portal-api/otp/request, /portal-api/details/update, and /portal-api/centres/search via create_portal_router() in backend/app/portal.py protected by require_human_token; 3 tests in test_portal_api.py. |
 | P7-04 | 7 | Portal API statistics | DONE | 4790ef6 | Added thread-safe PortalStatsTracker and GET /portal-api/stats reporting accepted vs rejected calls overall, per action, and per reason; 4 tests in test_portal_api.py. |
-| P7-05 | 7 | Protection-mode switch | DONE | pending | Added PROTECTION_MODE ('off' | 'passive', default 'passive') in backend/app/config.py, bypassed token requirement in require_human_token when 'off', and exposed protection_mode in /portal-api/stats; 5 tests in test_portal_api.py. |
-| P7-06 | 7 | Accessible step-up UI | TODO | | |
+| P7-05 | 7 | Protection-mode switch | DONE | 5f02c1e | Added PROTECTION_MODE ('off' | 'passive', default 'passive') in backend/app/config.py, bypassed token requirement in require_human_token when 'off', and exposed protection_mode in /portal-api/stats; 5 tests in test_portal_api.py. |
+| P7-06 | 7 | Accessible step-up UI | DONE | pending | Accessible press-and-hold step-up dialog with server-chosen hold_ms (0.8-1.5 s), Space/Enter single-press keyboard alternative, focus ring/trap, and no image/text puzzles; verified in portal/test/app.test.tsx. |
 | P7-07 | 7 | Challenge flow | TODO | | |
 | P7-08 | 7 | Challenge rate limits | TODO | | |
 | P7-09 | 7 | Challenge accessibility | TODO | | |

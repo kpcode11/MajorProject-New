@@ -95,18 +95,32 @@ export function defaultPressHoldRenderer(
   const doc = ctx.container.ownerDocument;
   const holdTargetMs = Math.max(100, ctx.challenge.hold_ms);
 
+  const previousActive = doc.activeElement instanceof HTMLElement ? doc.activeElement : null;
+
   const backdrop = createEl(doc, 'div', {
     class: 'botguard-challenge-backdrop',
+    'data-testid': 'stepup-backdrop',
     style:
       'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;' +
       'background:rgba(15,23,42,0.55);z-index:2147483647;font-family:system-ui,sans-serif;',
   });
+
+  const styleEl = createEl(
+    doc,
+    'style',
+    {},
+    '.botguard-challenge-dialog button:focus,' +
+      '.botguard-challenge-dialog button:focus-visible{' +
+      'outline:3px solid #0284c7;outline-offset:2px;}',
+  );
 
   const dialog = createEl(doc, 'div', {
     role: 'dialog',
     'aria-modal': 'true',
     'aria-labelledby': 'botguard-challenge-title',
     'aria-describedby': 'botguard-challenge-desc',
+    'data-testid': 'stepup-dialog',
+    'data-hold-ms': String(holdTargetMs),
     class: 'botguard-challenge-dialog',
     style:
       'background:#ffffff;color:#0f172a;border-radius:12px;padding:24px;max-width:380px;' +
@@ -136,6 +150,7 @@ export function defaultPressHoldRenderer(
 
   const progressTrack = createEl(doc, 'div', {
     role: 'progressbar',
+    'data-testid': 'stepup-progress',
     'aria-label': 'Verification hold progress',
     'aria-valuemin': '0',
     'aria-valuemax': String(holdTargetMs),
@@ -155,6 +170,7 @@ export function defaultPressHoldRenderer(
     {
       type: 'button',
       class: 'botguard-challenge-hold-btn',
+      'data-testid': 'stepup-hold-btn',
       'aria-label': `Press and hold for ${secs} seconds to verify`,
       style:
         'width:100%;padding:12px 16px;font-size:15px;font-weight:600;color:#ffffff;' +
@@ -170,6 +186,7 @@ export function defaultPressHoldRenderer(
     {
       type: 'button',
       class: 'botguard-challenge-kb-btn',
+      'data-testid': 'stepup-kb-btn',
       'aria-label': 'Keyboard accessible single-press verification alternative',
       style:
         'margin-top:10px;width:100%;padding:8px 12px;font-size:13px;color:#1e293b;' +
@@ -184,6 +201,7 @@ export function defaultPressHoldRenderer(
     {
       role: 'status',
       'aria-live': 'polite',
+      'data-testid': 'stepup-status',
       class: 'botguard-challenge-status',
       style: 'margin-top:10px;min-height:18px;font-size:13px;color:#475569;',
     },
@@ -196,6 +214,7 @@ export function defaultPressHoldRenderer(
     {
       type: 'button',
       class: 'botguard-challenge-cancel-btn',
+      'data-testid': 'stepup-cancel-btn',
       'aria-label': 'Cancel verification',
       style:
         'margin-top:8px;padding:6px 12px;font-size:12px;color:#64748b;background:transparent;' +
@@ -204,7 +223,7 @@ export function defaultPressHoldRenderer(
     'Cancel',
   );
 
-  dialog.append(title, desc, progressTrack, holdBtn, kbAltBtn, statusLive, cancelBtn);
+  dialog.append(styleEl, title, desc, progressTrack, holdBtn, kbAltBtn, statusLive, cancelBtn);
   backdrop.appendChild(dialog);
   ctx.container.appendChild(backdrop);
 
@@ -318,6 +337,14 @@ export function defaultPressHoldRenderer(
     }, holdTargetMs);
   };
 
+  const onKbAltKeyDown = (event: KeyboardEvent): void => {
+    if (event.repeat) return;
+    if (event.key === ' ' || event.key === 'Enter') {
+      event.preventDefault();
+      onKbAltClick(event);
+    }
+  };
+
   const onCancelClick = (): void => {
     if (finished) return;
     finished = true;
@@ -325,11 +352,27 @@ export function defaultPressHoldRenderer(
     ctx.cancel('user_cancelled');
   };
 
+  const focusableButtons = [holdBtn, kbAltBtn, cancelBtn];
+
   const onDocKeyDown = (event: KeyboardEvent): void => {
     if (event.key === 'Escape' && !finished) {
       finished = true;
       clearTimers();
       ctx.cancel('escape_pressed');
+      return;
+    }
+    if (event.key === 'Tab' && !finished) {
+      const enabledBtns = focusableButtons.filter((b) => !b.hasAttribute('disabled'));
+      if (enabledBtns.length === 0) return;
+      const activeIdx = enabledBtns.indexOf(doc.activeElement as HTMLButtonElement);
+      event.preventDefault();
+      if (event.shiftKey) {
+        const prevIdx = activeIdx <= 0 ? enabledBtns.length - 1 : activeIdx - 1;
+        enabledBtns[prevIdx]?.focus();
+      } else {
+        const nextIdx = activeIdx < 0 || activeIdx >= enabledBtns.length - 1 ? 0 : activeIdx + 1;
+        enabledBtns[nextIdx]?.focus();
+      }
     }
   };
 
@@ -340,6 +383,7 @@ export function defaultPressHoldRenderer(
   holdBtn.addEventListener('keydown', onHoldKeyDown);
   holdBtn.addEventListener('keyup', onHoldKeyUp);
   kbAltBtn.addEventListener('click', onKbAltClick);
+  kbAltBtn.addEventListener('keydown', onKbAltKeyDown);
   cancelBtn.addEventListener('click', onCancelClick);
   doc.addEventListener('keydown', onDocKeyDown);
 
@@ -369,9 +413,17 @@ export function defaultPressHoldRenderer(
     holdBtn.removeEventListener('keydown', onHoldKeyDown);
     holdBtn.removeEventListener('keyup', onHoldKeyUp);
     kbAltBtn.removeEventListener('click', onKbAltClick);
+    kbAltBtn.removeEventListener('keydown', onKbAltKeyDown);
     cancelBtn.removeEventListener('click', onCancelClick);
     doc.removeEventListener('keydown', onDocKeyDown);
     backdrop.remove();
+    try {
+      if (previousActive && previousActive.isConnected) {
+        previousActive.focus();
+      }
+    } catch {
+      /* ignore focus restore errors */
+    }
   };
 }
 
