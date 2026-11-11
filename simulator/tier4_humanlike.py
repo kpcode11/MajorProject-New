@@ -128,7 +128,9 @@ def build_tier4_behaviour_payload(
     )
     last_up_val = key_events[-1][2] if key_events else None
     last_key_up = (
-        float(last_up_val) if isinstance(last_up_val, (int, float)) else typing_start + 500.0
+        float(last_up_val)
+        if isinstance(last_up_val, (int, float))
+        else typing_start + 500.0
     )
 
     move2_start = last_key_up + float(gen.uniform(120.0, 260.0))
@@ -148,8 +150,18 @@ def build_tier4_behaviour_payload(
 
     all_points = (pts_to_input + pts_to_submit)[:600]
     clicks = [
-        [round(input_xy[0], 2), round(input_xy[1], 2), input_click_down, input_click_up],
-        [round(submit_xy[0], 2), round(submit_xy[1], 2), submit_click_down, submit_click_up],
+        [
+            round(input_xy[0], 2),
+            round(input_xy[1], 2),
+            input_click_down,
+            input_click_up,
+        ],
+        [
+            round(submit_xy[0], 2),
+            round(submit_xy[1], 2),
+            submit_click_down,
+            submit_click_up,
+        ],
     ]
 
     return {
@@ -166,9 +178,13 @@ def build_tier4_behaviour_payload(
             "untrusted_count": 0,
         },
         "timing": {
-            "ms_since_load": round(submit_click_up + float(gen.uniform(45.0, 120.0)), 2),
+            "ms_since_load": round(
+                submit_click_up + float(gen.uniform(45.0, 120.0)), 2
+            ),
             "ms_to_first_interaction": round(first_t, 2),
-            "ms_since_nonce": round(submit_click_up - first_t + float(gen.uniform(60.0, 140.0)), 2),
+            "ms_since_nonce": round(
+                submit_click_up - first_t + float(gen.uniform(60.0, 140.0)), 2
+            ),
             "scroll_events": int(gen.integers(0, 2)),
             "focus_changes": 2,
         },
@@ -193,7 +209,9 @@ def drive_tier4_playwright_page(
 
     Validates ``portal_url`` against ``simulator/allowlist.txt`` before navigating.
     """
-    clean_portal = validate_target_url(portal_url, allowlist_path=allowlist_path).rstrip("/")
+    clean_portal = validate_target_url(
+        portal_url, allowlist_path=allowlist_path
+    ).rstrip("/")
     page_id = ACTION_PAGE_MAP.get(action, "login")
     target_page_url = validate_target_url(
         f"{clean_portal}/?page={page_id}",
@@ -208,7 +226,9 @@ def drive_tier4_playwright_page(
     # Move mouse along Bezier path if page exposes a Playwright mouse controller
     mouse_obj = getattr(page, "mouse", None)
     move_fn = getattr(mouse_obj, "move", None) if mouse_obj is not None else None
-    curve = bezier_path((90.0, 110.0), (235.0, 295.0), n=n_curve_points, jitter=jitter, rng=rng)
+    curve = bezier_path(
+        (90.0, 110.0), (235.0, 295.0), n=n_curve_points, jitter=jitter, rng=rng
+    )
     if callable(move_fn):
         for pt in curve:
             move_fn(float(pt[0]), float(pt[1]))
@@ -303,7 +323,9 @@ def run_tier4_session(
 
     Validates ``base_url`` against ``simulator/allowlist.txt`` before making any call.
     """
-    clean_base = validate_target_url(base_url, allowlist_path=allowlist_path).rstrip("/")
+    clean_base = validate_target_url(base_url, allowlist_path=allowlist_path).rstrip(
+        "/"
+    )
     if page is not None:
         return drive_tier4_playwright_page(
             page,
@@ -318,9 +340,15 @@ def run_tier4_session(
             allowlist_path=allowlist_path,
         )
 
-    resolved_endpoint = endpoint_path or ACTION_ENDPOINT_MAP.get(action, "/portal-api/otp/request")
-    nonce_url = validate_target_url(f"{clean_base}/v1/nonce", allowlist_path=allowlist_path)
-    assess_url = validate_target_url(f"{clean_base}/v1/assess", allowlist_path=allowlist_path)
+    resolved_endpoint = endpoint_path or ACTION_ENDPOINT_MAP.get(
+        action, "/portal-api/otp/request"
+    )
+    nonce_url = validate_target_url(
+        f"{clean_base}/v1/nonce", allowlist_path=allowlist_path
+    )
+    assess_url = validate_target_url(
+        f"{clean_base}/v1/assess", allowlist_path=allowlist_path
+    )
     challenge_url = validate_target_url(
         f"{clean_base}/v1/assess/challenge", allowlist_path=allowlist_path
     )
@@ -390,7 +418,9 @@ def run_tier4_session(
             if assess_decision == "challenge" and attempt_stepup:
                 challenge_obj = a_body.get("challenge")
                 challenge_id = (
-                    str(challenge_obj.get("id", "")) if isinstance(challenge_obj, dict) else ""
+                    str(challenge_obj.get("id", ""))
+                    if isinstance(challenge_obj, dict)
+                    else ""
                 )
                 req_hold_ms = (
                     float(challenge_obj.get("hold_ms", 1000.0))
@@ -401,7 +431,9 @@ def run_tier4_session(
                     n2_status, n2_body = do_get(nonce_url, headers)
                     nonce2 = str(n2_body.get("nonce", "")) if n2_status == 200 else ""
                     if nonce2:
-                        actual_hold = round(req_hold_ms + float(rng.uniform(110.0, 260.0)), 2)
+                        actual_hold = round(
+                            req_hold_ms + float(rng.uniform(110.0, 260.0)), 2
+                        )
                         c_status, c_body = do_post(
                             challenge_url,
                             {
@@ -419,9 +451,13 @@ def run_tier4_session(
                             c_dec = c_body.get("decision")
                             c_band = c_body.get("band")
                             assess_decision = (
-                                str(c_dec) if isinstance(c_dec, str) else assess_decision
+                                str(c_dec)
+                                if isinstance(c_dec, str)
+                                else assess_decision
                             )
-                            assess_band = str(c_band) if isinstance(c_band, str) else assess_band
+                            assess_band = (
+                                str(c_band) if isinstance(c_band, str) else assess_band
+                            )
                             c_tok = c_body.get("token")
                             if isinstance(c_tok, str) and c_tok:
                                 token = c_tok

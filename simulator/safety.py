@@ -47,7 +47,9 @@ def load_allowlist(allowlist_path: Path | None = None) -> frozenset[str]:
 def extract_host(target_url: str) -> str:
     """Parse ``target_url`` and return its normalized hostname or raise."""
     if not target_url or not isinstance(target_url, str) or not target_url.strip():
-        raise SimulatorTargetError("Target URL must be a non-empty http:// or https:// URL")
+        raise SimulatorTargetError(
+            "Target URL must be a non-empty http:// or https:// URL"
+        )
 
     parsed = urlsplit(target_url.strip())
     if parsed.scheme.lower() not in ("http", "https"):

@@ -76,16 +76,16 @@ def _urllib_post(
     validate_target_url(url)
     raw = json.dumps(body).encode("utf-8")
     req_headers = {"Content-Type": "application/json", **headers}
-    req = urllib.request.Request(url, data=raw, headers=req_headers, method="POST")  # noqa: S310
+    req = urllib.request.Request(url, data=raw, headers=req_headers, method="POST")
     try:
-        with urllib.request.urlopen(req, timeout=timeout_s) as resp:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=timeout_s) as resp:
             status = int(resp.status)
             payload = json.loads(resp.read().decode("utf-8") or "{}")
             return status, payload if isinstance(payload, dict) else {}
     except urllib.error.HTTPError as exc:
         try:
             err_body = json.loads(exc.read().decode("utf-8") or "{}")
-        except Exception:
+        except (ValueError, UnicodeDecodeError):
             err_body = {}
         return int(exc.code), err_body if isinstance(err_body, dict) else {}
 
@@ -97,16 +97,16 @@ def _urllib_get(
     timeout_s: float = 5.0,
 ) -> HttpResponseTuple:
     validate_target_url(url)
-    req = urllib.request.Request(url, headers=dict(headers), method="GET")  # noqa: S310
+    req = urllib.request.Request(url, headers=dict(headers), method="GET")
     try:
-        with urllib.request.urlopen(req, timeout=timeout_s) as resp:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=timeout_s) as resp:
             status = int(resp.status)
             payload = json.loads(resp.read().decode("utf-8") or "{}")
             return status, payload if isinstance(payload, dict) else {}
     except urllib.error.HTTPError as exc:
         try:
             err_body = json.loads(exc.read().decode("utf-8") or "{}")
-        except Exception:
+        except (ValueError, UnicodeDecodeError):
             err_body = {}
         return int(exc.code), err_body if isinstance(err_body, dict) else {}
 
@@ -143,7 +143,9 @@ def run_tier1_session(
     Returns:
         A :class:`SimRunResult` describing the session outcome.
     """
-    clean_base = validate_target_url(base_url, allowlist_path=allowlist_path).rstrip("/")
+    clean_base = validate_target_url(base_url, allowlist_path=allowlist_path).rstrip(
+        "/"
+    )
     portal_url = validate_target_url(
         f"{clean_base}/{endpoint_path.lstrip('/')}",
         allowlist_path=allowlist_path,
@@ -158,8 +160,12 @@ def run_tier1_session(
     assess_band: str | None = None
 
     if include_assess_attempt:
-        nonce_url = validate_target_url(f"{clean_base}/v1/nonce", allowlist_path=allowlist_path)
-        assess_url = validate_target_url(f"{clean_base}/v1/assess", allowlist_path=allowlist_path)
+        nonce_url = validate_target_url(
+            f"{clean_base}/v1/nonce", allowlist_path=allowlist_path
+        )
+        assess_url = validate_target_url(
+            f"{clean_base}/v1/assess", allowlist_path=allowlist_path
+        )
         n_status, n_body = do_get(nonce_url, headers)
         nonce = str(n_body.get("nonce", "")) if n_status == 200 else ""
         if nonce:

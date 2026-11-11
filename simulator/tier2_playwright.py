@@ -139,7 +139,9 @@ def build_tier2_behaviour_payload(
     }
 
 
-def build_portal_request_body(action: str, *, identifier_length: int = 12) -> dict[str, Any]:
+def build_portal_request_body(
+    action: str, *, identifier_length: int = 12
+) -> dict[str, Any]:
     """Build the coarse portal API request body for ``action``."""
     if action == "details_update":
         return {
@@ -175,7 +177,9 @@ def drive_tier2_playwright_page(
 
     Validates ``portal_url`` against ``simulator/allowlist.txt`` before navigating.
     """
-    clean_portal = validate_target_url(portal_url, allowlist_path=allowlist_path).rstrip("/")
+    clean_portal = validate_target_url(
+        portal_url, allowlist_path=allowlist_path
+    ).rstrip("/")
     page_id = ACTION_PAGE_MAP.get(action, "login")
     target_page_url = validate_target_url(
         f"{clean_portal}/?page={page_id}",
@@ -277,7 +281,9 @@ def run_tier2_session(
     portal request flow produced by a default headless Playwright browser performing
     direct ``page.fill()`` and ``page.click()``.
     """
-    clean_base = validate_target_url(base_url, allowlist_path=allowlist_path).rstrip("/")
+    clean_base = validate_target_url(base_url, allowlist_path=allowlist_path).rstrip(
+        "/"
+    )
     if page is not None:
         return drive_tier2_playwright_page(
             page,
@@ -289,9 +295,15 @@ def run_tier2_session(
             allowlist_path=allowlist_path,
         )
 
-    resolved_endpoint = endpoint_path or ACTION_ENDPOINT_MAP.get(action, "/portal-api/otp/request")
-    nonce_url = validate_target_url(f"{clean_base}/v1/nonce", allowlist_path=allowlist_path)
-    assess_url = validate_target_url(f"{clean_base}/v1/assess", allowlist_path=allowlist_path)
+    resolved_endpoint = endpoint_path or ACTION_ENDPOINT_MAP.get(
+        action, "/portal-api/otp/request"
+    )
+    nonce_url = validate_target_url(
+        f"{clean_base}/v1/nonce", allowlist_path=allowlist_path
+    )
+    assess_url = validate_target_url(
+        f"{clean_base}/v1/assess", allowlist_path=allowlist_path
+    )
     challenge_url = validate_target_url(
         f"{clean_base}/v1/assess/challenge", allowlist_path=allowlist_path
     )
@@ -355,7 +367,9 @@ def run_tier2_session(
             if assess_decision == "challenge" and attempt_stepup:
                 challenge_obj = a_body.get("challenge")
                 challenge_id = (
-                    str(challenge_obj.get("id", "")) if isinstance(challenge_obj, dict) else ""
+                    str(challenge_obj.get("id", ""))
+                    if isinstance(challenge_obj, dict)
+                    else ""
                 )
                 if challenge_id:
                     n2_status, n2_body = do_get(nonce_url, headers)
@@ -379,9 +393,13 @@ def run_tier2_session(
                             c_dec = c_body.get("decision")
                             c_band = c_body.get("band")
                             assess_decision = (
-                                str(c_dec) if isinstance(c_dec, str) else assess_decision
+                                str(c_dec)
+                                if isinstance(c_dec, str)
+                                else assess_decision
                             )
-                            assess_band = str(c_band) if isinstance(c_band, str) else assess_band
+                            assess_band = (
+                                str(c_band) if isinstance(c_band, str) else assess_band
+                            )
                             c_tok = c_body.get("token")
                             if isinstance(c_tok, str) and c_tok:
                                 token = c_tok

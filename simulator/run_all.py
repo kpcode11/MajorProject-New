@@ -23,17 +23,17 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from simulator.safety import validate_target_url  # noqa: E402
-from simulator.tier1_http import (  # noqa: E402
+from simulator.safety import validate_target_url
+from simulator.tier1_http import (
     DEFAULT_TIER1_USER_AGENTS,
     HttpGetFn,
     HttpPostFn,
     SimRunResult,
     run_tier1_session,
 )
-from simulator.tier2_playwright import run_tier2_session  # noqa: E402
-from simulator.tier3_stealth import TIER3_PROFILES, run_tier3_session  # noqa: E402
-from simulator.tier4_humanlike import run_tier4_session  # noqa: E402
+from simulator.tier2_playwright import run_tier2_session
+from simulator.tier3_stealth import TIER3_PROFILES, run_tier3_session
+from simulator.tier4_humanlike import run_tier4_session
 
 DEFAULT_OUTPUT_PATH: Path = ROOT / "results" / "system" / "sim_runs.jsonl"
 DEFAULT_SUMMARY_PATH: Path = ROOT / "results" / "system" / "sim_summary.md"
@@ -224,7 +224,9 @@ def format_sim_summary_markdown(
         "> trained and frozen prior to Phase 7 on held-out public dataset splits. **No model,",
         "> feature, or threshold was tuned on the Phase 7 simulator.** The numbers below",
         "> document end-to-end system verification against the local mock portal",
-        "> (`results/system/sim_runs.jsonl`, `seed=" + str(seed) + "`) and must not be reported",
+        "> (`results/system/sim_runs.jsonl`, `seed="
+        + str(seed)
+        + "`) and must not be reported",
         "> as statistical generalisation benchmarks.",
         "",
         f"- **Total simulated sessions:** `{summary['total_runs']}`",
@@ -251,7 +253,9 @@ def format_sim_summary_markdown(
             caught_pct = 100.0 * caught / total
             allowed_pct = 100.0 * allowed / total
             tier_latencies = [
-                r.latency_ms for r in results if r.protection_mode == mode and r.tier == tier
+                r.latency_ms
+                for r in results
+                if r.protection_mode == mode and r.tier == tier
             ]
             mean_lat = float(np.mean(tier_latencies)) if tier_latencies else 0.0
             desc = tier_descriptions.get(tier, tier)
@@ -394,14 +398,14 @@ def _build_inprocess_asgi_factory(tmp_dir: Path | None = None) -> TransportFacto
             sys.path.insert(0, str(p))
 
     import dataclasses
+    import importlib
 
-    from app.config import load_settings
-    from app.db import DatabaseManager
-    from app.main import app as default_app
-    from app.main import create_app
-    from app.store import InMemoryStore
+    app_config: Any = importlib.import_module("app.config")
+    app_db: Any = importlib.import_module("app.db")
+    app_main: Any = importlib.import_module("app.main")
+    app_store: Any = importlib.import_module("app.store")
 
-    base_settings = load_settings()
+    base_settings = app_config.load_settings()
     apps_by_mode: dict[str, Any] = {}
 
     for mode in ("off", "passive"):
@@ -415,11 +419,11 @@ def _build_inprocess_asgi_factory(tmp_dir: Path | None = None) -> TransportFacto
             rate_limit_challenge_per_min=10_000,
             rate_limit_challenge_session_per_min=10_000,
         )
-        apps_by_mode[mode] = create_app(
+        apps_by_mode[mode] = app_main.create_app(
             settings=cfg,
-            store=InMemoryStore(),
-            scorer=default_app.state.scorer,
-            db=DatabaseManager(cfg.database_url),
+            store=app_store.InMemoryStore(),
+            scorer=app_main.app.state.scorer,
+            db=app_db.DatabaseManager(cfg.database_url),
         )
 
     def _call_asgi(
@@ -437,7 +441,9 @@ def _build_inprocess_asgi_factory(tmp_dir: Path | None = None) -> TransportFacto
             req_headers.setdefault("content-type", "application/json")
             req_headers.setdefault("content-length", str(len(body_bytes)))
 
-        raw_headers = [(k.encode("latin-1"), v.encode("latin-1")) for k, v in req_headers.items()]
+        raw_headers = [
+            (k.encode("latin-1"), v.encode("latin-1")) for k, v in req_headers.items()
+        ]
         scope = {
             "type": "http",
             "asgi": {"version": "3.0"},
@@ -478,11 +484,13 @@ def _build_inprocess_asgi_factory(tmp_dir: Path | None = None) -> TransportFacto
         raw_text = b"".join(resp_chunks).decode("utf-8")
         try:
             parsed = json.loads(raw_text) if raw_text else {}
-        except Exception:
+        except (ValueError, UnicodeDecodeError):
             parsed = {}
         return status_code, parsed if isinstance(parsed, dict) else {}
 
-    def factory(mode: str, session_idx: int) -> tuple[HttpPostFn | None, HttpGetFn | None]:
+    def factory(
+        mode: str, session_idx: int
+    ) -> tuple[HttpPostFn | None, HttpGetFn | None]:
         app = apps_by_mode[mode]
         client_ip = f"10.{(session_idx // 250) % 250 + 1}.{(session_idx % 250) + 1}.10"
 
@@ -508,7 +516,9 @@ def _build_inprocess_asgi_factory(tmp_dir: Path | None = None) -> TransportFacto
 
 def main(argv: Sequence[str] | None = None) -> int:
     """CLI entry point for ``simulator/run_all.py``."""
-    parser = argparse.ArgumentParser(description="Run Tiers 1-4 bot simulator sessions.")
+    parser = argparse.ArgumentParser(
+        description="Run Tiers 1-4 bot simulator sessions."
+    )
     parser.add_argument(
         "--base-url",
         default="http://127.0.0.1:8000",

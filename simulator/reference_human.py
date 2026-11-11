@@ -161,9 +161,13 @@ def build_reference_human_behaviour_payload(
 ) -> dict[str, Any]:
     """Build the behaviour payload for ``multimodal_desktop`` or ``keyboard_only`` runs."""
     if mode == "keyboard_only":
-        key_events = build_reference_human_key_events(seed=seed, include_tab_and_enter=True)
+        key_events = build_reference_human_key_events(
+            seed=seed, include_tab_and_enter=True
+        )
         last_up = (
-            float(key_events[-1][2]) if isinstance(key_events[-1][2], (int, float)) else 3500.0
+            float(key_events[-1][2])
+            if isinstance(key_events[-1][2], (int, float))
+            else 3500.0
         )
         return {
             "keys": {
@@ -182,8 +186,14 @@ def build_reference_human_behaviour_payload(
             "device_class": "desktop",
         }
 
-    key_events = build_reference_human_key_events(seed=seed, include_tab_and_enter=False)
-    last_up = float(key_events[-1][2]) if isinstance(key_events[-1][2], (int, float)) else 3500.0
+    key_events = build_reference_human_key_events(
+        seed=seed, include_tab_and_enter=False
+    )
+    last_up = (
+        float(key_events[-1][2])
+        if isinstance(key_events[-1][2], (int, float))
+        else 3500.0
+    )
     return {
         "mouse": {
             "points": [list(pt) for pt in REFERENCE_HUMAN_MOUSE_POINTS],
@@ -228,7 +238,9 @@ def run_reference_human_session(
     When ``mode="keyboard_only"``, sends only keyboard + timing telemetry (zero mouse points)
     and, if challenged, completes the step-up via the keyboard alternative path.
     """
-    clean_base = validate_target_url(base_url, allowlist_path=allowlist_path).rstrip("/")
+    clean_base = validate_target_url(base_url, allowlist_path=allowlist_path).rstrip(
+        "/"
+    )
     if page is not None:
         page_id = ACTION_PAGE_MAP.get(action, "login")
         target_page_url = validate_target_url(
@@ -262,9 +274,15 @@ def run_reference_human_session(
             latency_ms=latency_ms,
         )
 
-    resolved_endpoint = endpoint_path or ACTION_ENDPOINT_MAP.get(action, "/portal-api/otp/request")
-    nonce_url = validate_target_url(f"{clean_base}/v1/nonce", allowlist_path=allowlist_path)
-    assess_url = validate_target_url(f"{clean_base}/v1/assess", allowlist_path=allowlist_path)
+    resolved_endpoint = endpoint_path or ACTION_ENDPOINT_MAP.get(
+        action, "/portal-api/otp/request"
+    )
+    nonce_url = validate_target_url(
+        f"{clean_base}/v1/nonce", allowlist_path=allowlist_path
+    )
+    assess_url = validate_target_url(
+        f"{clean_base}/v1/assess", allowlist_path=allowlist_path
+    )
     challenge_url = validate_target_url(
         f"{clean_base}/v1/assess/challenge", allowlist_path=allowlist_path
     )
@@ -323,7 +341,9 @@ def run_reference_human_session(
             if assess_decision == "challenge":
                 challenge_obj = a_body.get("challenge")
                 challenge_id = (
-                    str(challenge_obj.get("id", "")) if isinstance(challenge_obj, dict) else ""
+                    str(challenge_obj.get("id", ""))
+                    if isinstance(challenge_obj, dict)
+                    else ""
                 )
                 req_hold_ms = (
                     float(challenge_obj.get("hold_ms", 1000.0))
@@ -351,9 +371,13 @@ def run_reference_human_session(
                             c_dec = c_body.get("decision")
                             c_band = c_body.get("band")
                             assess_decision = (
-                                str(c_dec) if isinstance(c_dec, str) else assess_decision
+                                str(c_dec)
+                                if isinstance(c_dec, str)
+                                else assess_decision
                             )
-                            assess_band = str(c_band) if isinstance(c_band, str) else assess_band
+                            assess_band = (
+                                str(c_band) if isinstance(c_band, str) else assess_band
+                            )
                             c_tok = c_body.get("token")
                             if isinstance(c_tok, str) and c_tok:
                                 token = c_tok

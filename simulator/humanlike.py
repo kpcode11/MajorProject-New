@@ -115,7 +115,11 @@ def generate_humanlike_mouse_trajectory(
 
     t_cursor = max(0.0, float(start_t_ms))
     samples: list[list[float]] = [
-        [round(float(all_pts[0, 0]), 2), round(float(all_pts[0, 1]), 2), round(t_cursor, 2)]
+        [
+            round(float(all_pts[0, 0]), 2),
+            round(float(all_pts[0, 1]), 2),
+            round(t_cursor, 2),
+        ]
     ]
     for idx in range(1, total_pts):
         t_cursor += float(dts[idx - 1])
@@ -168,7 +172,9 @@ def generate_humanlike_key_events(
 
             retype_flight = float(np.clip(gen.normal(145.0, 35.0), 55.0, 280.0))
             re_down = round(bs_up + retype_flight, 2)
-            re_dwell = float(np.clip(gen.normal(mean_dwell_ms, std_dwell_ms), 30.0, 240.0))
+            re_dwell = float(
+                np.clip(gen.normal(mean_dwell_ms, std_dwell_ms), 30.0, 240.0)
+            )
             re_up = round(re_down + re_dwell, 2)
             events.append([cls_name, re_down, re_up])
             up_ms = re_up
