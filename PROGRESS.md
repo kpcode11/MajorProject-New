@@ -101,8 +101,8 @@
 | P7-16 | 7 | Simulator batch runner | DONE | e4a3ec3 | Added simulator/run_all.py (run_all_tiers, run_randomized_tier_session, summarize_sim_runs, write_sim_runs_jsonl) generating results/system/sim_runs.jsonl (200 sessions across Tiers 1-4 for off and passive modes); 2 tests in test_simulator_run_all.py. |
 | P7-17 | 7 | Human-like reference run | DONE | e4b864c | Added simulator/reference_human.py (run_reference_human_session, REFERENCE_HUMAN_MOUSE_POINTS, DEMO_SCRIPT_DISCLAIMER) verifying multimodal and keyboard-only (Tab+Enter) sessions pass passive protection; 3 tests in test_simulator_reference_human.py. |
 | P7-18 | 7 | Portal end-to-end tests | DONE | 0088803 | Added backend/tests/test_e2e_portal.py (5 E2E tests) and portal/test/e2e.test.tsx (4 E2E tests) covering normal interaction -> token -> OTP accepted, headless direct click -> denied/challenged, no token -> 401, keyboard-only Tab+Enter -> step-up pass, and off vs passive mode. |
-| P7-19 | 7 | Demo startup command | DONE | pending | Added demo() in scripts/tasks.py starting backend (STORE_BACKEND=memory, SQLite, 127.0.0.1:8000) and portal dev server (127.0.0.1:5173) plus deploy/docker-compose.yml (optional Redis + PostgreSQL infra profile); 2 tests in test_demo_task.py. |
-| P7-20 | 7 | Demo script | TODO | | |
+| P7-19 | 7 | Demo startup command | DONE | 19a87b5 | Added demo() in scripts/tasks.py starting backend (STORE_BACKEND=memory, SQLite, 127.0.0.1:8000) and portal dev server (127.0.0.1:5173) plus deploy/docker-compose.yml (optional Redis + PostgreSQL infra profile); 2 tests in test_demo_task.py. |
+| P7-20 | 7 | Demo script | DONE | pending | Added docs/demo_script.md documenting python scripts/tasks.py demo, PROTECTION_MODE=off vs passive, /portal-api/stats, keyboard-only accessibility flow, and Tiers 1-4 simulator runs; verified in test_demo_task.py. |
 | P7-21 | 7 | Simulator summary | TODO | | |
 | P8-01 | 8 | Human touch-data decision | TODO | | |
 | P8-02A | 8 | Touch dataset inventory | TODO | | |

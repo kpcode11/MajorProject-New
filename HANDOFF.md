@@ -1,9 +1,9 @@
 # Handoff
 
-**Updated:** 2026-11-11 15:59  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-11 16:05  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P7-20 — Demo script (`docs/demo_script.md`)
+- ID: P7-21 — Simulator summary (`results/system/sim_summary.md`)
 - State: `TODO`
 
 ## Done in Phase 7 so far
@@ -25,13 +25,14 @@
 - **P7-16 (`e4a3ec3`):** Added `simulator/run_all.py` (`run_all_tiers`, `run_randomized_tier_session`, `summarize_sim_runs`, `write_sim_runs_jsonl`), generated `results/system/sim_runs.jsonl`, and added 2 unit tests in `backend/tests/test_simulator_run_all.py`.
 - **P7-17 (`e4b864c`):** Added `simulator/reference_human.py` (`run_reference_human_session`, `REFERENCE_HUMAN_MOUSE_POINTS`, `DEMO_SCRIPT_DISCLAIMER`, `build_reference_human_behaviour_payload`) and 3 unit tests in `backend/tests/test_simulator_reference_human.py`.
 - **P7-18 (`0088803`):** Added `backend/tests/test_e2e_portal.py` (5 E2E tests) and `portal/test/e2e.test.tsx` (4 E2E tests).
-- **P7-19:** Added `demo()` in `scripts/tasks.py` starting the backend (`STORE_BACKEND=memory`, SQLite, `127.0.0.1:8000`) and portal dev server (`127.0.0.1:5173`), added `deploy/docker-compose.yml` with optional `infra` profile for Redis and PostgreSQL, and added 2 tests in `backend/tests/test_demo_task.py`.
+- **P7-19 (`19a87b5`):** Added `demo()` in `scripts/tasks.py` and `deploy/docker-compose.yml` (`infra` profile for Redis and PostgreSQL), tested in `backend/tests/test_demo_task.py`.
+- **P7-20:** Added `docs/demo_script.md` detailing the step-by-step live demonstration workflow (`python scripts/tasks.py demo`, `PROTECTION_MODE=off` vs `passive`, `/portal-api/stats`, keyboard-only accessibility path, and Tiers 1–4 simulator runs).
 
 ## Exact next step
-- Start **P7-20** (`Demo script`): write `docs/demo_script.md` describing the end-to-end live demo walkthrough (`python scripts/tasks.py demo`, unprotected `PROTECTION_MODE=off` vs protected `PROTECTION_MODE=passive`, `/portal-api/stats` inspection, keyboard-only accessibility flow, and Tiers 1–4 bot simulator comparison).
+- Start **P7-21** (`Simulator summary`): generate `results/system/sim_summary.md` from `results/system/sim_runs.jsonl` reporting counts and rates per tier and protection mode (with explicit methodological note that the model was not tuned to the simulator).
 
 ## Files touched (recent)
-- `deploy/docker-compose.yml`, `backend/tests/test_demo_task.py` (new); `scripts/tasks.py`, `PROGRESS.md`, `HANDOFF.md`
+- `docs/demo_script.md` (new); `backend/tests/test_demo_task.py`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/tasks.py lint

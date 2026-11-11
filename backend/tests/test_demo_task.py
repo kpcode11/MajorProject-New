@@ -54,3 +54,14 @@ def test_tasks_demo_dry_run_configures_memory_store_sqlite_and_portal_server() -
         assert "sqlite:///./botguard.db" in out
         assert "http://127.0.0.1:8000" in out
         assert "http://127.0.0.1:5173" in out
+
+
+def test_demo_script_doc_exists_and_covers_demo_steps() -> None:
+    """docs/demo_script.md exists and documents the demo command, modes, and simulator tiers."""
+    doc_path = ROOT / "docs" / "demo_script.md"
+    assert doc_path.exists()
+    text = doc_path.read_text(encoding="utf-8")
+    assert "python scripts/tasks.py demo" in text
+    assert "/portal-api/stats" in text
+    assert "DEMO — not a government portal" in text
+    assert "simulator/run_all.py" in text
