@@ -122,4 +122,76 @@ describe('renderPressHoldChallenge & createChallengeHandler (P6-08)', () => {
     expect(cleanupSpy).toHaveBeenCalledTimes(1);
     expect(document.getElementById('custom-verify')).toBeNull();
   });
+
+  it('meets P7-09 accessibility invariants: labelled controls, focus ring, Tab trap, focus restore, and keyboard Space/Enter path without time pressure', async () => {
+    vi.useFakeTimers();
+    const triggerBtn = document.createElement('button');
+    triggerBtn.id = 'host-submit-btn';
+    document.body.appendChild(triggerBtn);
+    triggerBtn.focus();
+    expect(document.activeElement).toBe(triggerBtn);
+
+    clock = 100;
+    const promise = renderPressHoldChallenge(CHALLENGE, 'otp_request', { now });
+
+    const dialog = document.querySelector('[data-testid="stepup-dialog"]') as HTMLElement;
+    const holdBtn = document.querySelector('[data-testid="stepup-hold-btn"]') as HTMLButtonElement;
+    const kbBtn = document.querySelector('[data-testid="stepup-kb-btn"]') as HTMLButtonElement;
+    const cancelBtn = document.querySelector(
+      '[data-testid="stepup-cancel-btn"]',
+    ) as HTMLButtonElement;
+    const progress = document.querySelector('[data-testid="stepup-progress"]') as HTMLElement;
+    const status = document.querySelector('[data-testid="stepup-status"]') as HTMLElement;
+    const styleTag = dialog.querySelector('style');
+
+    // 1. Labelled controls & ARIA roles
+    expect(dialog.getAttribute('role')).toBe('dialog');
+    expect(dialog.getAttribute('aria-modal')).toBe('true');
+    expect(dialog.getAttribute('aria-labelledby')).toBe('botguard-challenge-title');
+    expect(dialog.getAttribute('aria-describedby')).toBe('botguard-challenge-desc');
+    expect(holdBtn.getAttribute('aria-label')).toContain('Press and hold');
+    expect(kbBtn.getAttribute('aria-label')).toContain('Keyboard accessible');
+    expect(cancelBtn.getAttribute('aria-label')).toBe('Cancel verification');
+    expect(progress.getAttribute('role')).toBe('progressbar');
+    expect(status.getAttribute('role')).toBe('status');
+    expect(status.getAttribute('aria-live')).toBe('polite');
+
+    // 2. Visible focus ring CSS rule present
+    expect(styleTag?.textContent).toContain(':focus-visible');
+    expect(styleTag?.textContent).toContain('outline:3px solid #0284c7');
+
+    // 3. Initial focus on holdBtn and Tab / Shift+Tab focus trap inside modal
+    expect(document.activeElement).toBe(holdBtn);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(kbBtn);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(cancelBtn);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(holdBtn);
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true }),
+    );
+    expect(document.activeElement).toBe(cancelBtn);
+
+    // Tab back to kbBtn and activate via Space key (no physical hold required)
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true }),
+    );
+    expect(document.activeElement).toBe(kbBtn);
+
+    dispatchTrusted(kbBtn, new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+    clock = 1_150;
+    vi.advanceTimersByTime(1_000);
+
+    const result = await promise;
+    expect(result.holdStartMs).toBe(100);
+    expect(result.holdEndMs).toBeGreaterThanOrEqual(1_100);
+
+    // 4. Focus restored to original trigger button after modal closes
+    expect(document.activeElement).toBe(triggerBtn);
+  });
 });

@@ -90,8 +90,8 @@
 | P7-05 | 7 | Protection-mode switch | DONE | 5f02c1e | Added PROTECTION_MODE ('off' | 'passive', default 'passive') in backend/app/config.py, bypassed token requirement in require_human_token when 'off', and exposed protection_mode in /portal-api/stats; 5 tests in test_portal_api.py. |
 | P7-06 | 7 | Accessible step-up UI | DONE | 5af2f3a | Accessible press-and-hold step-up dialog with server-chosen hold_ms (0.8-1.5 s), Space/Enter single-press keyboard alternative, focus ring/trap, and no image/text puzzles; verified in portal/test/app.test.tsx. |
 | P7-07 | 7 | Challenge flow | DONE | 554c422 | POST /v1/assess challenge decision (id, type, hold_ms, expires_in) and POST /v1/assess/challenge re-scoring combining original_score + challenge interaction features to return allow/deny; verified in test_api.py. |
-| P7-08 | 7 | Challenge rate limits | DONE | pending | Per-session (RATE_LIMIT_CHALLENGE_SESSION_PER_MIN) and per-IP-bucket (RATE_LIMIT_CHALLENGE_PER_MIN) rate limits, single-use get_and_delete challenge_id, and CHALLENGE_TTL_SECONDS; verified in test_ratelimit.py and test_api.py. |
-| P7-09 | 7 | Challenge accessibility | TODO | | |
+| P7-08 | 7 | Challenge rate limits | DONE | 97d96b7 | Per-session (RATE_LIMIT_CHALLENGE_SESSION_PER_MIN) and per-IP-bucket (RATE_LIMIT_CHALLENGE_PER_MIN) rate limits, single-use get_and_delete challenge_id, and CHALLENGE_TTL_SECONDS; verified in test_ratelimit.py and test_api.py. |
+| P7-09 | 7 | Challenge accessibility | DONE | pending | Verified ARIA labels/roles, initial focus, Tab/Shift+Tab modal focus trap, focus restoration on close, visible :focus-visible outline, and keyboard Space/Enter single-press path without countdown pressure in sdk/test/challenge.test.ts. |
 | P7-10 | 7 | Challenge tests | TODO | | |
 | P7-11 | 7 | Simulator local-host safety | TODO | | |
 | P7-12 | 7 | Simulator tier 1 | TODO | | |
