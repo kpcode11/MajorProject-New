@@ -1,10 +1,10 @@
 # Handoff
 
-**Updated:** 2026-11-11 13:38  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-11 13:41  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P7-10 — Challenge tests (`backend/tests/test_api.py`, `sdk/test/challenge.test.ts`)
-- State: not started (`TODO`; P7-09 is DONE)
+- ID: P7-11 — Simulator local-host safety (`simulator/`)
+- State: not started (`TODO`; P7-10 is DONE)
 
 ## Done in Phase 7 so far
 - **P7-01 (`556745c`):** Created `portal/` React 19 + Vite 8 + TypeScript 6 + Vitest 5 + ESLint 10 + Prettier scaffold linking `@botguard/sdk` (`file:../sdk`).
@@ -15,13 +15,14 @@
 - **P7-06 (`5af2f3a`):** Enhanced the default accessible press-and-hold step-up UI (`sdk/src/challenge.ts`) with `data-testid` hooks, `Space`/`Enter` single-press keyboard alternative handler (`onKbAltKeyDown`), visible `:focus-visible` ring, Tab focus trapping, and focus restoration, and verified end-to-end step-up interaction in `portal/test/app.test.tsx`.
 - **P7-07 (`554c422`):** Enhanced `POST /v1/assess/challenge` in `backend/app/main.py` to re-score using the original session's `original_score` blended with any challenge `env`/`behaviour` features and hold timing, returning `allow` (with token) or `deny`.
 - **P7-08 (`97d96b7`):** Added configurable `RATE_LIMIT_CHALLENGE_PER_MIN`, `RATE_LIMIT_CHALLENGE_SESSION_PER_MIN`, and `CHALLENGE_TTL_SECONDS`, enforced per-session and per-IP-bucket sliding-window rate limits on `POST /v1/assess/challenge`, and verified single-use `challenge_id` consumption.
-- **P7-09:** Added comprehensive accessibility unit tests in `sdk/test/challenge.test.ts` verifying ARIA roles/labels (`role="dialog"`, `aria-modal="true"`, `aria-labelledby`, `aria-describedby`, `role="progressbar"`, `role="status"`), visible `:focus-visible` outline, initial focus, `Tab`/`Shift+Tab` modal focus trapping, focus restoration on close, and keyboard single-press `Space`/`Enter` completion without time pressure.
+- **P7-09 (`06bbafc`):** Verified ARIA labels/roles, initial focus, `Tab`/`Shift+Tab` modal focus trap, focus restoration on close, visible `:focus-visible` outline, and keyboard `Space`/`Enter` single-press path without countdown pressure in `sdk/test/challenge.test.ts`.
+- **P7-10:** Added dedicated step-up challenge test suite `backend/tests/test_challenge.py` (5 tests) and timeout test in `sdk/test/challenge.test.ts` covering challenge success, timeout expiration (`401` / `challenge_expired`), single-use replay rejection (`401`), too-fast completion (`deny`), and wrong ID / context / action mismatch.
 
 ## Exact next step
-- Start **P7-10** (`Challenge tests`): add dedicated challenge test suite covering all required scenarios in `docs/plan/phase_7.md` (`challenge success, timeout, replay, too-fast completion, wrong id`) across backend (`backend/tests/test_challenge.py`) and SDK (`sdk/test/challenge.test.ts`).
+- Start **P7-11** (`Simulator local-host safety`): implement host-allowlist safety check in `simulator/` refusing to run if the target host is not in `localhost`, `127.0.0.1`, `::1`, or `simulator/allowlist.txt`, and add unit tests.
 
 ## Files touched (recent)
-- `sdk/test/challenge.test.ts`, `PROGRESS.md`, `HANDOFF.md`
+- `backend/tests/test_challenge.py` (new); `sdk/test/challenge.test.ts`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/tasks.py lint

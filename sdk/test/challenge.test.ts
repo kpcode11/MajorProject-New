@@ -194,4 +194,20 @@ describe('renderPressHoldChallenge & createChallengeHandler (P6-08)', () => {
     // 4. Focus restored to original trigger button after modal closes
     expect(document.activeElement).toBe(triggerBtn);
   });
+
+  it('rejects with challenge_expired when expires_in timeout elapses before completion (P7-10)', async () => {
+    vi.useFakeTimers();
+    const shortChallenge: ChallengeInfo = {
+      id: 'chal-timeout-1',
+      type: 'press_hold',
+      hold_ms: 1000,
+      expires_in: 2,
+    };
+    const promise = renderPressHoldChallenge(shortChallenge, 'otp_request', { now });
+    // Attach rejection handler before advancing timers so Node does not flag unhandled rejection
+    const assertion = expect(promise).rejects.toThrowError(/challenge_expired/);
+    vi.advanceTimersByTime(2_100);
+    await assertion;
+    expect(document.querySelector('[data-testid="stepup-dialog"]')).toBeNull();
+  });
 });
