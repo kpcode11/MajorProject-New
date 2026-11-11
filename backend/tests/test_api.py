@@ -469,6 +469,51 @@ def test_challenge_step_up_flow_and_protected_route_access(
     assert replay_portal.json()["error"]["code"] == "token_replayed_or_revoked"
 
 
+def test_challenge_rescoring_rejects_untrusted_or_bot_challenge_behaviour(
+    test_app: FastAPI,
+) -> None:
+    """Verify P7-07: POST /v1/assess/challenge re-scores original session + challenge features."""
+    client = _client(test_app)
+    nonce1 = client.get("/v1/nonce").json()["nonce"]
+    assess_resp = client.post(
+        "/v1/assess",
+        json={
+            "nonce": nonce1,
+            "action": "otp_request",
+            "env": {"webdriver": True},
+            "behaviour": {
+                "keys": {"events": _make_human_key_events()},
+            },
+        },
+    )
+    assert assess_resp.status_code == 200
+    chal = assess_resp.json()["challenge"]
+    assert chal is not None
+    assert 800 <= chal["hold_ms"] <= 1500
+    hold_ms = float(chal["hold_ms"])
+
+    # Even with valid hold duration, untrusted synthetic challenge events (R11) cause deny
+    nonce2 = client.get("/v1/nonce").json()["nonce"]
+    chal_resp = client.post(
+        "/v1/assess/challenge",
+        json={
+            "nonce": nonce2,
+            "challenge_id": chal["id"],
+            "action": "otp_request",
+            "hold_start_ms": 500.0,
+            "hold_end_ms": 500.0 + hold_ms + 40.0,
+            "behaviour": {
+                "mouse": {"points": _make_bot_mouse_points(), "untrusted_count": 3},
+            },
+        },
+    )
+    assert chal_resp.status_code == 200
+    chal_data = chal_resp.json()
+    assert chal_data["decision"] == "deny"
+    assert chal_data["band"] == "high"
+    assert chal_data["token"] is None
+
+
 def test_token_verify_endpoint_and_wrong_action_rejection(
     test_app: FastAPI, test_settings: Settings
 ) -> None:

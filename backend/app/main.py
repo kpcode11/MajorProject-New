@@ -736,20 +736,48 @@ def create_app(
             )
 
         required_hold_ms = float(chal_data.get("hold_ms", 1000))
-        hold_ok = False
-        if payload.hold_start_ms is not None and payload.hold_end_ms is not None:
-            held_ms = payload.hold_end_ms - payload.hold_start_ms
-            # Allow 15% human release tolerance up to 10 seconds
-            if required_hold_ms * 0.85 <= held_ms <= 10_000.0:
-                hold_ok = True
+        original_score = float(chal_data.get("original_score", 0.5))
+        held_ms = (
+            payload.hold_end_ms - payload.hold_start_ms
+            if (payload.hold_start_ms is not None and payload.hold_end_ms is not None)
+            else -1.0
+        )
+        # Allow 15% human release tolerance up to 10 seconds
+        hold_ok = required_hold_ms * 0.85 <= held_ms <= 10_000.0
 
-        outcome = "passed" if hold_ok else "failed"
+        # Re-score using the original session score plus challenge features (P7-07)
+        chal_rules: list[str] = []
+        chal_bot_behaviour = False
+        chal_score_val = original_score
+        if payload.env is not None or payload.behaviour is not None:
+            chal_assess_req = AssessRequest(
+                nonce=payload.nonce,
+                action=payload.action,
+                sdk_version=payload.sdk_version,
+                env=payload.env,
+                behaviour=payload.behaviour,
+            )
+            chal_score_res: ScoreResult = app.state.scorer.score_request(chal_assess_req)
+            chal_rules = list(chal_score_res.fired_rules)
+            chal_score_val = 0.5 * original_score + 0.5 * chal_score_res.score
+            if "R11" in chal_rules or (
+                chal_score_res.model_score is not None and chal_score_res.model_score >= 0.85
+            ):
+                chal_bot_behaviour = True
+
+        passed = hold_ok and not chal_bot_behaviour
+        rescored_score = (
+            round(max(0.0, min(chal_score_val - 0.45, 0.10)), 4)
+            if passed
+            else round(max(original_score, chal_score_val, 0.85), 4)
+        )
+        outcome = "passed" if passed else "failed"
         app.state.db.record_challenge_completed(
             challenge_id=payload.challenge_id,
             outcome=outcome,
         )
 
-        if hold_ok:
+        if passed:
             tok = issue_token(
                 app.state.store,
                 app.state.settings,
@@ -762,6 +790,8 @@ def create_app(
                 client_ip=ip,
                 action=payload.action,
                 challenge_id=payload.challenge_id,
+                original_score=round(original_score, 4),
+                rescored_score=rescored_score,
             )
             return AssessResponse(
                 decision="allow",
@@ -779,6 +809,9 @@ def create_app(
             client_ip=ip,
             action=payload.action,
             challenge_id=payload.challenge_id,
+            original_score=round(original_score, 4),
+            rescored_score=rescored_score,
+            rules_fired=chal_rules,
         )
         return AssessResponse(
             decision="deny",
