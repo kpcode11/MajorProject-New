@@ -92,8 +92,8 @@
 | P7-07 | 7 | Challenge flow | DONE | 554c422 | POST /v1/assess challenge decision (id, type, hold_ms, expires_in) and POST /v1/assess/challenge re-scoring combining original_score + challenge interaction features to return allow/deny; verified in test_api.py. |
 | P7-08 | 7 | Challenge rate limits | DONE | 97d96b7 | Per-session (RATE_LIMIT_CHALLENGE_SESSION_PER_MIN) and per-IP-bucket (RATE_LIMIT_CHALLENGE_PER_MIN) rate limits, single-use get_and_delete challenge_id, and CHALLENGE_TTL_SECONDS; verified in test_ratelimit.py and test_api.py. |
 | P7-09 | 7 | Challenge accessibility | DONE | 06bbafc | Verified ARIA labels/roles, initial focus, Tab/Shift+Tab modal focus trap, focus restoration on close, visible :focus-visible outline, and keyboard Space/Enter single-press path without countdown pressure in sdk/test/challenge.test.ts. |
-| P7-10 | 7 | Challenge tests | DONE | pending | Added backend/tests/test_challenge.py and sdk/test/challenge.test.ts covering challenge success, timeout expiration, replay rejection, too-fast completion deny, and wrong ID / context / action mismatch. |
-| P7-11 | 7 | Simulator local-host safety | TODO | | |
+| P7-10 | 7 | Challenge tests | DONE | 20615d7 | Added backend/tests/test_challenge.py and sdk/test/challenge.test.ts covering challenge success, timeout expiration, replay rejection, too-fast completion deny, and wrong ID / context / action mismatch. |
+| P7-11 | 7 | Simulator local-host safety | DONE | pending | Added simulator/allowlist.txt and simulator/safety.py (validate_target_url, load_allowlist, extract_host) refusing non-local and .gov/.nic.in/uidai hosts; 16 tests in test_simulator_safety.py. |
 | P7-12 | 7 | Simulator tier 1 | TODO | | |
 | P7-13 | 7 | Simulator tier 2 | TODO | | |
 | P7-14 | 7 | Simulator tier 3 | TODO | | |

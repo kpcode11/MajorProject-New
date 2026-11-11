@@ -99,6 +99,12 @@ def lint() -> None:
             cwd=package,
         )
         run([str(interpreter), "-m", "mypy", source], cwd=package)
+    sim_dir = ROOT / "simulator"
+    if sim_dir.exists():
+        backend_py = require_environment(PACKAGES[1])
+        run([str(backend_py), "-m", "ruff", "check", str(sim_dir)], cwd=ROOT)
+        run([str(backend_py), "-m", "ruff", "format", "--check", str(sim_dir)], cwd=ROOT)
+        run([str(backend_py), "-m", "mypy", "--strict", str(sim_dir)], cwd=ROOT)
     node_npm(SDK, "lint", "typecheck")
     node_npm(PORTAL, "lint", "typecheck")
 

@@ -1,0 +1,7 @@
+# Allowed target hosts for the BotGuard bot simulator (P7-11).
+# The simulator is strictly restricted to the local mock portal and must refuse
+# any non-local or external host.
+localhost
+127.0.0.1
+::1
+testserver
