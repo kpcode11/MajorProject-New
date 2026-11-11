@@ -1,9 +1,9 @@
 # Handoff
 
-**Updated:** 2026-11-11 14:01  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-11 14:32  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P7-14 — Simulator tier 3 (`simulator/tier3_stealth.py`)
+- ID: P7-15 — Simulator tier 4 (`simulator/humanlike.py` and `simulator/tier4_humanlike.py`)
 - State: `TODO`
 
 ## Done in Phase 7 so far
@@ -19,13 +19,14 @@
 - **P7-10 (`20615d7`):** Added dedicated step-up challenge test suite `backend/tests/test_challenge.py` and timeout test in `sdk/test/challenge.test.ts`.
 - **P7-11 (`b65d5ae`):** Added `simulator/allowlist.txt`, `simulator/safety.py` (`validate_target_url`, `load_allowlist`, `extract_host`, `SimulatorTargetError`), `simulator/__init__.py`, `backend/tests/test_simulator_safety.py` (16 unit tests), and wired `simulator/` into `scripts/tasks.py` `lint()`.
 - **P7-12 (`7b234d9`):** Added `simulator/tier1_http.py` (`run_tier1_session`, `SimRunResult`, `SimOutcome`, `DEFAULT_TIER1_USER_AGENTS`), exported them in `simulator/__init__.py`, and added unit tests in `backend/tests/test_simulator_tier1.py`.
-- **P7-13:** Added `simulator/tier2_playwright.py` (`run_tier2_session`, `drive_tier2_playwright_page`, `build_tier2_env_signals`, `build_tier2_behaviour_payload`, `PlaywrightPageLike`), exported them in `simulator/__init__.py`, and added 3 unit tests in `backend/tests/test_simulator_tier2.py`.
+- **P7-13 (`f5e438f`):** Added `simulator/tier2_playwright.py` (`run_tier2_session`, `drive_tier2_playwright_page`, `build_tier2_env_signals`, `build_tier2_behaviour_payload`, `PlaywrightPageLike`) and 3 unit tests in `backend/tests/test_simulator_tier2.py`.
+- **P7-14:** Added `simulator/tier3_stealth.py` (`run_tier3_session`, `drive_tier3_playwright_page`, `apply_tier3_context_adjustments`, `build_tier3_env_signals`, `build_tier3_behaviour_payload`, `TIER3_INIT_SCRIPT`, `TIER3_PROFILES`) and 4 unit tests in `backend/tests/test_simulator_tier3.py`.
 
 ## Exact next step
-- Start **P7-14** (`Simulator tier 3`): implement Playwright with basic, documented automation-hiding context adjustments (e.g., overriding `navigator.webdriver = false`, custom UA/plugins, while potentially leaving inconsistencies or mechanical behaviour to test the rule & behavioural layers) after local-host validation.
+- Start **P7-15** (`Simulator tier 4`): implement `simulator/humanlike.py` (Bezier mouse paths with smoothstep ease-in/out and Gaussian jitter per Appendix D.3, plus randomised typing delays) and `simulator/tier4_humanlike.py` (`run_tier4_session`, `drive_tier4_playwright_page`).
 
 ## Files touched (recent)
-- `simulator/tier2_playwright.py`, `backend/tests/test_simulator_tier2.py` (new); `simulator/__init__.py`, `PROGRESS.md`, `HANDOFF.md`
+- `simulator/tier3_stealth.py`, `backend/tests/test_simulator_tier3.py` (new); `simulator/__init__.py`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/tasks.py lint
