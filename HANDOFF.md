@@ -1,10 +1,10 @@
 # Handoff
 
-**Updated:** 2026-11-11 16:05  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-11 16:12  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P7-21 — Simulator summary (`results/system/sim_summary.md`)
-- State: `TODO`
+- ID: Phase 7 (`P7-01`..`P7-21`) complete; next task is **P8-01** (`Human touch-data decision`) after Phase 7 exit / human demo check.
+- State: `DONE` (all Phase 7 tasks `P7-01`..`P7-21` completed)
 
 ## Done in Phase 7 so far
 - **P7-01 (`556745c`):** Created `portal/` React 19 + Vite 8 + TypeScript 6 + Vitest 5 + ESLint 10 + Prettier scaffold linking `@botguard/sdk` (`file:../sdk`).
@@ -26,15 +26,17 @@
 - **P7-17 (`e4b864c`):** Added `simulator/reference_human.py` (`run_reference_human_session`, `REFERENCE_HUMAN_MOUSE_POINTS`, `DEMO_SCRIPT_DISCLAIMER`, `build_reference_human_behaviour_payload`) and 3 unit tests in `backend/tests/test_simulator_reference_human.py`.
 - **P7-18 (`0088803`):** Added `backend/tests/test_e2e_portal.py` (5 E2E tests) and `portal/test/e2e.test.tsx` (4 E2E tests).
 - **P7-19 (`19a87b5`):** Added `demo()` in `scripts/tasks.py` and `deploy/docker-compose.yml` (`infra` profile for Redis and PostgreSQL), tested in `backend/tests/test_demo_task.py`.
-- **P7-20:** Added `docs/demo_script.md` detailing the step-by-step live demonstration workflow (`python scripts/tasks.py demo`, `PROTECTION_MODE=off` vs `passive`, `/portal-api/stats`, keyboard-only accessibility path, and Tiers 1–4 simulator runs).
+- **P7-20 (`4a93ffb`):** Added `docs/demo_script.md` detailing the step-by-step live demonstration workflow (`python scripts/tasks.py demo`, `PROTECTION_MODE=off` vs `passive`, `/portal-api/stats`, keyboard-only accessibility path, and Tiers 1–4 simulator runs).
+- **P7-21:** Added `format_sim_summary_markdown` and `write_sim_summary_markdown` in `simulator/run_all.py`, generated `results/system/sim_summary.md` reporting per-tier counts and rates across `off` and `passive` protection modes (with explicit non-generalisation disclaimer), and added verification in `backend/tests/test_simulator_run_all.py`.
 
 ## Exact next step
-- Start **P7-21** (`Simulator summary`): generate `results/system/sim_summary.md` from `results/system/sim_runs.jsonl` reporting counts and rates per tier and protection mode (with explicit methodological note that the model was not tuned to the simulator).
+- Phase 7 (`P7-01`..`P7-21`) is complete. After the human demo check (`docs/demo_script.md`), merge `phase-7-mock-portal` into `main`, create `phase-8-mobile-touch`, and start **P8-01** (`Human touch-data decision` in `docs/plan/phase_8.md`).
 
 ## Files touched (recent)
-- `docs/demo_script.md` (new); `backend/tests/test_demo_task.py`, `PROGRESS.md`, `HANDOFF.md`
+- `results/system/sim_summary.md` (new); `simulator/run_all.py`, `simulator/__init__.py`, `backend/tests/test_simulator_run_all.py`, `results/system/sim_runs.jsonl`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
+    python scripts/status.py
     python scripts/tasks.py lint
     python scripts/tasks.py test-fast
 

@@ -17,10 +17,13 @@ from simulator.reference_human import (
 )
 from simulator.run_all import (
     DEFAULT_OUTPUT_PATH,
+    DEFAULT_SUMMARY_PATH,
+    format_sim_summary_markdown,
     run_all_tiers,
     run_randomized_tier_session,
     summarize_sim_runs,
     write_sim_runs_jsonl,
+    write_sim_summary_markdown,
 )
 from simulator.safety import (
     BUILTIN_LOCAL_HOSTS,
@@ -64,6 +67,7 @@ __all__ = [
     "BUILTIN_LOCAL_HOSTS",
     "DEFAULT_ALLOWLIST_PATH",
     "DEFAULT_OUTPUT_PATH",
+    "DEFAULT_SUMMARY_PATH",
     "DEFAULT_TIER1_USER_AGENTS",
     "DEMO_SCRIPT_DISCLAIMER",
     "PlaywrightPageLike",
@@ -91,6 +95,7 @@ __all__ = [
     "drive_tier3_playwright_page",
     "drive_tier4_playwright_page",
     "extract_host",
+    "format_sim_summary_markdown",
     "generate_humanlike_key_events",
     "generate_humanlike_mouse_trajectory",
     "load_allowlist",
@@ -104,4 +109,5 @@ __all__ = [
     "summarize_sim_runs",
     "validate_target_url",
     "write_sim_runs_jsonl",
+    "write_sim_summary_markdown",
 ]

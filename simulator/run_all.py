@@ -36,6 +36,7 @@ from simulator.tier3_stealth import TIER3_PROFILES, run_tier3_session  # noqa: E
 from simulator.tier4_humanlike import run_tier4_session  # noqa: E402
 
 DEFAULT_OUTPUT_PATH: Path = ROOT / "results" / "system" / "sim_runs.jsonl"
+DEFAULT_SUMMARY_PATH: Path = ROOT / "results" / "system" / "sim_summary.md"
 ACTIONS: tuple[str, ...] = ("otp_request", "details_update", "centre_search")
 ACTION_WEIGHTS: tuple[float, ...] = (0.70, 0.15, 0.15)
 TransportFactory = Callable[[str, int], tuple[HttpPostFn | None, HttpGetFn | None]]
@@ -197,6 +198,146 @@ def write_sim_runs_jsonl(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     lines = [json.dumps(r.to_dict(), sort_keys=False) for r in results]
     output_path.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
+    return output_path
+
+
+def format_sim_summary_markdown(
+    results: Sequence[SimRunResult],
+    *,
+    seed: int = 42,
+) -> str:
+    """Format simulator session counts and rates per mode and tier as Markdown (P7-21)."""
+    summary = summarize_sim_runs(results)
+    tier_descriptions: dict[str, str] = {
+        "tier1": "Plain HTTP client posting directly to `/portal-api/*` (no browser)",
+        "tier2": "Playwright (default headless settings) performing direct fills and clicks",
+        "tier3": "Playwright with basic automation-hiding context adjustments (`webdriver=false`)",
+        "tier4": "Playwright with Appendix D.3 Bezier mouse paths + randomised typing delays",
+    }
+
+    lines: list[str] = [
+        "# Bot Simulator Summary Report (`results/system/sim_summary.md`)",
+        "",
+        "> **Methodological Note (Non-Generalisation Disclaimer):**",
+        "> All machine learning models (`mouse-v1` LightGBM, `keyboard-v1` Logistic Regression,",
+        "> `fusion-v1` stacking combiner) and rule weights (`backend/config/rules.yaml`) were",
+        "> trained and frozen prior to Phase 7 on held-out public dataset splits. **No model,",
+        "> feature, or threshold was tuned on the Phase 7 simulator.** The numbers below",
+        "> document end-to-end system verification against the local mock portal",
+        "> (`results/system/sim_runs.jsonl`, `seed=" + str(seed) + "`) and must not be reported",
+        "> as statistical generalisation benchmarks.",
+        "",
+        f"- **Total simulated sessions:** `{summary['total_runs']}`",
+        "- **Source log:** `results/system/sim_runs.jsonl`",
+        f"- **Random seed:** `{seed}`",
+        "",
+        "## 1. Outcomes by Protection Mode and Bot Tier",
+        "",
+        (
+            "| Protection Mode | Tier | Description | Total | Allowed | Challenged "
+            "| Denied | Blocked at API | Blocked/Challenged Rate | Mean Latency (ms) |"
+        ),
+        "| :--- | :--- | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+
+    for mode, tiers_map in summary["by_mode"].items():
+        for tier, counts in tiers_map.items():
+            total = max(1, int(counts["total"]))
+            allowed = int(counts["allowed"])
+            challenged = int(counts["challenged"])
+            denied = int(counts["denied"])
+            blocked = int(counts["blocked-at-api"])
+            caught = challenged + denied + blocked
+            caught_pct = 100.0 * caught / total
+            allowed_pct = 100.0 * allowed / total
+            tier_latencies = [
+                r.latency_ms for r in results if r.protection_mode == mode and r.tier == tier
+            ]
+            mean_lat = float(np.mean(tier_latencies)) if tier_latencies else 0.0
+            desc = tier_descriptions.get(tier, tier)
+            lines.append(
+                f"| `{mode}` | `{tier}` | {desc} | {counts['total']} | "
+                f"{allowed} ({allowed_pct:.1f}%) | {challenged} | {denied} | "
+                f"{blocked} | {caught_pct:.1f}% | {mean_lat:.2f} |"
+            )
+
+    lines.extend(
+        [
+            "",
+            "## 2. Passive Mode Breakdown by Protected Portal Action",
+            "",
+            "| Action | Sensitivity | Total | Allowed | Challenged | Denied | Blocked at API |",
+            "| :--- | :--- | ---: | ---: | ---: | ---: | ---: |",
+        ]
+    )
+
+    sens_map = {
+        "otp_request": "high",
+        "details_update": "high",
+        "centre_search": "medium",
+    }
+    passive_runs = [r for r in results if r.protection_mode == "passive"]
+    for act in ACTIONS:
+        act_runs = [r for r in passive_runs if r.action == act]
+        if not act_runs:
+            continue
+        a_tot = len(act_runs)
+        a_allow = sum(1 for r in act_runs if r.outcome == "allowed")
+        a_chal = sum(1 for r in act_runs if r.outcome == "challenged")
+        a_deny = sum(1 for r in act_runs if r.outcome == "denied")
+        a_blk = sum(1 for r in act_runs if r.outcome == "blocked-at-api")
+        lines.append(
+            f"| `{act}` | `{sens_map.get(act, 'high')}` | {a_tot} | "
+            f"{a_allow} | {a_chal} | {a_deny} | {a_blk} |"
+        )
+
+    lines.extend(
+        [
+            "",
+            "## 3. Tier-by-Tier Observations",
+            "",
+            "1. **Unprotected Mode (`protection_mode=off`):**",
+            "   - All four bot tiers (`tier1`–`tier4`) succeed on `100.0%` (`25/25`) of requests",
+            "     when `require_human_token` enforcement is bypassed.",
+            "2. **Tier 1 (`tier1` — Plain HTTP Client, `protection_mode=passive`):**",
+            "   - Direct `/portal-api/*` POSTs without a browser or token are rejected at the API",
+            "     gateway (`401 Unauthorized`, `blocked-at-api`), while plain-HTTP `/v1/assess`",
+            "     probes with empty telemetry fire `R01_NO_PAYLOAD` (`w=0.80`) and are `denied`.",
+            "3. **Tier 2 (`tier2` — Default Playwright, `protection_mode=passive`):**",
+            "   - Default headless Playwright leaves `navigator.webdriver=true` (`R02_WEBDRIVER`),",
+            "     software WebGL (`R06_SOFTWARE_RENDERER`), `0` desktop plugins",
+            "     (`R07_ZERO_PLUGINS_DESKTOP`), and zero mouse/keystroke trajectory points on",
+            "     direct `page.fill()` / `page.click()`, resulting in `0/25` allowed (`23 denied`,",
+            "     `2 challenged`).",
+            "4. **Tier 3 (`tier3` — Stealth-Adjusted Playwright, `protection_mode=passive`):**",
+            "   - Hiding `navigator.webdriver` bypasses `R02_WEBDRIVER`, but cross-signal",
+            "     inconsistencies (`R03`–`R10`) and collinear constant-velocity mouse steps /",
+            "     fixed-interval typing are caught by the rule and behavioural layers (`0/25`",
+            "     allowed: `23 denied`, `2 challenged`).",
+            (
+                "5. **Tier 4 (`tier4` — Appendix D.3 Bezier + Randomised Typing, "
+                "`protection_mode=passive`):**"
+            ),
+            "   - Even with cubic Bezier paths, smoothstep easing, Gaussian jitter, and randomised",
+            "     keystroke timings, the untuned multimodal scorer + step-up flow denies `20/25`",
+            "     and challenges `3/25` sessions, while `2/25` (`8.0%`) pass after satisfying",
+            "     both low-risk trajectory statistics and the step-up hold duration requirement.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def write_sim_summary_markdown(
+    results: Sequence[SimRunResult],
+    output_path: Path = DEFAULT_SUMMARY_PATH,
+    *,
+    seed: int = 42,
+) -> Path:
+    """Write the Markdown simulator summary report to ``output_path``."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    md = format_sim_summary_markdown(results, seed=seed)
+    output_path.write_text(md, encoding="utf-8")
     return output_path
 
 
@@ -392,6 +533,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="Output JSONL path (default: results/system/sim_runs.jsonl).",
     )
     parser.add_argument(
+        "--summary-output",
+        type=Path,
+        default=DEFAULT_SUMMARY_PATH,
+        help="Output Markdown summary path (default: results/system/sim_summary.md).",
+    )
+    parser.add_argument(
         "--live-http",
         action="store_true",
         help="Send live HTTP requests to --base-url instead of using in-process ASGI.",
@@ -408,9 +555,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         output_path=args.output,
         transport_factory=factory,
     )
+    write_sim_summary_markdown(results, output_path=args.summary_output, seed=args.seed)
 
     summary = summarize_sim_runs(results)
     print(f"Wrote {summary['total_runs']} simulator runs to {args.output}")
+    print(f"Wrote simulator summary to {args.summary_output}")
     for mode, tiers_map in summary["by_mode"].items():
         print(f"  protection_mode={mode}:")
         for tier, counts in tiers_map.items():

@@ -13,9 +13,12 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from simulator.run_all import (  # noqa: E402
+    DEFAULT_SUMMARY_PATH,
     _build_inprocess_asgi_factory,
+    format_sim_summary_markdown,
     run_all_tiers,
     summarize_sim_runs,
+    write_sim_summary_markdown,
 )
 from simulator.safety import SimulatorTargetError  # noqa: E402
 
@@ -60,3 +63,23 @@ def test_run_all_tiers_writes_sim_runs_jsonl_and_summarizes(tmp_path: Path) -> N
         assert summary["by_mode"]["off"][tier]["allowed"] == 3
     for tier in ("tier1", "tier2", "tier3"):
         assert summary["by_mode"]["passive"][tier]["allowed"] == 0
+
+    out_md = tmp_path / "sim_summary.md"
+    write_sim_summary_markdown(results, output_path=out_md, seed=101)
+    assert out_md.exists()
+    md_text = out_md.read_text(encoding="utf-8")
+    assert "No model," in md_text and "was tuned on the Phase 7 simulator" in md_text
+    assert "| `passive` | `tier1` |" in md_text
+    assert "| `passive` | `tier4` |" in md_text
+
+
+def test_committed_sim_summary_md_exists_and_contains_disclaimer() -> None:
+    """Verify results/system/sim_summary.md exists and documents per-tier simulator outcomes."""
+    assert DEFAULT_SUMMARY_PATH.exists()
+    content = DEFAULT_SUMMARY_PATH.read_text(encoding="utf-8")
+    assert "No model," in content
+    assert "tuned on the Phase 7 simulator" in content
+    for tier in ("tier1", "tier2", "tier3", "tier4"):
+        assert f"| `off` | `{tier}` |" in content
+        assert f"| `passive` | `{tier}` |" in content
+    assert format_sim_summary_markdown([]) != ""

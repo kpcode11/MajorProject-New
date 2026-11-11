@@ -102,8 +102,8 @@
 | P7-17 | 7 | Human-like reference run | DONE | e4b864c | Added simulator/reference_human.py (run_reference_human_session, REFERENCE_HUMAN_MOUSE_POINTS, DEMO_SCRIPT_DISCLAIMER) verifying multimodal and keyboard-only (Tab+Enter) sessions pass passive protection; 3 tests in test_simulator_reference_human.py. |
 | P7-18 | 7 | Portal end-to-end tests | DONE | 0088803 | Added backend/tests/test_e2e_portal.py (5 E2E tests) and portal/test/e2e.test.tsx (4 E2E tests) covering normal interaction -> token -> OTP accepted, headless direct click -> denied/challenged, no token -> 401, keyboard-only Tab+Enter -> step-up pass, and off vs passive mode. |
 | P7-19 | 7 | Demo startup command | DONE | 19a87b5 | Added demo() in scripts/tasks.py starting backend (STORE_BACKEND=memory, SQLite, 127.0.0.1:8000) and portal dev server (127.0.0.1:5173) plus deploy/docker-compose.yml (optional Redis + PostgreSQL infra profile); 2 tests in test_demo_task.py. |
-| P7-20 | 7 | Demo script | DONE | pending | Added docs/demo_script.md documenting python scripts/tasks.py demo, PROTECTION_MODE=off vs passive, /portal-api/stats, keyboard-only accessibility flow, and Tiers 1-4 simulator runs; verified in test_demo_task.py. |
-| P7-21 | 7 | Simulator summary | TODO | | |
+| P7-20 | 7 | Demo script | DONE | 4a93ffb | Added docs/demo_script.md documenting python scripts/tasks.py demo, PROTECTION_MODE=off vs passive, /portal-api/stats, keyboard-only accessibility flow, and Tiers 1-4 simulator runs; verified in test_demo_task.py. |
+| P7-21 | 7 | Simulator summary | DONE | HEAD | Added format_sim_summary_markdown and write_sim_summary_markdown in simulator/run_all.py and generated results/system/sim_summary.md with per-tier counts/rates and non-generalisation disclaimer; 3 tests in test_simulator_run_all.py. |
 | P8-01 | 8 | Human touch-data decision | TODO | | |
 | P8-02A | 8 | Touch dataset inventory | TODO | | |
 | P8-03A | 8 | Touch data loader | TODO | | |
@@ -163,4 +163,4 @@ Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 - `results/mouse/` — `baselines.csv`, `hparams.json`, `evaluation_splits.csv`, `lobo_evaluation.csv`, `human_fpr_captchasolve30k.csv`, `aggregation.csv`, `calibration.json`, `ablations.csv`, `shap_summary.csv`, `shap_top3_examples.json`, `fingerprint.json`
 - `results/keyboard/` — `privacy_scan.json`, `baselines.csv`, `hparams.json`, `evaluation.csv`, `evaluation_splits.csv`, `per_generator.csv`, `speed_terciles.csv`, `calibration.json`, `feature_importance.csv`, `failure_analysis.md`, `summary.json`
 - `results/fusion/` — `fusion_comparison.csv`, `modality_availability.csv`
-- `results/system/` — `scoring_latency.json`, `sdk_size.json`, `sim_runs.jsonl`
+- `results/system/` — `scoring_latency.json`, `sdk_size.json`, `sim_runs.jsonl`, `sim_summary.md`
