@@ -1,9 +1,9 @@
 # Handoff
 
-**Updated:** 2026-11-11 13:51  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-11 14:01  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P7-13 — Simulator tier 2 (`simulator/tier2_playwright.py` or `simulator/tiers.py`)
+- ID: P7-14 — Simulator tier 3 (`simulator/tier3_stealth.py`)
 - State: `TODO`
 
 ## Done in Phase 7 so far
@@ -18,13 +18,14 @@
 - **P7-09 (`06bbafc`):** Verified ARIA labels/roles, initial focus, `Tab`/`Shift+Tab` modal focus trap, focus restoration on close, visible `:focus-visible` outline, and keyboard `Space`/`Enter` single-press path without countdown pressure in `sdk/test/challenge.test.ts`.
 - **P7-10 (`20615d7`):** Added dedicated step-up challenge test suite `backend/tests/test_challenge.py` and timeout test in `sdk/test/challenge.test.ts`.
 - **P7-11 (`b65d5ae`):** Added `simulator/allowlist.txt`, `simulator/safety.py` (`validate_target_url`, `load_allowlist`, `extract_host`, `SimulatorTargetError`), `simulator/__init__.py`, `backend/tests/test_simulator_safety.py` (16 unit tests), and wired `simulator/` into `scripts/tasks.py` `lint()`.
-- **P7-12:** Added `simulator/tier1_http.py` (`run_tier1_session`, `SimRunResult`, `SimOutcome`, `DEFAULT_TIER1_USER_AGENTS`), exported them in `simulator/__init__.py`, and added unit tests in `backend/tests/test_simulator_tier1.py` verifying local-host validation, `allowed` when protection is `off`, and `blocked-at-api` (401) when protection is `passive`.
+- **P7-12 (`7b234d9`):** Added `simulator/tier1_http.py` (`run_tier1_session`, `SimRunResult`, `SimOutcome`, `DEFAULT_TIER1_USER_AGENTS`), exported them in `simulator/__init__.py`, and added unit tests in `backend/tests/test_simulator_tier1.py`.
+- **P7-13:** Added `simulator/tier2_playwright.py` (`run_tier2_session`, `drive_tier2_playwright_page`, `build_tier2_env_signals`, `build_tier2_behaviour_payload`, `PlaywrightPageLike`), exported them in `simulator/__init__.py`, and added 3 unit tests in `backend/tests/test_simulator_tier2.py`.
 
 ## Exact next step
-- Start **P7-13** (`Simulator tier 2`): implement Playwright default settings performing direct clicks and fills against the local mock portal (`validate_target_url` first) and returning a `SimRunResult`.
+- Start **P7-14** (`Simulator tier 3`): implement Playwright with basic, documented automation-hiding context adjustments (e.g., overriding `navigator.webdriver = false`, custom UA/plugins, while potentially leaving inconsistencies or mechanical behaviour to test the rule & behavioural layers) after local-host validation.
 
 ## Files touched (recent)
-- `simulator/tier1_http.py`, `backend/tests/test_simulator_tier1.py` (new); `simulator/__init__.py`, `PROGRESS.md`, `HANDOFF.md`
+- `simulator/tier2_playwright.py`, `backend/tests/test_simulator_tier2.py` (new); `simulator/__init__.py`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/tasks.py lint

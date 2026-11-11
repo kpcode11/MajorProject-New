@@ -94,8 +94,8 @@
 | P7-09 | 7 | Challenge accessibility | DONE | 06bbafc | Verified ARIA labels/roles, initial focus, Tab/Shift+Tab modal focus trap, focus restoration on close, visible :focus-visible outline, and keyboard Space/Enter single-press path without countdown pressure in sdk/test/challenge.test.ts. |
 | P7-10 | 7 | Challenge tests | DONE | 20615d7 | Added backend/tests/test_challenge.py and sdk/test/challenge.test.ts covering challenge success, timeout expiration, replay rejection, too-fast completion deny, and wrong ID / context / action mismatch. |
 | P7-11 | 7 | Simulator local-host safety | DONE | b65d5ae | Added simulator/allowlist.txt and simulator/safety.py (validate_target_url, load_allowlist, extract_host) refusing non-local and .gov/.nic.in/uidai hosts; 16 tests in test_simulator_safety.py. |
-| P7-12 | 7 | Simulator tier 1 | DONE | pending | Added simulator/tier1_http.py (run_tier1_session, SimRunResult, SimOutcome, DEFAULT_TIER1_USER_AGENTS) posting directly to /portal-api/* without browser or SDK token after local-host validation; 2 tests in test_simulator_tier1.py. |
-| P7-13 | 7 | Simulator tier 2 | TODO | | |
+| P7-12 | 7 | Simulator tier 1 | DONE | 7b234d9 | Added simulator/tier1_http.py (run_tier1_session, SimRunResult, SimOutcome, DEFAULT_TIER1_USER_AGENTS) posting directly to /portal-api/* without browser or SDK token after local-host validation; 2 tests in test_simulator_tier1.py. |
+| P7-13 | 7 | Simulator tier 2 | DONE | pending | Added simulator/tier2_playwright.py (run_tier2_session, drive_tier2_playwright_page, build_tier2_env_signals, build_tier2_behaviour_payload, PlaywrightPageLike) performing default Playwright direct fills and clicks after local-host validation; 3 tests in test_simulator_tier2.py. |
 | P7-14 | 7 | Simulator tier 3 | TODO | | |
 | P7-15 | 7 | Simulator tier 4 | TODO | | |
 | P7-16 | 7 | Simulator batch runner | TODO | | |
