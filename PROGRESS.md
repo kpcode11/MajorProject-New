@@ -98,8 +98,8 @@
 | P7-13 | 7 | Simulator tier 2 | DONE | f5e438f | Added simulator/tier2_playwright.py (run_tier2_session, drive_tier2_playwright_page, build_tier2_env_signals, build_tier2_behaviour_payload, PlaywrightPageLike) performing default Playwright direct fills and clicks after local-host validation; 3 tests in test_simulator_tier2.py. |
 | P7-14 | 7 | Simulator tier 3 | DONE | ea2e017 | Added simulator/tier3_stealth.py (run_tier3_session, drive_tier3_playwright_page, apply_tier3_context_adjustments, build_tier3_env_signals, build_tier3_behaviour_payload, TIER3_INIT_SCRIPT) testing rule & behavioural layers under basic stealth adjustments; 4 tests in test_simulator_tier3.py. |
 | P7-15 | 7 | Simulator tier 4 | DONE | c7dd2aa | Added simulator/humanlike.py (bezier_path, generate_humanlike_mouse_trajectory, generate_humanlike_key_events) and simulator/tier4_humanlike.py (run_tier4_session, drive_tier4_playwright_page); 4 tests in test_simulator_tier4.py. |
-| P7-16 | 7 | Simulator batch runner | DONE | pending | Added simulator/run_all.py (run_all_tiers, run_randomized_tier_session, summarize_sim_runs, write_sim_runs_jsonl) generating results/system/sim_runs.jsonl (200 sessions across Tiers 1-4 for off and passive modes); 2 tests in test_simulator_run_all.py. |
-| P7-17 | 7 | Human-like reference run | TODO | | |
+| P7-16 | 7 | Simulator batch runner | DONE | e4a3ec3 | Added simulator/run_all.py (run_all_tiers, run_randomized_tier_session, summarize_sim_runs, write_sim_runs_jsonl) generating results/system/sim_runs.jsonl (200 sessions across Tiers 1-4 for off and passive modes); 2 tests in test_simulator_run_all.py. |
+| P7-17 | 7 | Human-like reference run | DONE | pending | Added simulator/reference_human.py (run_reference_human_session, REFERENCE_HUMAN_MOUSE_POINTS, DEMO_SCRIPT_DISCLAIMER) verifying multimodal and keyboard-only (Tab+Enter) sessions pass passive protection; 3 tests in test_simulator_reference_human.py. |
 | P7-18 | 7 | Portal end-to-end tests | TODO | | |
 | P7-19 | 7 | Demo startup command | TODO | | |
 | P7-20 | 7 | Demo script | TODO | | |

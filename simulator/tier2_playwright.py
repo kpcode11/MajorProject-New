@@ -358,32 +358,33 @@ def run_tier2_session(
                     str(challenge_obj.get("id", "")) if isinstance(challenge_obj, dict) else ""
                 )
                 if challenge_id:
-                    # Tier 2 naive direct click on the step-up button (15 ms hold -> fails hold_ms)
-                    c_status, c_body = do_post(
-                        challenge_url,
-                        {
-                            "challenge_id": challenge_id,
-                            "action": action,
-                            "interaction": {
-                                "type": "press_hold",
-                                "total_ms": 15.0,
-                                "hold_ms": 15.0,
-                                "completed": True,
-                                "kb_alternative": False,
+                    n2_status, n2_body = do_get(nonce_url, headers)
+                    nonce2 = str(n2_body.get("nonce", "")) if n2_status == 200 else ""
+                    if nonce2:
+                        # Tier 2 naive direct click on step-up button (15 ms hold -> fails)
+                        c_status, c_body = do_post(
+                            challenge_url,
+                            {
+                                "nonce": nonce2,
+                                "challenge_id": challenge_id,
+                                "action": action,
+                                "hold_start_ms": 1000.0,
+                                "hold_end_ms": 1015.0,
+                                "env": env_signals,
+                                "behaviour": behaviour_payload,
                             },
-                            "env": env_signals,
-                            "behaviour": behaviour_payload,
-                        },
-                        headers,
-                    )
-                    if c_status == 200:
-                        c_dec = c_body.get("decision")
-                        c_band = c_body.get("band")
-                        assess_decision = str(c_dec) if isinstance(c_dec, str) else assess_decision
-                        assess_band = str(c_band) if isinstance(c_band, str) else assess_band
-                        c_tok = c_body.get("token")
-                        if isinstance(c_tok, str) and c_tok:
-                            token = c_tok
+                            headers,
+                        )
+                        if c_status == 200:
+                            c_dec = c_body.get("decision")
+                            c_band = c_body.get("band")
+                            assess_decision = (
+                                str(c_dec) if isinstance(c_dec, str) else assess_decision
+                            )
+                            assess_band = str(c_band) if isinstance(c_band, str) else assess_band
+                            c_tok = c_body.get("token")
+                            if isinstance(c_tok, str) and c_tok:
+                                token = c_tok
 
     if token:
         headers["X-Human-Token"] = token
