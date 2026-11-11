@@ -323,6 +323,19 @@ def require_human_token(expected_action: str) -> Callable[..., Any]:
         x_human_token: str | None = Header(default=None, alias="X-Human-Token"),
         authorization: str | None = Header(default=None, alias="Authorization"),
     ) -> TokenClaims:
+        settings: Settings = request.app.state.settings
+        if settings.protection_mode == "off":
+            now_ts = time.time()
+            return TokenClaims(
+                iss=settings.jwt_issuer,
+                aud=settings.jwt_audience,
+                act=expected_action,
+                iat=now_ts,
+                exp=now_ts + float(settings.jwt_expire_seconds),
+                jti="protection-off",
+                band="low",
+            )
+
         raw_token = x_human_token
         if not raw_token and authorization:
             parts = authorization.strip().split(" ", 1)
@@ -340,7 +353,6 @@ def require_human_token(expected_action: str) -> Callable[..., Any]:
             )
 
         store: Store = request.app.state.store
-        settings: Settings = request.app.state.settings
         try:
             return verify_token(
                 store,

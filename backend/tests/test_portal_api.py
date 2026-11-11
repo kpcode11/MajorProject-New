@@ -184,6 +184,7 @@ def test_portal_stats_counts_accepted_and_rejected_calls(
             "centre_search": {"accepted": 0, "rejected": 0},
         },
         "by_reason": {},
+        "protection_mode": "passive",
     }
 
     # 1. Missing token on otp_request -> rejected (missing_token)
@@ -254,3 +255,47 @@ def test_portal_stats_counts_accepted_and_rejected_calls(
         "action_mismatch": 1,
         "validation_error": 1,
     }
+    assert stats["protection_mode"] == "passive"
+
+
+def test_protection_mode_off_allows_unauthenticated_portal_calls(
+    portal_settings: Settings, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("PROTECTION_MODE", "off")
+    env_settings = load_settings()
+    assert env_settings.protection_mode == "off"
+
+    off_settings = dataclasses.replace(portal_settings, protection_mode="off")
+    store = InMemoryStore()
+    db = DatabaseManager(off_settings.database_url)
+    app = create_app(
+        settings=off_settings,
+        store=store,
+        scorer=default_app.state.scorer,
+        db=db,
+    )
+    client = _client(app)
+
+    # All 3 portal endpoints succeed without X-Human-Token when protection_mode="off"
+    otp_resp = client.post("/portal-api/otp/request", json={"identifier_length": 12})
+    assert otp_resp.status_code == 200
+    assert otp_resp.json()["status"] == "otp_sent"
+
+    details_resp = client.post("/portal-api/details/update", json={"fields_updated": ["name"]})
+    assert details_resp.status_code == 200
+    assert details_resp.json()["status"] == "details_updated"
+
+    search_resp = client.post("/portal-api/centres/search", json={"query_length": 6})
+    assert search_resp.status_code == 200
+    assert search_resp.json()["status"] == "ok"
+
+    stats = client.get("/portal-api/stats").json()
+    assert stats["protection_mode"] == "off"
+    assert stats["accepted"] == 3
+    assert stats["rejected"] == 0
+    assert stats["total"] == 3
+
+    # Invalid PROTECTION_MODE value raises ValueError
+    monkeypatch.setenv("PROTECTION_MODE", "invalid_mode")
+    with pytest.raises(ValueError, match="PROTECTION_MODE"):
+        load_settings()

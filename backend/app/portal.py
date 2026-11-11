@@ -150,7 +150,10 @@ def create_portal_router() -> APIRouter:
         if stats is None:
             stats = PortalStatsTracker()
             request.app.state.portal_stats = stats
-        return stats.snapshot()
+        snap = stats.snapshot()
+        settings = getattr(request.app.state, "settings", None)
+        snap["protection_mode"] = getattr(settings, "protection_mode", "passive")
+        return snap
 
     @router.post("/otp/request")
     async def request_otp(

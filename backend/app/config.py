@@ -61,6 +61,8 @@ _DEFAULTS: dict[str, object] = {
     "FEATURE_TTL_SECONDS": str(7 * 24 * 3600),
     # Assessment long-term TTL in seconds (30 days)
     "ASSESSMENT_TTL_SECONDS": str(30 * 24 * 3600),
+    # Portal protection mode (P7-05): "passive" (default) or "off"
+    "PROTECTION_MODE": "passive",
 }
 
 
@@ -92,6 +94,7 @@ class Settings:
     store_features_in_db: bool
     feature_ttl_seconds: int
     assessment_ttl_seconds: int
+    protection_mode: str = "passive"  # "off" | "passive"
 
     def jwt_private_key(self) -> str | None:
         """Return the PEM private key string, or None if not configured."""
@@ -165,6 +168,10 @@ def load_settings(yaml_path: Path | None = None) -> Settings:
     if jwt_algorithm not in ("HS256", "RS256", "ES256"):
         raise ValueError(f"JWT_ALGORITHM must be HS256, RS256 or ES256, got {jwt_algorithm!r}")
 
+    protection_mode = _str(get("PROTECTION_MODE")).lower()
+    if protection_mode not in ("off", "passive"):
+        raise ValueError(f"PROTECTION_MODE must be 'off' or 'passive', got {protection_mode!r}")
+
     return Settings(
         store_backend=store_backend,
         redis_url=_str(get("REDIS_URL")),
@@ -188,6 +195,7 @@ def load_settings(yaml_path: Path | None = None) -> Settings:
         store_features_in_db=_bool(get("STORE_FEATURES_IN_DB"), "STORE_FEATURES_IN_DB"),
         feature_ttl_seconds=_int(get("FEATURE_TTL_SECONDS"), "FEATURE_TTL_SECONDS"),
         assessment_ttl_seconds=_int(get("ASSESSMENT_TTL_SECONDS"), "ASSESSMENT_TTL_SECONDS"),
+        protection_mode=protection_mode,
     )
 
 
