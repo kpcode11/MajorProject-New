@@ -1,10 +1,10 @@
 # Handoff
 
-**Updated:** 2026-11-11 13:46  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-11 13:51  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P7-12 — Simulator tier 1 (`simulator/tiers.py` or `simulator/tier1_http.py`)
-- State: not started (`TODO`; P7-11 is DONE)
+- ID: P7-13 — Simulator tier 2 (`simulator/tier2_playwright.py` or `simulator/tiers.py`)
+- State: `TODO`
 
 ## Done in Phase 7 so far
 - **P7-01 (`556745c`):** Created `portal/` React 19 + Vite 8 + TypeScript 6 + Vitest 5 + ESLint 10 + Prettier scaffold linking `@botguard/sdk` (`file:../sdk`).
@@ -17,13 +17,14 @@
 - **P7-08 (`97d96b7`):** Added configurable `RATE_LIMIT_CHALLENGE_PER_MIN`, `RATE_LIMIT_CHALLENGE_SESSION_PER_MIN`, and `CHALLENGE_TTL_SECONDS`, enforced per-session and per-IP-bucket sliding-window rate limits on `POST /v1/assess/challenge`, and verified single-use `challenge_id` consumption.
 - **P7-09 (`06bbafc`):** Verified ARIA labels/roles, initial focus, `Tab`/`Shift+Tab` modal focus trap, focus restoration on close, visible `:focus-visible` outline, and keyboard `Space`/`Enter` single-press path without countdown pressure in `sdk/test/challenge.test.ts`.
 - **P7-10 (`20615d7`):** Added dedicated step-up challenge test suite `backend/tests/test_challenge.py` and timeout test in `sdk/test/challenge.test.ts`.
-- **P7-11:** Added `simulator/allowlist.txt`, `simulator/safety.py` (`validate_target_url`, `load_allowlist`, `extract_host`, `SimulatorTargetError`), `simulator/__init__.py`, `backend/tests/test_simulator_safety.py` (16 unit tests), and wired `simulator/` into `scripts/tasks.py` `lint()`.
+- **P7-11 (`b65d5ae`):** Added `simulator/allowlist.txt`, `simulator/safety.py` (`validate_target_url`, `load_allowlist`, `extract_host`, `SimulatorTargetError`), `simulator/__init__.py`, `backend/tests/test_simulator_safety.py` (16 unit tests), and wired `simulator/` into `scripts/tasks.py` `lint()`.
+- **P7-12:** Added `simulator/tier1_http.py` (`run_tier1_session`, `SimRunResult`, `SimOutcome`, `DEFAULT_TIER1_USER_AGENTS`), exported them in `simulator/__init__.py`, and added unit tests in `backend/tests/test_simulator_tier1.py` verifying local-host validation, `allowed` when protection is `off`, and `blocked-at-api` (401) when protection is `passive`.
 
 ## Exact next step
-- Start **P7-12** (`Simulator tier 1`): implement Tier 1 plain HTTP client posting directly to the protected portal endpoint (`/portal-api/otp/request`) without a browser, enforcing `validate_target_url` first, and recording the outcome (`allowed` when protection is `off`, `blocked-at-api` / `401` when protection is `passive`). Add unit tests.
+- Start **P7-13** (`Simulator tier 2`): implement Playwright default settings performing direct clicks and fills against the local mock portal (`validate_target_url` first) and returning a `SimRunResult`.
 
 ## Files touched (recent)
-- `simulator/allowlist.txt`, `simulator/__init__.py`, `simulator/safety.py`, `backend/tests/test_simulator_safety.py` (new); `simulator/.gitkeep` (deleted); `scripts/tasks.py`, `PROGRESS.md`, `HANDOFF.md`
+- `simulator/tier1_http.py`, `backend/tests/test_simulator_tier1.py` (new); `simulator/__init__.py`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/tasks.py lint

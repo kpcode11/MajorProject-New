@@ -93,8 +93,8 @@
 | P7-08 | 7 | Challenge rate limits | DONE | 97d96b7 | Per-session (RATE_LIMIT_CHALLENGE_SESSION_PER_MIN) and per-IP-bucket (RATE_LIMIT_CHALLENGE_PER_MIN) rate limits, single-use get_and_delete challenge_id, and CHALLENGE_TTL_SECONDS; verified in test_ratelimit.py and test_api.py. |
 | P7-09 | 7 | Challenge accessibility | DONE | 06bbafc | Verified ARIA labels/roles, initial focus, Tab/Shift+Tab modal focus trap, focus restoration on close, visible :focus-visible outline, and keyboard Space/Enter single-press path without countdown pressure in sdk/test/challenge.test.ts. |
 | P7-10 | 7 | Challenge tests | DONE | 20615d7 | Added backend/tests/test_challenge.py and sdk/test/challenge.test.ts covering challenge success, timeout expiration, replay rejection, too-fast completion deny, and wrong ID / context / action mismatch. |
-| P7-11 | 7 | Simulator local-host safety | DONE | pending | Added simulator/allowlist.txt and simulator/safety.py (validate_target_url, load_allowlist, extract_host) refusing non-local and .gov/.nic.in/uidai hosts; 16 tests in test_simulator_safety.py. |
-| P7-12 | 7 | Simulator tier 1 | TODO | | |
+| P7-11 | 7 | Simulator local-host safety | DONE | b65d5ae | Added simulator/allowlist.txt and simulator/safety.py (validate_target_url, load_allowlist, extract_host) refusing non-local and .gov/.nic.in/uidai hosts; 16 tests in test_simulator_safety.py. |
+| P7-12 | 7 | Simulator tier 1 | DONE | pending | Added simulator/tier1_http.py (run_tier1_session, SimRunResult, SimOutcome, DEFAULT_TIER1_USER_AGENTS) posting directly to /portal-api/* without browser or SDK token after local-host validation; 2 tests in test_simulator_tier1.py. |
 | P7-13 | 7 | Simulator tier 2 | TODO | | |
 | P7-14 | 7 | Simulator tier 3 | TODO | | |
 | P7-15 | 7 | Simulator tier 4 | TODO | | |

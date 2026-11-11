@@ -10,12 +10,22 @@ from simulator.safety import (
     load_allowlist,
     validate_target_url,
 )
+from simulator.tier1_http import (
+    DEFAULT_TIER1_USER_AGENTS,
+    SimOutcome,
+    SimRunResult,
+    run_tier1_session,
+)
 
 __all__ = [
     "BUILTIN_LOCAL_HOSTS",
     "DEFAULT_ALLOWLIST_PATH",
+    "DEFAULT_TIER1_USER_AGENTS",
+    "SimOutcome",
+    "SimRunResult",
     "SimulatorTargetError",
     "extract_host",
     "load_allowlist",
+    "run_tier1_session",
     "validate_target_url",
 ]
