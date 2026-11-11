@@ -1,0 +1,113 @@
+"""Bot simulator package (Phase 7, localhost-only)."""
+
+from simulator.humanlike import (
+    VALID_KEY_CLASSES,
+    bezier_path,
+    generate_humanlike_key_events,
+    generate_humanlike_mouse_trajectory,
+)
+from simulator.reference_human import (
+    DEMO_SCRIPT_DISCLAIMER,
+    REFERENCE_HUMAN_MOUSE_POINTS,
+    ReferenceMode,
+    build_reference_human_behaviour_payload,
+    build_reference_human_env_signals,
+    build_reference_human_key_events,
+    run_reference_human_session,
+)
+from simulator.run_all import (
+    DEFAULT_OUTPUT_PATH,
+    DEFAULT_SUMMARY_PATH,
+    format_sim_summary_markdown,
+    run_all_tiers,
+    run_randomized_tier_session,
+    summarize_sim_runs,
+    write_sim_runs_jsonl,
+    write_sim_summary_markdown,
+)
+from simulator.safety import (
+    BUILTIN_LOCAL_HOSTS,
+    DEFAULT_ALLOWLIST_PATH,
+    SimulatorTargetError,
+    extract_host,
+    load_allowlist,
+    validate_target_url,
+)
+from simulator.tier1_http import (
+    DEFAULT_TIER1_USER_AGENTS,
+    SimOutcome,
+    SimRunResult,
+    run_tier1_session,
+)
+from simulator.tier2_playwright import (
+    PlaywrightPageLike,
+    build_tier2_behaviour_payload,
+    build_tier2_env_signals,
+    drive_tier2_playwright_page,
+    run_tier2_session,
+)
+from simulator.tier3_stealth import (
+    TIER3_INIT_SCRIPT,
+    TIER3_PROFILES,
+    Tier3Profile,
+    apply_tier3_context_adjustments,
+    build_tier3_behaviour_payload,
+    build_tier3_env_signals,
+    drive_tier3_playwright_page,
+    run_tier3_session,
+)
+from simulator.tier4_humanlike import (
+    build_tier4_behaviour_payload,
+    build_tier4_env_signals,
+    drive_tier4_playwright_page,
+    run_tier4_session,
+)
+
+__all__ = [
+    "BUILTIN_LOCAL_HOSTS",
+    "DEFAULT_ALLOWLIST_PATH",
+    "DEFAULT_OUTPUT_PATH",
+    "DEFAULT_SUMMARY_PATH",
+    "DEFAULT_TIER1_USER_AGENTS",
+    "DEMO_SCRIPT_DISCLAIMER",
+    "REFERENCE_HUMAN_MOUSE_POINTS",
+    "TIER3_INIT_SCRIPT",
+    "TIER3_PROFILES",
+    "VALID_KEY_CLASSES",
+    "PlaywrightPageLike",
+    "ReferenceMode",
+    "SimOutcome",
+    "SimRunResult",
+    "SimulatorTargetError",
+    "Tier3Profile",
+    "apply_tier3_context_adjustments",
+    "bezier_path",
+    "build_reference_human_behaviour_payload",
+    "build_reference_human_env_signals",
+    "build_reference_human_key_events",
+    "build_tier2_behaviour_payload",
+    "build_tier2_env_signals",
+    "build_tier3_behaviour_payload",
+    "build_tier3_env_signals",
+    "build_tier4_behaviour_payload",
+    "build_tier4_env_signals",
+    "drive_tier2_playwright_page",
+    "drive_tier3_playwright_page",
+    "drive_tier4_playwright_page",
+    "extract_host",
+    "format_sim_summary_markdown",
+    "generate_humanlike_key_events",
+    "generate_humanlike_mouse_trajectory",
+    "load_allowlist",
+    "run_all_tiers",
+    "run_randomized_tier_session",
+    "run_reference_human_session",
+    "run_tier1_session",
+    "run_tier2_session",
+    "run_tier3_session",
+    "run_tier4_session",
+    "summarize_sim_runs",
+    "validate_target_url",
+    "write_sim_runs_jsonl",
+    "write_sim_summary_markdown",
+]

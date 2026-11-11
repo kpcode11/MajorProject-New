@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = (ROOT / "ml", ROOT / "backend")
 SDK = ROOT / "sdk"
+PORTAL = ROOT / "portal"
 IMPLEMENTED = (
     "setup",
     "lint",
@@ -23,8 +26,9 @@ IMPLEMENTED = (
     "train-keyboard",
     "keyboard-privacy",
     "serve",
+    "demo",
 )
-PLANNED = ("train-touch", "eval-all", "demo", "loadtest")
+PLANNED = ("train-touch", "eval-all", "loadtest")
 
 
 def package_python(package: Path) -> Path:
@@ -45,14 +49,14 @@ def require_environment(package: Path) -> Path:
     return interpreter
 
 
-def sdk_npm(*scripts: str) -> None:
-    """Run npm scripts in ``sdk/``; skip with a notice when Node or dependencies are missing."""
+def node_npm(pkg_dir: Path, *scripts: str) -> None:
+    """Run npm scripts in ``pkg_dir``; skip with a notice when Node or dependencies are missing."""
     npm = shutil.which("npm")
-    if npm is None or not (SDK / "node_modules").exists():
-        print("sdk: skipped (install Node.js and run: python scripts/tasks.py setup)")
+    if npm is None or not (pkg_dir / "node_modules").exists():
+        print(f"{pkg_dir.name}: skipped (install Node.js and run: python scripts/tasks.py setup)")
         return
     for script in scripts:
-        run([npm, "run", "--silent", script], cwd=SDK)
+        run([npm, "run", "--silent", script], cwd=pkg_dir)
 
 
 def setup() -> None:
@@ -78,10 +82,13 @@ def setup() -> None:
     npm = shutil.which("npm")
     if npm is not None and (SDK / "package-lock.json").exists():
         run([npm, "ci", "--no-fund", "--no-audit"], cwd=SDK)
+        run([npm, "run", "--silent", "build"], cwd=SDK)
+    if npm is not None and (PORTAL / "package-lock.json").exists():
+        run([npm, "ci", "--no-fund", "--no-audit"], cwd=PORTAL)
 
 
 def lint() -> None:
-    """Run Ruff, strict mypy, and the SDK ESLint/Prettier/tsc checks."""
+    """Run Ruff, strict mypy, and the SDK/portal ESLint/Prettier/tsc checks."""
     for package, source, tests in (
         (PACKAGES[0], "src", "tests"),
         (PACKAGES[1], "app", "tests"),
@@ -93,11 +100,18 @@ def lint() -> None:
             cwd=package,
         )
         run([str(interpreter), "-m", "mypy", source], cwd=package)
-    sdk_npm("lint", "typecheck")
+    sim_dir = ROOT / "simulator"
+    if sim_dir.exists():
+        backend_py = require_environment(PACKAGES[1])
+        run([str(backend_py), "-m", "ruff", "check", str(sim_dir)], cwd=ROOT)
+        run([str(backend_py), "-m", "ruff", "format", "--check", str(sim_dir)], cwd=ROOT)
+        run([str(backend_py), "-m", "mypy", "--strict", str(sim_dir)], cwd=ROOT)
+    node_npm(SDK, "lint", "typecheck")
+    node_npm(PORTAL, "lint", "typecheck")
 
 
 def test() -> None:
-    """Run the complete test suites for both Python packages and the SDK."""
+    """Run the complete test suites for both Python packages, the SDK, and the portal."""
     for package in PACKAGES:
         run(
             [
@@ -112,7 +126,8 @@ def test() -> None:
             ],
             cwd=package,
         )
-    sdk_npm("test")
+    node_npm(SDK, "test")
+    node_npm(PORTAL, "test")
 
 
 def test_fast() -> None:
@@ -178,13 +193,7 @@ def train_keyboard(stage: str, max_participants: int | None) -> None:
                 "--input-root",
                 str(ROOT / "data" / "interim" / "aalto_keystrokes"),
                 "--output",
-                str(
-                    ROOT
-                    / "data"
-                    / "processed"
-                    / "keyboard_features"
-                    / "features.parquet"
-                ),
+                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
             ]
         )
     elif stage == "evaluate":
@@ -193,13 +202,7 @@ def train_keyboard(stage: str, max_participants: int | None) -> None:
                 str(interpreter),
                 str(ROOT / "scripts" / "evaluate_keyboard.py"),
                 "--input",
-                str(
-                    ROOT
-                    / "data"
-                    / "processed"
-                    / "keyboard_features"
-                    / "features.parquet"
-                ),
+                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
                 "--output",
                 str(ROOT / "results" / "keyboard" / "evaluation.csv"),
             ]
@@ -210,21 +213,13 @@ def train_keyboard(stage: str, max_participants: int | None) -> None:
                 str(interpreter),
                 str(ROOT / "scripts" / "export_keyboard_onnx.py"),
                 "--input",
-                str(
-                    ROOT
-                    / "data"
-                    / "processed"
-                    / "keyboard_features"
-                    / "features.parquet"
-                ),
+                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
                 "--output-dir",
                 str(ROOT / "backend" / "models" / "keyboard-v1"),
             ]
         )
     else:
-        raise ValueError(
-            "train-keyboard supports --stage events, features, evaluate, or onnx"
-        )
+        raise ValueError("train-keyboard supports --stage events, features, evaluate, or onnx")
 
 
 def keyboard_privacy() -> None:
@@ -252,11 +247,7 @@ def train_mouse(stage: str, max_sessions: int | None) -> None:
                 str(ROOT / "data" / "interim"),
                 "--output-root",
                 str(ROOT / "data" / "processed" / "mouse_features"),
-                *(
-                    []
-                    if max_sessions is None
-                    else ["--max-sessions", str(max_sessions)]
-                ),
+                *([] if max_sessions is None else ["--max-sessions", str(max_sessions)]),
             ]
         )
     elif stage == "baselines":
@@ -338,6 +329,76 @@ def serve() -> None:
     )
 
 
+def demo(*, protection_mode: str = "passive", dry_run: bool = False) -> None:
+    """Start the backend (in-memory store, SQLite) and the portal dev server (P7-19)."""
+    mode = protection_mode.strip().lower()
+    if mode not in {"passive", "off"}:
+        raise ValueError(f"--protection-mode must be 'passive' or 'off', got {protection_mode!r}")
+
+    backend_py = require_environment(PACKAGES[1])
+    npm = shutil.which("npm")
+    if npm is None or not (PORTAL / "node_modules").exists():
+        raise RuntimeError(
+            "Portal dependencies missing. Install Node.js and run: python scripts/tasks.py setup"
+        )
+
+    backend_env = dict(os.environ)
+    backend_env.setdefault("STORE_BACKEND", "memory")
+    backend_env.setdefault("DATABASE_URL", "sqlite:///./botguard.db")
+    backend_env["PROTECTION_MODE"] = mode
+
+    backend_cmd = [
+        str(backend_py),
+        "-m",
+        "uvicorn",
+        "app.main:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8000",
+    ]
+    portal_cmd = [
+        npm,
+        "run",
+        "dev",
+        "--",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "5173",
+    ]
+
+    print(
+        f"BotGuard Demo (PROTECTION_MODE={mode}, "
+        f"STORE_BACKEND={backend_env['STORE_BACKEND']}, "
+        f"DATABASE_URL={backend_env['DATABASE_URL']})"
+    )
+    print("  Backend API : http://127.0.0.1:8000 (stats: http://127.0.0.1:8000/portal-api/stats)")
+    print("  Mock Portal : http://127.0.0.1:5173")
+    if dry_run:
+        print(f"  [dry-run] backend_cmd: {' '.join(backend_cmd)}")
+        print(f"  [dry-run] portal_cmd : {' '.join(portal_cmd)}")
+        return
+
+    backend_proc = subprocess.Popen(backend_cmd, cwd=PACKAGES[1], env=backend_env)
+    portal_proc = subprocess.Popen(portal_cmd, cwd=PORTAL)
+    try:
+        while True:
+            if backend_proc.poll() is not None or portal_proc.poll() is not None:
+                break
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        print("\nStopping BotGuard demo servers...")
+    finally:
+        for proc in (portal_proc, backend_proc):
+            if proc.poll() is None:
+                proc.terminate()
+                try:
+                    proc.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+
+
 def main() -> int:
     """Parse a task command and dispatch it."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -345,6 +406,8 @@ def main() -> int:
     parser.add_argument("--stage", default="features")
     parser.add_argument("--max-sessions", type=int, default=None)
     parser.add_argument("--max-participants", type=int, default=None)
+    parser.add_argument("--protection-mode", default="passive", choices=("passive", "off"))
+    parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     command = args.command
     try:
@@ -368,9 +431,11 @@ def main() -> int:
             train_mouse(args.stage, args.max_sessions)
         elif command == "serve":
             serve()
+        elif command == "demo":
+            demo(protection_mode=args.protection_mode, dry_run=args.dry_run)
         else:
             print(f"{command}: not implemented yet")
-    except (RuntimeError, subprocess.CalledProcessError) as error:
+    except (RuntimeError, subprocess.CalledProcessError, ValueError) as error:
         print(f"tasks: {error}", file=sys.stderr)
         return 1
     return 0

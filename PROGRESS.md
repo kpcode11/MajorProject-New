@@ -1,6 +1,6 @@
 # Progress
 
-**Current phase:** 7  |  **Branch:** phase-6-browser-sdk  |  **Last updated:** 2026-11-08  |  **Last agent/tool:** Antigravity
+**Current phase:** 7  |  **Branch:** phase-7-mock-portal  |  **Last updated:** 2026-11-08  |  **Last agent/tool:** Antigravity
 
 ## Task table
 
@@ -82,28 +82,28 @@
 | P6-10 | 6 | SDK performance controls | DONE | 30a8a73 | Passive listener enforcement, throttle gate, scheduleIdleTask with timeout fallback, bounded ring buffers, and zero-listener-leak stop() cleanup; 4 stress/performance tests. |
 | P6-11 | 6 | SDK tests | DONE | b03e6c3 | 98 vitest + happy-dom tests across 11 suites: bounded collectors, form/typed-string privacy guarantees, throttling, <64 KB stress test, and window/document stop() listener cleanup. |
 | P6-12 | 6 | SDK bundle report | DONE | 0ae5bef | ES module (10.90 KB gzip), UMD (10.05 KB gzip), and React wrapper (1.02 KB gzip) built and reported in results/system/sdk_size.json (< 30 KB target). |
-| P6-13 | 6 | SDK/backend contract test | DONE | pending | Exported backend Pydantic JSON Schema (data/fixtures/backend_contract_schema.json) and validated live SDK AssessRequest and ChallengeAssessRequest payloads in sdk/test/contract.test.ts and backend/tests/test_sdk_contract.py. |
-| P7-01 | 7 | Demo portal scaffold | TODO | | |
-| P7-02 | 7 | Demo portal pages | TODO | | |
-| P7-03 | 7 | Protected portal API | TODO | | |
-| P7-04 | 7 | Portal API statistics | TODO | | |
-| P7-05 | 7 | Protection-mode switch | TODO | | |
-| P7-06 | 7 | Accessible step-up UI | TODO | | |
-| P7-07 | 7 | Challenge flow | TODO | | |
-| P7-08 | 7 | Challenge rate limits | TODO | | |
-| P7-09 | 7 | Challenge accessibility | TODO | | |
-| P7-10 | 7 | Challenge tests | TODO | | |
-| P7-11 | 7 | Simulator local-host safety | TODO | | |
-| P7-12 | 7 | Simulator tier 1 | TODO | | |
-| P7-13 | 7 | Simulator tier 2 | TODO | | |
-| P7-14 | 7 | Simulator tier 3 | TODO | | |
-| P7-15 | 7 | Simulator tier 4 | TODO | | |
-| P7-16 | 7 | Simulator batch runner | TODO | | |
-| P7-17 | 7 | Human-like reference run | TODO | | |
-| P7-18 | 7 | Portal end-to-end tests | TODO | | |
-| P7-19 | 7 | Demo startup command | TODO | | |
-| P7-20 | 7 | Demo script | TODO | | |
-| P7-21 | 7 | Simulator summary | TODO | | |
+| P6-13 | 6 | SDK/backend contract test | DONE | c667d49 | Exported backend Pydantic JSON Schema (data/fixtures/backend_contract_schema.json) and validated live SDK AssessRequest and ChallengeAssessRequest payloads in sdk/test/contract.test.ts and backend/tests/test_sdk_contract.py. |
+| P7-01 | 7 | Demo portal scaffold | DONE | 556745c | React 19 + Vite 8 + TypeScript 6 portal scaffold in portal/ labelled 'DEMO — not a government portal', wrapped in BotGuardProvider, with CI job and unit test. |
+| P7-02 | 7 | Demo portal pages | DONE | 47e287c | Landing, Resident login (identifier + Send OTP), Update details form, and Centre search pages in portal/src/pages/ with X-Human-Token forwarding and zero raw-text transmission; 4 unit tests. |
+| P7-03 | 7 | Protected portal API | DONE | 1d9bd4a | Mounted /portal-api/otp/request, /portal-api/details/update, and /portal-api/centres/search via create_portal_router() in backend/app/portal.py protected by require_human_token; 3 tests in test_portal_api.py. |
+| P7-04 | 7 | Portal API statistics | DONE | 4790ef6 | Added thread-safe PortalStatsTracker and GET /portal-api/stats reporting accepted vs rejected calls overall, per action, and per reason; 4 tests in test_portal_api.py. |
+| P7-05 | 7 | Protection-mode switch | DONE | 5f02c1e | Added PROTECTION_MODE ('off' | 'passive', default 'passive') in backend/app/config.py, bypassed token requirement in require_human_token when 'off', and exposed protection_mode in /portal-api/stats; 5 tests in test_portal_api.py. |
+| P7-06 | 7 | Accessible step-up UI | DONE | 5af2f3a | Accessible press-and-hold step-up dialog with server-chosen hold_ms (0.8-1.5 s), Space/Enter single-press keyboard alternative, focus ring/trap, and no image/text puzzles; verified in portal/test/app.test.tsx. |
+| P7-07 | 7 | Challenge flow | DONE | 554c422 | POST /v1/assess challenge decision (id, type, hold_ms, expires_in) and POST /v1/assess/challenge re-scoring combining original_score + challenge interaction features to return allow/deny; verified in test_api.py. |
+| P7-08 | 7 | Challenge rate limits | DONE | 97d96b7 | Per-session (RATE_LIMIT_CHALLENGE_SESSION_PER_MIN) and per-IP-bucket (RATE_LIMIT_CHALLENGE_PER_MIN) rate limits, single-use get_and_delete challenge_id, and CHALLENGE_TTL_SECONDS; verified in test_ratelimit.py and test_api.py. |
+| P7-09 | 7 | Challenge accessibility | DONE | 06bbafc | Verified ARIA labels/roles, initial focus, Tab/Shift+Tab modal focus trap, focus restoration on close, visible :focus-visible outline, and keyboard Space/Enter single-press path without countdown pressure in sdk/test/challenge.test.ts. |
+| P7-10 | 7 | Challenge tests | DONE | 20615d7 | Added backend/tests/test_challenge.py and sdk/test/challenge.test.ts covering challenge success, timeout expiration, replay rejection, too-fast completion deny, and wrong ID / context / action mismatch. |
+| P7-11 | 7 | Simulator local-host safety | DONE | b65d5ae | Added simulator/allowlist.txt and simulator/safety.py (validate_target_url, load_allowlist, extract_host) refusing non-local and .gov/.nic.in/uidai hosts; 16 tests in test_simulator_safety.py. |
+| P7-12 | 7 | Simulator tier 1 | DONE | 7b234d9 | Added simulator/tier1_http.py (run_tier1_session, SimRunResult, SimOutcome, DEFAULT_TIER1_USER_AGENTS) posting directly to /portal-api/* without browser or SDK token after local-host validation; 2 tests in test_simulator_tier1.py. |
+| P7-13 | 7 | Simulator tier 2 | DONE | f5e438f | Added simulator/tier2_playwright.py (run_tier2_session, drive_tier2_playwright_page, build_tier2_env_signals, build_tier2_behaviour_payload, PlaywrightPageLike) performing default Playwright direct fills and clicks after local-host validation; 3 tests in test_simulator_tier2.py. |
+| P7-14 | 7 | Simulator tier 3 | DONE | ea2e017 | Added simulator/tier3_stealth.py (run_tier3_session, drive_tier3_playwright_page, apply_tier3_context_adjustments, build_tier3_env_signals, build_tier3_behaviour_payload, TIER3_INIT_SCRIPT) testing rule & behavioural layers under basic stealth adjustments; 4 tests in test_simulator_tier3.py. |
+| P7-15 | 7 | Simulator tier 4 | DONE | c7dd2aa | Added simulator/humanlike.py (bezier_path, generate_humanlike_mouse_trajectory, generate_humanlike_key_events) and simulator/tier4_humanlike.py (run_tier4_session, drive_tier4_playwright_page); 4 tests in test_simulator_tier4.py. |
+| P7-16 | 7 | Simulator batch runner | DONE | e4a3ec3 | Added simulator/run_all.py (run_all_tiers, run_randomized_tier_session, summarize_sim_runs, write_sim_runs_jsonl) generating results/system/sim_runs.jsonl (200 sessions across Tiers 1-4 for off and passive modes); 2 tests in test_simulator_run_all.py. |
+| P7-17 | 7 | Human-like reference run | DONE | e4b864c | Added simulator/reference_human.py (run_reference_human_session, REFERENCE_HUMAN_MOUSE_POINTS, DEMO_SCRIPT_DISCLAIMER) verifying multimodal and keyboard-only (Tab+Enter) sessions pass passive protection; 3 tests in test_simulator_reference_human.py. |
+| P7-18 | 7 | Portal end-to-end tests | DONE | 0088803 | Added backend/tests/test_e2e_portal.py (5 E2E tests) and portal/test/e2e.test.tsx (4 E2E tests) covering normal interaction -> token -> OTP accepted, headless direct click -> denied/challenged, no token -> 401, keyboard-only Tab+Enter -> step-up pass, and off vs passive mode. |
+| P7-19 | 7 | Demo startup command | DONE | 19a87b5 | Added demo() in scripts/tasks.py starting backend (STORE_BACKEND=memory, SQLite, 127.0.0.1:8000) and portal dev server (127.0.0.1:5173) plus deploy/docker-compose.yml (optional Redis + PostgreSQL infra profile); 2 tests in test_demo_task.py. |
+| P7-20 | 7 | Demo script | DONE | 4a93ffb | Added docs/demo_script.md documenting python scripts/tasks.py demo, PROTECTION_MODE=off vs passive, /portal-api/stats, keyboard-only accessibility flow, and Tiers 1-4 simulator runs; verified in test_demo_task.py. |
+| P7-21 | 7 | Simulator summary | DONE | HEAD | Added format_sim_summary_markdown and write_sim_summary_markdown in simulator/run_all.py and generated results/system/sim_summary.md with per-tier counts/rates and non-generalisation disclaimer; 3 tests in test_simulator_run_all.py. |
 | P8-01 | 8 | Human touch-data decision | TODO | | |
 | P8-02A | 8 | Touch dataset inventory | TODO | | |
 | P8-03A | 8 | Touch data loader | TODO | | |
@@ -163,4 +163,4 @@ Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 - `results/mouse/` — `baselines.csv`, `hparams.json`, `evaluation_splits.csv`, `lobo_evaluation.csv`, `human_fpr_captchasolve30k.csv`, `aggregation.csv`, `calibration.json`, `ablations.csv`, `shap_summary.csv`, `shap_top3_examples.json`, `fingerprint.json`
 - `results/keyboard/` — `privacy_scan.json`, `baselines.csv`, `hparams.json`, `evaluation.csv`, `evaluation_splits.csv`, `per_generator.csv`, `speed_terciles.csv`, `calibration.json`, `feature_importance.csv`, `failure_analysis.md`, `summary.json`
 - `results/fusion/` — `fusion_comparison.csv`, `modality_availability.csv`
-- `results/system/` — `scoring_latency.json`, `sdk_size.json`
+- `results/system/` — `scoring_latency.json`, `sdk_size.json`, `sim_runs.jsonl`, `sim_summary.md`

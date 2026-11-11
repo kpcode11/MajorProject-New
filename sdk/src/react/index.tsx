@@ -27,6 +27,8 @@ import {
 export interface BotGuardContextValue {
   /** Underlying SDK client instance. */
   client: BotGuardClient;
+  /** True while the SDK collectors are actively listening. */
+  running: boolean;
   /** True while an `assess` or `runChallenge` call is in flight. */
   assessing: boolean;
   /** Most recent assessment response (or `null` before the first call). */
@@ -77,14 +79,17 @@ export function BotGuardProvider({
   }
   const activeClient = externalClient ?? clientRef.current;
 
+  const [running, setRunning] = useState(false);
   const [assessing, setAssessing] = useState(false);
   const [lastResponse, setLastResponse] = useState<AssessResponse | null>(null);
 
   useEffect(() => {
     if (!autoStart) return undefined;
     activeClient.start(externalClient ? undefined : options);
+    setRunning(activeClient.running);
     return () => {
       activeClient.stop();
+      setRunning(false);
     };
   }, [activeClient, autoStart, externalClient, options]);
 
@@ -134,13 +139,14 @@ export function BotGuardProvider({
   const value = useMemo<BotGuardContextValue>(
     () => ({
       client: activeClient,
+      running,
       assessing,
       lastResponse,
       assess,
       runChallenge,
       assessWithStepUp,
     }),
-    [activeClient, assessing, lastResponse, assess, runChallenge, assessWithStepUp],
+    [activeClient, running, assessing, lastResponse, assess, runChallenge, assessWithStepUp],
   );
 
   return <BotGuardContext.Provider value={value}>{children}</BotGuardContext.Provider>;

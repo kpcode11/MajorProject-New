@@ -9,16 +9,16 @@ from typing import Any
 
 import numpy as np
 import pytest
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 
 from app.config import Settings, load_rule_config, load_settings
 from app.db import DatabaseManager
 from app.main import app as default_app
-from app.main import create_app, format_safe_log_record, require_human_token
+from app.main import create_app, format_safe_log_record
 from app.schemas import EnvSignals
 from app.scoring import ModelScorer
 from app.store import InMemoryStore, Store
-from app.tokens import TokenClaims, issue_token
+from app.tokens import issue_token
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 
@@ -273,13 +273,6 @@ def test_app(test_settings: Settings) -> FastAPI:
         scorer=default_app.state.scorer,
         db=db,
     )
-
-    @app.post("/portal-api/otp/request")
-    async def protected_otp(
-        claims: TokenClaims = Depends(require_human_token("otp_request")),
-    ) -> dict[str, Any]:
-        return {"status": "otp_sent", "action": claims.act, "band": claims.band}
-
     return app
 
 
@@ -474,6 +467,134 @@ def test_challenge_step_up_flow_and_protected_route_access(
     )
     assert replay_portal.status_code == 401
     assert replay_portal.json()["error"]["code"] == "token_replayed_or_revoked"
+
+
+def test_challenge_rescoring_rejects_untrusted_or_bot_challenge_behaviour(
+    test_app: FastAPI,
+) -> None:
+    """Verify P7-07: POST /v1/assess/challenge re-scores original session + challenge features."""
+    client = _client(test_app)
+    nonce1 = client.get("/v1/nonce").json()["nonce"]
+    assess_resp = client.post(
+        "/v1/assess",
+        json={
+            "nonce": nonce1,
+            "action": "otp_request",
+            "env": {"webdriver": True},
+            "behaviour": {
+                "keys": {"events": _make_human_key_events()},
+            },
+        },
+    )
+    assert assess_resp.status_code == 200
+    chal = assess_resp.json()["challenge"]
+    assert chal is not None
+    assert 800 <= chal["hold_ms"] <= 1500
+    hold_ms = float(chal["hold_ms"])
+
+    # Even with valid hold duration, untrusted synthetic challenge events (R11) cause deny
+    nonce2 = client.get("/v1/nonce").json()["nonce"]
+    chal_resp = client.post(
+        "/v1/assess/challenge",
+        json={
+            "nonce": nonce2,
+            "challenge_id": chal["id"],
+            "action": "otp_request",
+            "hold_start_ms": 500.0,
+            "hold_end_ms": 500.0 + hold_ms + 40.0,
+            "behaviour": {
+                "mouse": {"points": _make_bot_mouse_points(), "untrusted_count": 3},
+            },
+        },
+    )
+    assert chal_resp.status_code == 200
+    chal_data = chal_resp.json()
+    assert chal_data["decision"] == "deny"
+    assert chal_data["band"] == "high"
+    assert chal_data["token"] is None
+
+
+def test_challenge_single_use_and_endpoint_rate_limiting(
+    test_settings: Settings,
+) -> None:
+    """Verify P7-08: single-use/short-lived challenge IDs and challenge rate limits."""
+    cfg = dataclasses.replace(
+        test_settings,
+        rate_limit_challenge_per_min=5,
+        rate_limit_challenge_session_per_min=2,
+        challenge_ttl_seconds=45,
+    )
+    store = InMemoryStore()
+    db = DatabaseManager(cfg.database_url)
+    app = create_app(
+        settings=cfg,
+        store=store,
+        scorer=default_app.state.scorer,
+        db=db,
+    )
+    client = _client(app)
+
+    nonce1 = client.get("/v1/nonce").json()["nonce"]
+    assess_resp = client.post(
+        "/v1/assess",
+        json={
+            "nonce": nonce1,
+            "action": "otp_request",
+            "env": {"webdriver": True},
+            "behaviour": {"keys": {"events": _make_human_key_events()}},
+        },
+    )
+    assert assess_resp.status_code == 200
+    chal = assess_resp.json()["challenge"]
+    assert chal is not None
+    assert chal["expires_in"] == 45
+    hold_ms = float(chal["hold_ms"])
+
+    # 1. First challenge submission consumes challenge_id
+    nonce2 = client.get("/v1/nonce").json()["nonce"]
+    first_chal = client.post(
+        "/v1/assess/challenge",
+        json={
+            "nonce": nonce2,
+            "challenge_id": chal["id"],
+            "action": "otp_request",
+            "hold_start_ms": 100.0,
+            "hold_end_ms": 100.0 + hold_ms + 30.0,
+        },
+    )
+    assert first_chal.status_code == 200
+    assert first_chal.json()["decision"] == "allow"
+
+    # 2. Replaying the same challenge_id with a fresh nonce is rejected (401 single-use)
+    nonce3 = client.get("/v1/nonce").json()["nonce"]
+    replay_chal = client.post(
+        "/v1/assess/challenge",
+        json={
+            "nonce": nonce3,
+            "challenge_id": chal["id"],
+            "action": "otp_request",
+            "hold_start_ms": 100.0,
+            "hold_end_ms": 100.0 + hold_ms + 30.0,
+        },
+    )
+    assert replay_chal.status_code == 401
+    assert replay_chal.json()["error"]["code"] == "invalid_or_expired_challenge"
+
+    # 3. Third challenge attempt in the same session exceeds session limit=2 -> 429
+    nonce4 = client.get("/v1/nonce").json()["nonce"]
+    rl_chal = client.post(
+        "/v1/assess/challenge",
+        json={
+            "nonce": nonce4,
+            "challenge_id": "any_id",
+            "action": "otp_request",
+            "hold_start_ms": 100.0,
+            "hold_end_ms": 1200.0,
+        },
+    )
+    assert rl_chal.status_code == 429
+    assert rl_chal.json()["error"]["code"] == "rate_limit_exceeded"
+    assert rl_chal.headers.get("Retry-After") is not None
 
 
 def test_token_verify_endpoint_and_wrong_action_rejection(

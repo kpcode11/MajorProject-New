@@ -144,12 +144,26 @@ class RateLimiter:
         settings: Settings,
         *,
         window_seconds: int = DEFAULT_WINDOW_SECONDS,
-        challenge_limit_per_min: int = DEFAULT_CHALLENGE_LIMIT_PER_MIN,
+        challenge_limit_per_min: int | None = None,
+        challenge_session_limit_per_min: int | None = None,
     ) -> None:
         self.store = store
         self.settings = settings
         self.window_seconds = window_seconds
-        self.challenge_limit_per_min = challenge_limit_per_min
+        self.challenge_limit_per_min = (
+            challenge_limit_per_min
+            if challenge_limit_per_min is not None
+            else getattr(settings, "rate_limit_challenge_per_min", DEFAULT_CHALLENGE_LIMIT_PER_MIN)
+        )
+        self.challenge_session_limit_per_min = (
+            challenge_session_limit_per_min
+            if challenge_session_limit_per_min is not None
+            else getattr(
+                settings,
+                "rate_limit_challenge_session_per_min",
+                self.challenge_limit_per_min,
+            )
+        )
 
     def check_nonce(
         self,
@@ -189,12 +203,13 @@ class RateLimiter:
         *,
         session_id: str | None = None,
     ) -> RateLimitResult:
-        """Check the ``POST /v1/assess/challenge`` sliding-window rate limit."""
+        """Check the ``POST /v1/assess/challenge`` sliding-window rate limit (IP + session)."""
         return check_rate_limit(
             self.store,
             endpoint="challenge",
             client_ip=client_ip,
             limit=self.challenge_limit_per_min,
             session_id=session_id,
+            session_limit=self.challenge_session_limit_per_min,
             window_seconds=self.window_seconds,
         )

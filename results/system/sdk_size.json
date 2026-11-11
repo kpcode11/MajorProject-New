@@ -7,24 +7,24 @@
   "bundles": {
     "esm": {
       "file": "dist/botguard.js",
-      "raw_bytes": 35902,
-      "raw_kb": 35.06,
-      "gzip_bytes": 11159,
-      "gzip_kb": 10.9
+      "raw_bytes": 36966,
+      "raw_kb": 36.1,
+      "gzip_bytes": 11438,
+      "gzip_kb": 11.17
     },
     "umd": {
       "file": "dist/botguard.umd.cjs",
-      "raw_bytes": 29376,
-      "raw_kb": 28.69,
-      "gzip_bytes": 10291,
-      "gzip_kb": 10.05
+      "raw_bytes": 30266,
+      "raw_kb": 29.56,
+      "gzip_bytes": 10549,
+      "gzip_kb": 10.3
     },
     "react": {
       "file": "dist/react/index.js",
-      "raw_bytes": 3123,
-      "raw_kb": 3.05,
-      "gzip_bytes": 1043,
-      "gzip_kb": 1.02
+      "raw_bytes": 3273,
+      "raw_kb": 3.2,
+      "gzip_bytes": 1073,
+      "gzip_kb": 1.05
     }
   }
 }

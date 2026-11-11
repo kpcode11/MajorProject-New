@@ -43,3 +43,31 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+
+  portal:
+    name: Portal lint, typecheck, tests and build
+    runs-on: windows-latest
+    needs: sdk
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+      - name: Install and build SDK
+        working-directory: sdk
+        run: npm ci && npm run build
+      - name: Install portal
+        working-directory: portal
+        run: npm ci
+      - name: Lint
+        working-directory: portal
+        run: npm run lint
+      - name: Typecheck
+        working-directory: portal
+        run: npm run typecheck
+      - name: Tests
+        working-directory: portal
+        run: npm test
+      - name: Build
+        working-directory: portal
+        run: npm run build

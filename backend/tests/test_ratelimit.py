@@ -117,3 +117,27 @@ class TestSlidingWindowRateLimiting:
             enforce_rate_limit(store, endpoint="nonce", client_ip="127.0.0.1", limit=1)
         assert exc_info.value.code == "rate_limit_exceeded"
         assert exc_info.value.retry_after_seconds == 60
+
+    def test_challenge_rate_limit_per_session_and_ip_bucket(
+        self, store: InMemoryStore, settings: Settings
+    ) -> None:
+        """Verify P7-08: check_challenge enforces per-session and per-IP-bucket limits."""
+        cfg = dataclasses.replace(
+            settings,
+            rate_limit_challenge_per_min=4,
+            rate_limit_challenge_session_per_min=2,
+        )
+        limiter = RateLimiter(store, cfg)
+
+        # Session 'sess-1' can make at most 2 challenge attempts even though IP bucket allows 4
+        assert limiter.check_challenge("198.51.100.10", session_id="sess-1").allowed is True
+        assert limiter.check_challenge("198.51.100.10", session_id="sess-1").allowed is True
+        res_sess_exceeded = limiter.check_challenge("198.51.100.10", session_id="sess-1")
+        assert res_sess_exceeded.allowed is False
+        assert res_sess_exceeded.exceeded_bucket == "session"
+
+        # Another session ('sess-2') in the same /24 consumes #4, then hits IP limit (#5)
+        assert limiter.check_challenge("198.51.100.20", session_id="sess-2").allowed is True
+        res_ip_exceeded = limiter.check_challenge("198.51.100.20", session_id="sess-2")
+        assert res_ip_exceeded.allowed is False
+        assert res_ip_exceeded.exceeded_bucket == "ip"
