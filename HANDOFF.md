@@ -1,9 +1,9 @@
 # Handoff
 
-**Updated:** 2026-11-11 15:52  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-11 15:59  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P7-19 — Demo startup command (`scripts/tasks.py demo` and `deploy/docker-compose.yml`)
+- ID: P7-20 — Demo script (`docs/demo_script.md`)
 - State: `TODO`
 
 ## Done in Phase 7 so far
@@ -24,13 +24,14 @@
 - **P7-15 (`c7dd2aa`):** Added `simulator/humanlike.py` (`bezier_path`, `generate_humanlike_mouse_trajectory`, `generate_humanlike_key_events`) and `simulator/tier4_humanlike.py` (`run_tier4_session`, `drive_tier4_playwright_page`) and 4 unit tests in `backend/tests/test_simulator_tier4.py`.
 - **P7-16 (`e4a3ec3`):** Added `simulator/run_all.py` (`run_all_tiers`, `run_randomized_tier_session`, `summarize_sim_runs`, `write_sim_runs_jsonl`), generated `results/system/sim_runs.jsonl`, and added 2 unit tests in `backend/tests/test_simulator_run_all.py`.
 - **P7-17 (`e4b864c`):** Added `simulator/reference_human.py` (`run_reference_human_session`, `REFERENCE_HUMAN_MOUSE_POINTS`, `DEMO_SCRIPT_DISCLAIMER`, `build_reference_human_behaviour_payload`) and 3 unit tests in `backend/tests/test_simulator_reference_human.py`.
-- **P7-18:** Added `backend/tests/test_e2e_portal.py` (5 E2E tests) and `portal/test/e2e.test.tsx` (4 E2E tests) covering normal interaction path -> token -> OTP accepted, headless direct click -> denied/challenged, no token -> 401, keyboard-only Tab+Enter -> step-up pass, and protection mode `off` vs `passive`.
+- **P7-18 (`0088803`):** Added `backend/tests/test_e2e_portal.py` (5 E2E tests) and `portal/test/e2e.test.tsx` (4 E2E tests).
+- **P7-19:** Added `demo()` in `scripts/tasks.py` starting the backend (`STORE_BACKEND=memory`, SQLite, `127.0.0.1:8000`) and portal dev server (`127.0.0.1:5173`), added `deploy/docker-compose.yml` with optional `infra` profile for Redis and PostgreSQL, and added 2 tests in `backend/tests/test_demo_task.py`.
 
 ## Exact next step
-- Start **P7-19** (`Demo startup command`): implement `python scripts/tasks.py demo` to start the backend (in-memory store, SQLite) and the portal dev server, and add optional `deploy/docker-compose.yml` profile for Redis and PostgreSQL.
+- Start **P7-20** (`Demo script`): write `docs/demo_script.md` describing the end-to-end live demo walkthrough (`python scripts/tasks.py demo`, unprotected `PROTECTION_MODE=off` vs protected `PROTECTION_MODE=passive`, `/portal-api/stats` inspection, keyboard-only accessibility flow, and Tiers 1–4 bot simulator comparison).
 
 ## Files touched (recent)
-- `backend/tests/test_e2e_portal.py`, `portal/test/e2e.test.tsx` (new); `simulator/reference_human.py`, `PROGRESS.md`, `HANDOFF.md`
+- `deploy/docker-compose.yml`, `backend/tests/test_demo_task.py` (new); `scripts/tasks.py`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/tasks.py lint

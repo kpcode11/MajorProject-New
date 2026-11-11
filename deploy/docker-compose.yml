@@ -1,0 +1,51 @@
+# Optional local infrastructure for the passive bot-detection demo (P7-19).
+#
+# By default, `python scripts/tasks.py demo` runs entirely self-contained with
+# an in-memory nonce/rate-limit store (`STORE_BACKEND=memory`) and SQLite
+# (`DATABASE_URL=sqlite:///./botguard.db`).
+#
+# To run with Redis and PostgreSQL instead:
+#   docker compose -f deploy/docker-compose.yml --profile infra up -d
+#   $env:STORE_BACKEND="redis"
+#   $env:REDIS_URL="redis://127.0.0.1:6379/0"
+#   $env:DATABASE_URL="postgresql+psycopg://botguard:botguard_local_dev@127.0.0.1:5432/botguard"
+#   python scripts/tasks.py demo
+
+name: botguard-demo
+
+services:
+  redis:
+    image: redis:7.4-alpine
+    container_name: botguard-redis
+    profiles: ["infra", "full"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: botguard-postgres
+    profiles: ["infra", "full"]
+    environment:
+      POSTGRES_USER: botguard
+      POSTGRES_PASSWORD: botguard_local_dev
+      POSTGRES_DB: botguard
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - botguard_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U botguard -d botguard"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  botguard_pgdata:
