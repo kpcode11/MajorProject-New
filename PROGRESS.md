@@ -97,8 +97,8 @@
 | P7-12 | 7 | Simulator tier 1 | DONE | 7b234d9 | Added simulator/tier1_http.py (run_tier1_session, SimRunResult, SimOutcome, DEFAULT_TIER1_USER_AGENTS) posting directly to /portal-api/* without browser or SDK token after local-host validation; 2 tests in test_simulator_tier1.py. |
 | P7-13 | 7 | Simulator tier 2 | DONE | f5e438f | Added simulator/tier2_playwright.py (run_tier2_session, drive_tier2_playwright_page, build_tier2_env_signals, build_tier2_behaviour_payload, PlaywrightPageLike) performing default Playwright direct fills and clicks after local-host validation; 3 tests in test_simulator_tier2.py. |
 | P7-14 | 7 | Simulator tier 3 | DONE | ea2e017 | Added simulator/tier3_stealth.py (run_tier3_session, drive_tier3_playwright_page, apply_tier3_context_adjustments, build_tier3_env_signals, build_tier3_behaviour_payload, TIER3_INIT_SCRIPT) testing rule & behavioural layers under basic stealth adjustments; 4 tests in test_simulator_tier3.py. |
-| P7-15 | 7 | Simulator tier 4 | DONE | pending | Added simulator/humanlike.py (bezier_path, generate_humanlike_mouse_trajectory, generate_humanlike_key_events) and simulator/tier4_humanlike.py (run_tier4_session, drive_tier4_playwright_page); 4 tests in test_simulator_tier4.py. |
-| P7-16 | 7 | Simulator batch runner | TODO | | |
+| P7-15 | 7 | Simulator tier 4 | DONE | c7dd2aa | Added simulator/humanlike.py (bezier_path, generate_humanlike_mouse_trajectory, generate_humanlike_key_events) and simulator/tier4_humanlike.py (run_tier4_session, drive_tier4_playwright_page); 4 tests in test_simulator_tier4.py. |
+| P7-16 | 7 | Simulator batch runner | DONE | pending | Added simulator/run_all.py (run_all_tiers, run_randomized_tier_session, summarize_sim_runs, write_sim_runs_jsonl) generating results/system/sim_runs.jsonl (200 sessions across Tiers 1-4 for off and passive modes); 2 tests in test_simulator_run_all.py. |
 | P7-17 | 7 | Human-like reference run | TODO | | |
 | P7-18 | 7 | Portal end-to-end tests | TODO | | |
 | P7-19 | 7 | Demo startup command | TODO | | |
@@ -163,4 +163,4 @@ Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 - `results/mouse/` — `baselines.csv`, `hparams.json`, `evaluation_splits.csv`, `lobo_evaluation.csv`, `human_fpr_captchasolve30k.csv`, `aggregation.csv`, `calibration.json`, `ablations.csv`, `shap_summary.csv`, `shap_top3_examples.json`, `fingerprint.json`
 - `results/keyboard/` — `privacy_scan.json`, `baselines.csv`, `hparams.json`, `evaluation.csv`, `evaluation_splits.csv`, `per_generator.csv`, `speed_terciles.csv`, `calibration.json`, `feature_importance.csv`, `failure_analysis.md`, `summary.json`
 - `results/fusion/` — `fusion_comparison.csv`, `modality_availability.csv`
-- `results/system/` — `scoring_latency.json`, `sdk_size.json`
+- `results/system/` — `scoring_latency.json`, `sdk_size.json`, `sim_runs.jsonl`

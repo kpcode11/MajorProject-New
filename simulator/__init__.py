@@ -6,6 +6,13 @@ from simulator.humanlike import (
     generate_humanlike_key_events,
     generate_humanlike_mouse_trajectory,
 )
+from simulator.run_all import (
+    DEFAULT_OUTPUT_PATH,
+    run_all_tiers,
+    run_randomized_tier_session,
+    summarize_sim_runs,
+    write_sim_runs_jsonl,
+)
 from simulator.safety import (
     BUILTIN_LOCAL_HOSTS,
     DEFAULT_ALLOWLIST_PATH,
@@ -47,6 +54,7 @@ from simulator.tier4_humanlike import (
 __all__ = [
     "BUILTIN_LOCAL_HOSTS",
     "DEFAULT_ALLOWLIST_PATH",
+    "DEFAULT_OUTPUT_PATH",
     "DEFAULT_TIER1_USER_AGENTS",
     "PlaywrightPageLike",
     "SimOutcome",
@@ -71,9 +79,13 @@ __all__ = [
     "generate_humanlike_key_events",
     "generate_humanlike_mouse_trajectory",
     "load_allowlist",
+    "run_all_tiers",
+    "run_randomized_tier_session",
     "run_tier1_session",
     "run_tier2_session",
     "run_tier3_session",
     "run_tier4_session",
+    "summarize_sim_runs",
     "validate_target_url",
+    "write_sim_runs_jsonl",
 ]

@@ -112,7 +112,8 @@ def build_tier2_behaviour_payload(
       intermediate mouse movement trajectory samples (``mouse.points = []``).
     - Interaction starts almost immediately after page load (``ms_to_first_interaction < 150 ms``).
     """
-    down_ms = round(max(10.0, click_delay_ms), 2)
+    first_ms = round(max(5.0, fill_delay_ms), 2)
+    down_ms = round(first_ms + max(5.0, click_delay_ms), 2)
     up_ms = round(down_ms + max(1.0, click_hold_ms), 2)
     return {
         "mouse": {
@@ -129,8 +130,8 @@ def build_tier2_behaviour_payload(
         },
         "timing": {
             "ms_since_load": round(up_ms + 15.0, 2),
-            "ms_to_first_interaction": round(max(5.0, fill_delay_ms), 2),
-            "ms_since_nonce": round(up_ms - max(5.0, fill_delay_ms) + 10.0, 2),
+            "ms_to_first_interaction": first_ms,
+            "ms_since_nonce": round(max(1.0, up_ms - first_ms + 10.0), 2),
             "scroll_events": 0,
             "focus_changes": 2,
         },

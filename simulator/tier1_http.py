@@ -181,9 +181,26 @@ def run_tier1_session(
                 if isinstance(tok, str) and tok:
                     headers["X-Human-Token"] = tok
 
+    if action == "details_update":
+        portal_body: dict[str, Any] = {
+            "action": "details_update",
+            "fields_updated": ["name", "address", "pincode"],
+            "city_code": "BENGALURU",
+            "language_code": "EN",
+            "confirmed": True,
+        }
+    elif action == "centre_search":
+        portal_body = {
+            "action": "centre_search",
+            "service_type": "ALL",
+            "query_length": max(2, identifier_length),
+        }
+    else:
+        portal_body = {"action": action, "identifier_length": max(4, identifier_length)}
+
     portal_status, _ = do_post(
         portal_url,
-        {"action": action, "identifier_length": identifier_length},
+        portal_body,
         headers,
     )
     latency_ms = (time.perf_counter() - t0) * 1000.0
