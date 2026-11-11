@@ -187,7 +187,7 @@ def build_reference_human_behaviour_payload(
     return {
         "mouse": {
             "points": [list(pt) for pt in REFERENCE_HUMAN_MOUSE_POINTS],
-            "clicks": [[767.0, 267.0, 835.0, 912.0]],
+            "clicks": [],
             "untrusted_count": 0,
             "wheel_events": 1,
         },
