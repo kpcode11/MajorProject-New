@@ -85,8 +85,8 @@
 | P6-13 | 6 | SDK/backend contract test | DONE | c667d49 | Exported backend Pydantic JSON Schema (data/fixtures/backend_contract_schema.json) and validated live SDK AssessRequest and ChallengeAssessRequest payloads in sdk/test/contract.test.ts and backend/tests/test_sdk_contract.py. |
 | P7-01 | 7 | Demo portal scaffold | DONE | 556745c | React 19 + Vite 8 + TypeScript 6 portal scaffold in portal/ labelled 'DEMO — not a government portal', wrapped in BotGuardProvider, with CI job and unit test. |
 | P7-02 | 7 | Demo portal pages | DONE | 47e287c | Landing, Resident login (identifier + Send OTP), Update details form, and Centre search pages in portal/src/pages/ with X-Human-Token forwarding and zero raw-text transmission; 4 unit tests. |
-| P7-03 | 7 | Protected portal API | DONE | pending | Mounted /portal-api/otp/request, /portal-api/details/update, and /portal-api/centres/search via create_portal_router() in backend/app/portal.py protected by require_human_token; 3 tests in test_portal_api.py. |
-| P7-04 | 7 | Portal API statistics | TODO | | |
+| P7-03 | 7 | Protected portal API | DONE | 1d9bd4a | Mounted /portal-api/otp/request, /portal-api/details/update, and /portal-api/centres/search via create_portal_router() in backend/app/portal.py protected by require_human_token; 3 tests in test_portal_api.py. |
+| P7-04 | 7 | Portal API statistics | DONE | pending | Added thread-safe PortalStatsTracker and GET /portal-api/stats reporting accepted vs rejected calls overall, per action, and per reason; 4 tests in test_portal_api.py. |
 | P7-05 | 7 | Protection-mode switch | TODO | | |
 | P7-06 | 7 | Accessible step-up UI | TODO | | |
 | P7-07 | 7 | Challenge flow | TODO | | |

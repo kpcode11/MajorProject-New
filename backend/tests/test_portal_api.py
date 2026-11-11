@@ -163,3 +163,94 @@ def test_portal_centres_search_requires_valid_token_and_filters_by_service(
     centres_bio = resp_bio.json()["centres"]
     assert len(centres_bio) == 1
     assert centres_bio[0]["code"] == "DEMO-BLR-01"
+
+
+def test_portal_stats_counts_accepted_and_rejected_calls(
+    portal_app: FastAPI, portal_settings: Settings
+) -> None:
+    client = _client(portal_app)
+    store: Store = portal_app.state.store
+
+    # Initial stats are zero
+    init_resp = client.get("/portal-api/stats")
+    assert init_resp.status_code == 200
+    assert init_resp.json() == {
+        "accepted": 0,
+        "rejected": 0,
+        "total": 0,
+        "by_action": {
+            "otp_request": {"accepted": 0, "rejected": 0},
+            "details_update": {"accepted": 0, "rejected": 0},
+            "centre_search": {"accepted": 0, "rejected": 0},
+        },
+        "by_reason": {},
+    }
+
+    # 1. Missing token on otp_request -> rejected (missing_token)
+    assert client.post("/portal-api/otp/request").status_code == 401
+
+    # 2. Valid token on otp_request -> accepted
+    tok_otp = issue_token(store, portal_settings, action="otp_request", band="low")
+    assert (
+        client.post(
+            "/portal-api/otp/request",
+            headers={"X-Human-Token": tok_otp},
+        ).status_code
+        == 200
+    )
+
+    # 3. Replay consumed token on otp_request -> rejected (token_replayed_or_revoked)
+    assert (
+        client.post(
+            "/portal-api/otp/request",
+            headers={"X-Human-Token": tok_otp},
+        ).status_code
+        == 401
+    )
+
+    # 4. Wrong action token on details_update -> rejected (action_mismatch)
+    tok_wrong = issue_token(store, portal_settings, action="centre_search", band="low")
+    assert (
+        client.post(
+            "/portal-api/details/update",
+            headers={"X-Human-Token": tok_wrong},
+        ).status_code
+        == 401
+    )
+
+    # 5. Valid token on centre_search -> accepted
+    tok_search = issue_token(store, portal_settings, action="centre_search", band="low")
+    assert (
+        client.post(
+            "/portal-api/centres/search",
+            headers={"X-Human-Token": tok_search},
+        ).status_code
+        == 200
+    )
+
+    # 6. Extra field on details_update with valid token -> rejected (validation_error)
+    tok_details = issue_token(store, portal_settings, action="details_update", band="low")
+    assert (
+        client.post(
+            "/portal-api/details/update",
+            json={"unexpected_field": "bad"},
+            headers={"X-Human-Token": tok_details},
+        ).status_code
+        == 422
+    )
+
+    stats = client.get("/portal-api/stats").json()
+    assert stats["accepted"] == 2
+    assert stats["rejected"] == 4
+    assert stats["total"] == 6
+    assert stats["by_action"] == {
+        "otp_request": {"accepted": 1, "rejected": 2},
+        "details_update": {"accepted": 0, "rejected": 2},
+        "centre_search": {"accepted": 1, "rejected": 0},
+    }
+    assert stats["by_reason"] == {
+        "missing_token": 1,
+        "token_replayed_or_revoked": 1,
+        "action_mismatch": 1,
+        "validation_error": 1,
+    }

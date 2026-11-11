@@ -1,9 +1,11 @@
-"""Mock Resident Self-Service Portal API routes under ``/portal-api/`` (P7-03).
+"""Mock Resident Self-Service Portal API routes under ``/portal-api/`` (P7-03, P7-04).
 
 Routes:
 - ``POST /portal-api/otp/request``     — Protected by ``require_human_token("otp_request")``.
 - ``POST /portal-api/details/update``  — Protected by ``require_human_token("details_update")``.
 - ``POST /portal-api/centres/search``  — Protected by ``require_human_token("centre_search")``.
+- ``GET  /portal-api/stats``           — Returns accepted vs rejected call counters (overall,
+                                         per action, and per rejection reason).
 
 Privacy invariant:
 - No route accepts or stores raw personal identifiers or typed text. Request models
@@ -12,13 +14,22 @@ Privacy invariant:
 
 from __future__ import annotations
 
+import threading
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, Request
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.main import require_human_token
 from app.tokens import TokenClaims
+
+PORTAL_ACTIONS: tuple[str, ...] = ("otp_request", "details_update", "centre_search")
+
+PORTAL_PATH_ACTIONS: dict[str, str] = {
+    "/portal-api/otp/request": "otp_request",
+    "/portal-api/details/update": "details_update",
+    "/portal-api/centres/search": "centre_search",
+}
 
 DEMO_CENTRES: list[dict[str, Any]] = [
     {
@@ -43,6 +54,53 @@ DEMO_CENTRES: list[dict[str, Any]] = [
         "hours": "09:00 – 17:00 (Mon–Sat)",
     },
 ]
+
+
+class PortalStatsTracker:
+    """Thread-safe counter tracking accepted vs rejected calls to ``/portal-api/*`` (P7-04)."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._accepted = 0
+        self._rejected = 0
+        self._by_action: dict[str, dict[str, int]] = {
+            action: {"accepted": 0, "rejected": 0} for action in PORTAL_ACTIONS
+        }
+        self._by_reason: dict[str, int] = {}
+
+    def reset(self) -> None:
+        """Reset all accepted/rejected counters to zero."""
+        with self._lock:
+            self._accepted = 0
+            self._rejected = 0
+            self._by_action = {action: {"accepted": 0, "rejected": 0} for action in PORTAL_ACTIONS}
+            self._by_reason = {}
+
+    def record_accepted(self, action: str) -> None:
+        """Increment the accepted counter for ``action``."""
+        with self._lock:
+            self._accepted += 1
+            bucket = self._by_action.setdefault(action, {"accepted": 0, "rejected": 0})
+            bucket["accepted"] += 1
+
+    def record_rejected(self, action: str, reason: str) -> None:
+        """Increment the rejected counter for ``action`` and ``reason``."""
+        with self._lock:
+            self._rejected += 1
+            bucket = self._by_action.setdefault(action, {"accepted": 0, "rejected": 0})
+            bucket["rejected"] += 1
+            self._by_reason[reason] = self._by_reason.get(reason, 0) + 1
+
+    def snapshot(self) -> dict[str, Any]:
+        """Return a copy of the current accepted/rejected statistics."""
+        with self._lock:
+            return {
+                "accepted": self._accepted,
+                "rejected": self._rejected,
+                "total": self._accepted + self._rejected,
+                "by_action": {act: dict(counts) for act, counts in self._by_action.items()},
+                "by_reason": dict(self._by_reason),
+            }
 
 
 class OtpRequestPayload(BaseModel):
@@ -76,16 +134,32 @@ class CentreSearchPayload(BaseModel):
     query_length: int = Field(default=6, ge=1, le=128)
 
 
+def _record_portal_accepted(request: Request, action: str) -> None:
+    stats: PortalStatsTracker | None = getattr(request.app.state, "portal_stats", None)
+    if stats is not None:
+        stats.record_accepted(action)
+
+
 def create_portal_router() -> APIRouter:
-    """Create the ``/portal-api`` router with human-token protection on all action endpoints."""
+    """Create the ``/portal-api`` router with human-token protection and call statistics."""
     router = APIRouter(prefix="/portal-api", tags=["portal"])
+
+    @router.get("/stats")
+    async def get_portal_stats(request: Request) -> dict[str, Any]:
+        stats: PortalStatsTracker | None = getattr(request.app.state, "portal_stats", None)
+        if stats is None:
+            stats = PortalStatsTracker()
+            request.app.state.portal_stats = stats
+        return stats.snapshot()
 
     @router.post("/otp/request")
     async def request_otp(
+        request: Request,
         payload: OtpRequestPayload | None = Body(default=None),
         claims: TokenClaims = Depends(require_human_token("otp_request")),
     ) -> dict[str, Any]:
         body = payload or OtpRequestPayload()
+        _record_portal_accepted(request, "otp_request")
         return {
             "status": "otp_sent",
             "action": claims.act,
@@ -96,10 +170,12 @@ def create_portal_router() -> APIRouter:
 
     @router.post("/details/update")
     async def update_details(
+        request: Request,
         payload: DetailsUpdatePayload | None = Body(default=None),
         claims: TokenClaims = Depends(require_human_token("details_update")),
     ) -> dict[str, Any]:
         body = payload or DetailsUpdatePayload()
+        _record_portal_accepted(request, "details_update")
         return {
             "status": "details_updated",
             "action": claims.act,
@@ -112,10 +188,12 @@ def create_portal_router() -> APIRouter:
 
     @router.post("/centres/search")
     async def search_centres(
+        request: Request,
         payload: CentreSearchPayload | None = Body(default=None),
         claims: TokenClaims = Depends(require_human_token("centre_search")),
     ) -> dict[str, Any]:
         body = payload or CentreSearchPayload()
+        _record_portal_accepted(request, "centre_search")
         service_filter = body.service_type.upper()
         service_map = {
             "ENROLMENT": "New Enrolment",

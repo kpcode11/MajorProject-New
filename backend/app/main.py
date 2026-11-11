@@ -330,6 +330,9 @@ def require_human_token(expected_action: str) -> Callable[..., Any]:
                 raw_token = parts[1].strip()
 
         if not raw_token:
+            stats = getattr(request.app.state, "portal_stats", None)
+            if stats is not None and request.url.path.startswith("/portal-api/"):
+                stats.record_rejected(expected_action, "missing_token")
             raise ApiError(
                 401,
                 "missing_token",
@@ -347,6 +350,9 @@ def require_human_token(expected_action: str) -> Callable[..., Any]:
                 consume=True,
             )
         except TokenError as exc:
+            stats = getattr(request.app.state, "portal_stats", None)
+            if stats is not None and request.url.path.startswith("/portal-api/"):
+                stats.record_rejected(expected_action, exc.code)
             raise ApiError(401, exc.code, exc.message) from exc
 
     return _dependency
@@ -420,6 +426,12 @@ def create_app(
         request: Request, exc: RequestValidationError
     ) -> JSONResponse:
         rid = _request_id(request)
+        from app.portal import PORTAL_PATH_ACTIONS
+
+        portal_act = PORTAL_PATH_ACTIONS.get(request.url.path)
+        stats = getattr(request.app.state, "portal_stats", None)
+        if portal_act is not None and stats is not None:
+            stats.record_rejected(portal_act, "validation_error")
         first_err = exc.errors()[0] if exc.errors() else {}
         loc = ".".join(str(p) for p in first_err.get("loc", []))
         msg = f"Validation error at {loc}: {first_err.get('msg', 'invalid input')}"
@@ -808,8 +820,9 @@ def create_app(
             db_ok=db_ok,
         )
 
-    from app.portal import create_portal_router
+    from app.portal import PortalStatsTracker, create_portal_router
 
+    app.state.portal_stats = PortalStatsTracker()
     app.include_router(create_portal_router())
 
     return app
