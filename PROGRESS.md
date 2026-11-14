@@ -1,6 +1,6 @@
 # Progress
 
-**Current phase:** 7  |  **Branch:** phase-7-mock-portal  |  **Last updated:** 2026-11-08  |  **Last agent/tool:** Antigravity
+**Current phase:** 9  |  **Branch:** phase-9-dashboard-privacy  |  **Last updated:** 2026-11-14  |  **Last agent/tool:** Cursor Grok
 
 ## Task table
 
@@ -122,7 +122,7 @@
 | P8-08B | 8 | Mobile limitation documentation | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
 | P9-01 | 9 | Admin API | DONE | c7073d9 | Added backend/app/admin.py (/admin/overview, /admin/scores, /admin/assessments, /admin/assessments/{id}, /admin/feedback, /admin/sim-results, /admin/privacy, /admin/privacy/purge) protected by ADMIN_API_KEY; 4 tests in test_admin_api.py. |
 | P9-02 | 9 | Admin dashboard | DONE | HEAD | Added portal/src/pages/AdminDashboardPage.tsx, portal/src/adminApi.ts, portal/src/designTokens.ts (supabase/DESIGN.md tokens), portal/src/dashboard/RechartsCompat.tsx, and dashboard/ exports implementing all 6 admin dashboard views. |
-| P9-03 | 9 | Dashboard tests | TODO | | |
+| P9-03 | 9 | Dashboard tests | DONE | HEAD | Added portal/test/dashboard.test.tsx (overview, histogram thresholds, session derived features, simulator tiers, fp/fn feedback, privacy purge, portal-shell smoke) and backend/tests/test_dashboard_smoke.py (admin views load from ASGI backend). |
 | P9-04 | 9 | Retention purge | TODO | | |
 | P9-05 | 9 | Rotating session identifiers | TODO | | |
 | P9-06 | 9 | Privacy regression scan | TODO | | |
