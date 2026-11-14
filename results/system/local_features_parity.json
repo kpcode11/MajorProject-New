@@ -1,0 +1,88 @@
+{
+  "task": "P9-08",
+  "mouse_feature_count_with_shortcuts": 120,
+  "mouse_feature_count_without_shortcuts": 104,
+  "keyboard_feature_count": 31,
+  "golden_fixture_tolerance": 1e-09,
+  "parity_tests_passed": true,
+  "default_send_raw_trace": true,
+  "note": "sendRawTrace=false verified with 1e-9 TypeScript/Python feature parity and 0.0 ONNX score delta; sendRawTrace remains true by default for backwards compatibility with raw-trace tests.",
+  "model_evaluations": [
+    {
+      "scenario": "clean_human_multimodal",
+      "raw_trace_mode": {
+        "mouse_score": 0.88,
+        "keyboard_score": 0.0,
+        "model_score": 0.44,
+        "final_score": 0.44,
+        "band": "medium"
+      },
+      "local_feature_mode": {
+        "mouse_score": 0.88,
+        "keyboard_score": 0.0,
+        "model_score": 0.44,
+        "final_score": 0.44,
+        "band": "medium"
+      },
+      "abs_score_diff": 0.0,
+      "band_match": true
+    },
+    {
+      "scenario": "linear_bot_multimodal",
+      "raw_trace_mode": {
+        "mouse_score": 1.0,
+        "keyboard_score": 1.0,
+        "model_score": 1.0,
+        "final_score": 1.0,
+        "band": "high"
+      },
+      "local_feature_mode": {
+        "mouse_score": 1.0,
+        "keyboard_score": 1.0,
+        "model_score": 1.0,
+        "final_score": 1.0,
+        "band": "high"
+      },
+      "abs_score_diff": 0.0,
+      "band_match": true
+    },
+    {
+      "scenario": "human_mouse_only",
+      "raw_trace_mode": {
+        "mouse_score": 0.294118,
+        "keyboard_score": null,
+        "model_score": 0.294118,
+        "final_score": 0.294118,
+        "band": "low"
+      },
+      "local_feature_mode": {
+        "mouse_score": 0.294118,
+        "keyboard_score": null,
+        "model_score": 0.294118,
+        "final_score": 0.294118,
+        "band": "low"
+      },
+      "abs_score_diff": 0.0,
+      "band_match": true
+    },
+    {
+      "scenario": "human_keyboard_only",
+      "raw_trace_mode": {
+        "mouse_score": null,
+        "keyboard_score": 0.0,
+        "model_score": 0.0,
+        "final_score": 0.0,
+        "band": "low"
+      },
+      "local_feature_mode": {
+        "mouse_score": null,
+        "keyboard_score": 0.0,
+        "model_score": 0.0,
+        "final_score": 0.0,
+        "band": "low"
+      },
+      "abs_score_diff": 0.0,
+      "band_match": true
+    }
+  ]
+}

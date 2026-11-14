@@ -22,6 +22,10 @@ export interface MouseBehaviour {
   clicks: [number, number, number, number][];
   untrusted_count: number;
   wheel_events: number;
+  /** Locally extracted aggregate features when `sendRawTrace: false` (P9-08). */
+  features?: Record<string, number | null>;
+  /** Locally extracted per-window feature maps when `sendRawTrace: false` (P9-08). */
+  feature_windows?: Record<string, number | null>[];
 }
 
 /** Collector settings (a subset of the SDK config). */

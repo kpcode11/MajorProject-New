@@ -1,10 +1,10 @@
 # Handoff
 
-**Updated:** 2026-11-14 15:11  |  **By:** Antigravity  |  **Branch:** phase-9-dashboard-privacy  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-14 21:04  |  **By:** Antigravity  |  **Branch:** phase-9-dashboard-privacy  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P9-07 — Privacy impact assessment (`docs/privacy_impact.md`)
-- State: `DONE` (next task is **P9-08** — `Optional local feature extraction` [Stretch] or **P9-09** — `Accessibility audit`)
+- ID: P9-08 — Optional local feature extraction (`sendRawTrace=false`)
+- State: `DONE` (next task is **P9-09** — `Accessibility audit`)
 
 ## Done in Phase 9 so far
 - Recorded human decision in `docs/decision_log.md` to skip Phase 8 (`P8-*` marked `SKIPPED` in `PROGRESS.md`) and proceed directly to Phase 9 (`phase-9-dashboard-privacy`), using `supabase/DESIGN.md` for the Phase 9 Admin Dashboard UI (`P9-02`).
@@ -14,13 +14,14 @@
 - **P9-04 (`7f10bd9`):** Implemented `backend/app/retention.py` (`run_retention_purge`, `RetentionScheduler`, `FakeClock`, `SystemClock`, `PurgeResult`, and CLI `python -m app.retention --once`), added `RETENTION_PURGE_INTERVAL_SECONDS` in `backend/app/config.py`, wired lifespan scheduling in `backend/app/main.py` and `POST /admin/privacy/purge` in `backend/app/admin.py`, and added 6 unit tests in `backend/tests/test_retention.py`.
 - **P9-05 (`c965218`):** Implemented in-memory rotating per-page-load session identifiers in the SDK (`generateSessionId`, `SESSION_ROTATION_MS`, `X-Session-Id` header in `sdk/src/index.ts` and `sdk/src/transport.ts`) and daily-rotated session hashing (`daily_session_salt`, `make_session_hash`, coarse `/24` & `/48` IP buckets in `backend/app/nonce.py` and `backend/app/main.py`), verified by `backend/tests/test_session_privacy.py` and `sdk/test/api.test.ts`.
 - **P9-06 (`ee236bf`):** Added `backend/tests/test_privacy_scan.py` to execute end-to-end portal (`otp_request`, `details_update`, `centre_search`), step-up challenge, bot rejection, and extra-field form injection flows, then scan every database table/column/cell and structured log line to verify zero leakage of typed characters, form values, full IPs, or persistent device identifiers.
-- **P9-07:** Wrote `docs/privacy_impact.md` documenting purpose, necessity, less-invasive alternatives considered, and retention TTLs for every signal group (`EnvSignals`, `MouseBehaviour`, `KeyBehaviour`, `TimingSignals`, network/nonces/rotating session hashes, challenge telemetry, and portal metadata), plus explicit UIDAI/DPDP Act 2023-style engineering assumptions and legal review caveats.
+- **P9-07 (`39b397d`):** Wrote `docs/privacy_impact.md` documenting purpose, necessity, less-invasive alternatives considered, and retention TTLs for every signal group, plus explicit UIDAI/DPDP Act 2023-style engineering assumptions and legal review caveats.
+- **P9-08:** Implemented local feature extraction mode (`sendRawTrace=false`) in `sdk/src/features.ts`, `sdk/src/config.ts`, and `sdk/src/index.ts`, added backend support for `mouse.features` / `mouse.feature_windows` and `keys.features` in `backend/app/schemas.py` and `backend/app/scoring.py`, verified $10^{-9}$ golden parity across Python and TypeScript fixtures (`sdk/test/features_parity.test.ts`, `sdk/test/fixtures/golden_feature_fixtures.json`, `backend/tests/test_local_features.py`), and saved model evaluation results to `results/system/local_features_parity.json`.
 
 ## Exact next step
-- Start **P9-08** (`Optional local feature extraction` — stretch) or **P9-09** (`Accessibility audit`: run axe-core on portal and challenge pages and fix any issues).
+- Start **P9-09** (`Accessibility audit`): run `axe-core` on portal and step-up challenge pages and fix any accessibility issues.
 
 ## Files touched (recent)
-- `docs/privacy_impact.md`, `PROGRESS.md`, `HANDOFF.md`
+- `sdk/src/features.ts`, `sdk/src/config.ts`, `sdk/src/index.ts`, `sdk/src/collectors/mouse.ts`, `sdk/src/collectors/keyboard.ts`, `sdk/test/features_parity.test.ts`, `sdk/test/fixtures/golden_feature_fixtures.json`, `backend/app/schemas.py`, `backend/app/scoring.py`, `backend/tests/test_local_features.py`, `results/system/local_features_parity.json`, `results/system/sdk_size.json`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/status.py

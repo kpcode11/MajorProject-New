@@ -126,8 +126,8 @@
 | P9-04 | 9 | Retention purge | DONE | 7f10bd9 | Implemented backend/app/retention.py (run_retention_purge, RetentionScheduler, FakeClock, CLI --once), wired RETENTION_PURGE_INTERVAL_SECONDS in config/main/admin, and added 6 unit tests in backend/tests/test_retention.py. |
 | P9-05 | 9 | Rotating session identifiers | DONE | c965218 | Added random per-page-load rotating session IDs in SDK (generateSessionId, SESSION_ROTATION_MS, X-Session-Id header) and daily-rotated session hashes (daily_session_salt, make_session_hash) with coarse /24 and /48 IP logging in backend/app/nonce.py and backend/app/main.py; tested in backend/tests/test_session_privacy.py and sdk/test/api.test.ts. |
 | P9-06 | 9 | Privacy regression scan | DONE | ee236bf | Added backend/tests/test_privacy_scan.py scanning all DB tables/columns/cells and structured log lines across E2E portal, step-up challenge, bot, and form-injection flows for typed characters, form values, full IPs, and persistent device IDs. |
-| P9-07 | 9 | Privacy impact assessment | DONE | HEAD | Wrote docs/privacy_impact.md covering all 7 signal groups (purpose, necessity, less-invasive alternatives, retention), prohibited-signal invariants, and explicit UIDAI/DPDP Act 2023 engineering assumptions and legal review caveats. |
-| P9-08 | 9 | Optional local feature extraction | TODO | | |
+| P9-07 | 9 | Privacy impact assessment | DONE | 39b397d | Wrote docs/privacy_impact.md covering all 7 signal groups (purpose, necessity, less-invasive alternatives, retention), prohibited-signal invariants, and explicit UIDAI/DPDP Act 2023 engineering assumptions and legal review caveats. |
+| P9-08 | 9 | Optional local feature extraction | DONE | HEAD | Implemented SDK local feature extraction mode (sendRawTrace=false in sdk/src/features.ts, sdk/src/config.ts, sdk/src/index.ts), backend local-feature scoring (backend/app/schemas.py, backend/app/scoring.py), golden parity tests (1e-9 tolerance in sdk/test/features_parity.test.ts and backend/tests/test_local_features.py), and results/system/local_features_parity.json. |
 | P9-09 | 9 | Accessibility audit | TODO | | |
 | P9-10 | 9 | Keyboard-only portal test | TODO | | |
 | P9-11 | 9 | Human screen-reader check | TODO | | |
@@ -162,4 +162,4 @@ Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 - `results/mouse/` — `baselines.csv`, `hparams.json`, `evaluation_splits.csv`, `lobo_evaluation.csv`, `human_fpr_captchasolve30k.csv`, `aggregation.csv`, `calibration.json`, `ablations.csv`, `shap_summary.csv`, `shap_top3_examples.json`, `fingerprint.json`
 - `results/keyboard/` — `privacy_scan.json`, `baselines.csv`, `hparams.json`, `evaluation.csv`, `evaluation_splits.csv`, `per_generator.csv`, `speed_terciles.csv`, `calibration.json`, `feature_importance.csv`, `failure_analysis.md`, `summary.json`
 - `results/fusion/` — `fusion_comparison.csv`, `modality_availability.csv`
-- `results/system/` — `scoring_latency.json`, `sdk_size.json`, `sim_runs.jsonl`, `sim_summary.md`
+- `results/system/` — `scoring_latency.json`, `sdk_size.json`, `sim_runs.jsonl`, `sim_summary.md`, `local_features_parity.json`

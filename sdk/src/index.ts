@@ -54,6 +54,23 @@ import {
   endpointUrl,
   resolveConfig,
 } from './config';
+import {
+  type CanonicalKeyEvent,
+  type CanonicalMouseEvent,
+  KEYBOARD_FEATURE_NAMES,
+  MIN_KEYBOARD_EVENTS,
+  MIN_MOUSE_MOVE_POINTS,
+  SEGMENT_FEATURE_NAMES,
+  extractKeyboardFeatureDict,
+  extractKeyboardFeaturesFromCanonical,
+  extractMouseFeatureWindows,
+  extractSegmentFeatures,
+  extractWindowFeatures,
+  mouseBehaviourToEvents,
+  segmentMouseTrajectory,
+  serializeFeatureMap,
+  windowMouseEvents,
+} from './features';
 import { type IdleScheduleOptions, createThrottleGate, scheduleIdleTask } from './performance';
 import { RingBuffer } from './ringbuffer';
 import {
@@ -90,11 +107,15 @@ export {
   BotGuardTransportError,
   DEFAULT_CONFIG,
   HARD_LIMITS,
+  KEYBOARD_FEATURE_NAMES,
   KeyboardCollector,
+  MIN_KEYBOARD_EVENTS,
+  MIN_MOUSE_MOVE_POINTS,
   MouseCollector,
   RingBuffer,
   SCHEMA_VERSION,
   SDK_VERSION,
+  SEGMENT_FEATURE_NAMES,
   SESSION_ROTATION_MS,
   ScrollCollector,
   TimingCollector,
@@ -107,9 +128,15 @@ export {
   degradedFallbackResponse,
   deviceClass,
   endpointUrl,
+  extractKeyboardFeatureDict,
+  extractKeyboardFeaturesFromCanonical,
+  extractMouseFeatureWindows,
+  extractSegmentFeatures,
+  extractWindowFeatures,
   fetchNonce,
   generateSessionId,
   keyClass,
+  mouseBehaviourToEvents,
   postAssess,
   postChallenge,
   renderPressHoldChallenge,
@@ -117,7 +144,10 @@ export {
   safeAssess,
   safeSubmitChallenge,
   scheduleIdleTask,
+  segmentMouseTrajectory,
+  serializeFeatureMap,
   utf8ByteLength,
+  windowMouseEvents,
 };
 export type {
   AssessRequestPayload,
@@ -128,6 +158,8 @@ export type {
   BotGuardOptions,
   BuildAssessPayloadInput,
   BuildChallengePayloadInput,
+  CanonicalKeyEvent,
+  CanonicalMouseEvent,
   ChallengeAssessRequestPayload,
   ChallengeHandler,
   ChallengeInfo,
@@ -342,10 +374,35 @@ export class BotGuardClient {
       device_class: deviceClass(env),
     };
     if (this.mouse) {
-      behaviour.mouse = this.mouse.snapshot();
+      const rawMouse = this.mouse.snapshot();
+      if (this.config.sendRawTrace) {
+        behaviour.mouse = rawMouse;
+      } else {
+        const windows = extractMouseFeatureWindows(rawMouse, env).map(serializeFeatureMap);
+        const firstWin = windows[0];
+        behaviour.mouse = {
+          points: [],
+          clicks: [],
+          untrusted_count: rawMouse.untrusted_count,
+          wheel_events: rawMouse.wheel_events,
+          ...(firstWin !== undefined ? { features: firstWin, feature_windows: windows } : {}),
+        };
+      }
     }
     if (this.keyboard) {
-      behaviour.keys = this.keyboard.snapshot();
+      const rawKeys = this.keyboard.snapshot();
+      if (this.config.sendRawTrace) {
+        behaviour.keys = rawKeys;
+      } else {
+        const kbFeats = extractKeyboardFeatureDict(rawKeys);
+        behaviour.keys = {
+          events: [],
+          paste_events: rawKeys.paste_events,
+          autofill_suspected: rawKeys.autofill_suspected,
+          untrusted_count: rawKeys.untrusted_count,
+          ...(kbFeats ? { features: serializeFeatureMap(kbFeats) } : {}),
+        };
+      }
     }
     if (this.timing) {
       behaviour.timing = this.timing.snapshot();

@@ -672,13 +672,29 @@ class ModelScorer:
         mouse: MouseBehaviour | None,
         env: EnvSignals | None = None,
     ) -> tuple[float | None, list[str]]:
-        """Extract features and score a mouse payload if sufficient events exist."""
+        """Extract features or use local features to score a mouse payload."""
         if mouse is None or self.mouse_model is None:
             return None, []
         include_shortcuts = "window_n_points" in self.mouse_model.feature_order
-        windows = extract_mouse_feature_windows(
-            mouse, env, include_shortcut_features=include_shortcuts
-        )
+        if len(mouse.points) >= MIN_MOUSE_MOVE_POINTS:
+            windows = extract_mouse_feature_windows(
+                mouse, env, include_shortcut_features=include_shortcuts
+            )
+        elif mouse.feature_windows:
+            windows = [
+                {str(k): (float(v) if v is not None else float("nan")) for k, v in win.items()}
+                for win in mouse.feature_windows
+                if win
+            ]
+        elif mouse.features:
+            windows = [
+                {
+                    str(k): (float(v) if v is not None else float("nan"))
+                    for k, v in mouse.features.items()
+                }
+            ]
+        else:
+            return None, []
         if not windows:
             return None, []
         return self._run_onnx_windows(self.mouse_model, windows)
@@ -687,10 +703,18 @@ class ModelScorer:
         self,
         keys: KeyBehaviour | None,
     ) -> tuple[float | None, list[str]]:
-        """Extract features and score a keyboard payload if sufficient events exist."""
+        """Extract features or use local features to score a keyboard payload."""
         if keys is None or self.keyboard_model is None:
             return None, []
-        feat_dict = extract_keyboard_feature_dict(keys)
+        if len(keys.events) >= MIN_KEYBOARD_EVENTS:
+            feat_dict = extract_keyboard_feature_dict(keys)
+        elif keys.features:
+            feat_dict = {
+                str(k): (float(v) if v is not None else float("nan"))
+                for k, v in keys.features.items()
+            }
+        else:
+            return None, []
         if feat_dict is None:
             return None, []
         return self._run_onnx_windows(self.keyboard_model, [feat_dict])
@@ -762,10 +786,11 @@ class ModelScorer:
 
         if coerced_beh is not None:
             try:
-                if (
-                    coerced_beh.mouse is not None
-                    and len(coerced_beh.mouse.points) >= MIN_MOUSE_MOVE_POINTS
-                ):
+                has_mouse = coerced_beh.mouse is not None and (
+                    len(coerced_beh.mouse.points) >= MIN_MOUSE_MOVE_POINTS
+                    or bool(coerced_beh.mouse.feature_windows or coerced_beh.mouse.features)
+                )
+                if has_mouse and coerced_beh.mouse is not None:
                     if self.mouse_model is None:
                         degraded = True
                     else:
@@ -775,10 +800,11 @@ class ModelScorer:
                         for fk, fv in self._last_modality_features.get("mouse", {}).items():
                             derived_features[f"mouse:{fk}"] = fv
 
-                if (
-                    coerced_beh.keys is not None
-                    and len(coerced_beh.keys.events) >= MIN_KEYBOARD_EVENTS
-                ):
+                has_keys = coerced_beh.keys is not None and (
+                    len(coerced_beh.keys.events) >= MIN_KEYBOARD_EVENTS
+                    or bool(coerced_beh.keys.features)
+                )
+                if has_keys and coerced_beh.keys is not None:
                     if self.keyboard_model is None:
                         degraded = True
                     else:
