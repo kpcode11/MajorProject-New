@@ -46,6 +46,7 @@ from app.config import Settings
 from app.db import AssessmentRecord, ChallengeRecord, DatabaseManager
 from app.main import ApiError
 from app.policy import PolicyEngine
+from app.retention import run_retention_purge
 
 ROOT_DIR: Path = Path(__file__).resolve().parents[2]
 DEFAULT_SIM_RUNS_PATH: Path = ROOT_DIR / "results" / "system" / "sim_runs.jsonl"
@@ -675,14 +676,11 @@ def create_admin_router() -> APIRouter:
     async def post_admin_privacy_purge(request: Request) -> dict[str, Any]:
         """Run an immediate retention purge of expired feature blobs and assessments."""
         db: DatabaseManager = request.app.state.db
-        db.flush_buffer()
-        now = datetime.now(UTC)
-        features_purged = db.purge_expired_features(now=now)
-        assessments_purged = db.purge_expired_assessments(now=now)
+        result = run_retention_purge(db)
         return {
-            "purged_at": _iso_utc(now),
-            "features_purged": features_purged,
-            "assessments_purged": assessments_purged,
+            "purged_at": _iso_utc(result.purged_at),
+            "features_purged": result.features_purged,
+            "assessments_purged": result.assessments_purged,
         }
 
     return router

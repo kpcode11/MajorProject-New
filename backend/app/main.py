@@ -24,7 +24,8 @@ import logging
 import secrets
 import time
 import uuid
-from collections.abc import Callable
+from collections.abc import AsyncIterator, Callable
+from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from typing import Any, Literal
 
@@ -401,10 +402,24 @@ def create_app(
     )
     rate_limiter = RateLimiter(backing_store, cfg)
 
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        from app.retention import RetentionScheduler
+
+        interval = cfg.retention_purge_interval_seconds
+        scheduler = RetentionScheduler(db_mgr, interval_seconds=interval)
+        _app.state.retention_scheduler = scheduler
+        scheduler.start()
+        try:
+            yield
+        finally:
+            scheduler.stop()
+
     app = FastAPI(
         title="BotGuard Scoring API",
         version="0.1.0",
         description="Passive behavioural bot-detection scoring service (Phase 5).",
+        lifespan=lifespan,
     )
     app.state.settings = cfg
     app.state.store = backing_store

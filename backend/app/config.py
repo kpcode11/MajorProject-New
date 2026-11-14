@@ -67,6 +67,8 @@ _DEFAULTS: dict[str, object] = {
     "FEATURE_TTL_SECONDS": str(7 * 24 * 3600),
     # Assessment long-term TTL in seconds (30 days)
     "ASSESSMENT_TTL_SECONDS": str(30 * 24 * 3600),
+    # Background retention purge interval in seconds (P9-04; 0 disables the scheduler)
+    "RETENTION_PURGE_INTERVAL_SECONDS": "3600",
     # Portal protection mode (P7-05): "passive" (default) or "off"
     "PROTECTION_MODE": "passive",
     # Admin API key for /admin/* endpoints (P9-01; student project key; production needs SSO/RBAC)
@@ -107,6 +109,7 @@ class Settings:
     rate_limit_challenge_session_per_min: int = 5
     challenge_ttl_seconds: int = 60
     admin_api_key: str = "dev-admin-key"
+    retention_purge_interval_seconds: int = 3600
 
     def jwt_private_key(self) -> str | None:
         """Return the PEM private key string, or None if not configured."""
@@ -216,6 +219,10 @@ def load_settings(yaml_path: Path | None = None) -> Settings:
         ),
         challenge_ttl_seconds=_int(get("CHALLENGE_TTL_SECONDS"), "CHALLENGE_TTL_SECONDS"),
         admin_api_key=_str(get("ADMIN_API_KEY")),
+        retention_purge_interval_seconds=_int(
+            get("RETENTION_PURGE_INTERVAL_SECONDS"),
+            "RETENTION_PURGE_INTERVAL_SECONDS",
+        ),
     )
 
 
