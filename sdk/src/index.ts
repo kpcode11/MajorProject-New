@@ -95,6 +95,7 @@ export {
   RingBuffer,
   SCHEMA_VERSION,
   SDK_VERSION,
+  SESSION_ROTATION_MS,
   ScrollCollector,
   TimingCollector,
   buildAssessPayload,
@@ -107,6 +108,7 @@ export {
   deviceClass,
   endpointUrl,
   fetchNonce,
+  generateSessionId,
   keyClass,
   postAssess,
   postChallenge,
@@ -152,6 +154,29 @@ export type {
   TouchPointTuple,
   TransportDeps,
 };
+
+/** Default session identifier rotation period in milliseconds (15 minutes, P9-05). */
+const SESSION_ROTATION_MS = 15 * 60 * 1_000;
+
+/**
+ * Generate a fresh 128-bit (32 hex chars) random session identifier in memory only (P9-05).
+ * Never reads or writes `localStorage`, `sessionStorage`, `IndexedDB`, or `document.cookie`.
+ */
+function generateSessionId(): string {
+  const bytes = new Uint8Array(16);
+  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+    crypto.getRandomValues(bytes);
+  } else {
+    for (let i = 0; i < bytes.length; i += 1) {
+      bytes[i] = Math.floor(Math.random() * 256);
+    }
+  }
+  let hex = '';
+  for (const b of bytes) {
+    hex += b.toString(16).padStart(2, '0');
+  }
+  return hex;
+}
 
 /** Options accepted by `BotGuard.start()` and `new BotGuardClient()`. */
 export interface BotGuardStartOptions extends BotGuardOptions {
@@ -199,11 +224,14 @@ export class BotGuardClient {
   private transportDeps: TransportDeps = {};
   private challengeHandler: ChallengeHandler | undefined;
   private nowFn: () => number = () => performance.now();
+  private sessionId: string = generateSessionId();
+  private sessionCreatedAtMs = 0;
 
   constructor(options?: BotGuardStartOptions) {
     if (options) {
       this.applyOptions(options);
     }
+    this.sessionCreatedAtMs = this.nowFn();
   }
 
   /** True when collectors are actively listening. */
@@ -214,6 +242,24 @@ export class BotGuardClient {
   /** Current resolved configuration. */
   get currentConfig(): Readonly<BotGuardConfig> {
     return this.config;
+  }
+
+  /**
+   * Current ephemeral in-memory session identifier (P9-05).
+   * Automatically rotates when the session age reaches {@link SESSION_ROTATION_MS}.
+   */
+  get currentSessionId(): string {
+    if (this.isRunning && this.nowFn() - this.sessionCreatedAtMs >= SESSION_ROTATION_MS) {
+      return this.rotateSession();
+    }
+    return this.sessionId;
+  }
+
+  /** Explicitly rotate to a fresh random in-memory session identifier (P9-05). */
+  rotateSession(): string {
+    this.sessionId = generateSessionId();
+    this.sessionCreatedAtMs = this.nowFn();
+    return this.sessionId;
   }
 
   /** Register or replace the step-up challenge UI handler (P6-08). */
@@ -235,6 +281,7 @@ export class BotGuardClient {
     if (options) {
       this.applyOptions(options);
     }
+    this.rotateSession();
 
     const target = options?.target ?? (typeof window !== 'undefined' ? window : undefined);
 
@@ -284,6 +331,7 @@ export class BotGuardClient {
     this.scroll = null;
     this.cachedNonce = null;
     this.isRunning = false;
+    this.rotateSession();
   }
 
   /** Collect the current environment and behaviour snapshot without sending a network request. */
@@ -308,7 +356,10 @@ export class BotGuardClient {
   /** Pre-fetch and cache a single-use nonce, marking the nonce timestamp on the timing collector. */
   async prefetchNonce(): Promise<string | null> {
     try {
-      const res = await fetchNonce(this.config, this.transportDeps);
+      const res = await fetchNonce(this.config, {
+        ...this.transportDeps,
+        sessionId: this.currentSessionId,
+      });
       this.cachedNonce = res.nonce;
       this.timing?.markNonce(this.nowFn());
       return res.nonce;
@@ -325,12 +376,16 @@ export class BotGuardClient {
     if (!this.isRunning) {
       this.start();
     }
+    const depsWithSession: TransportDeps = {
+      ...this.transportDeps,
+      sessionId: this.currentSessionId,
+    };
     let nonce = this.cachedNonce ?? undefined;
     this.cachedNonce = null;
 
     if (!nonce) {
       try {
-        const nonceRes = await fetchNonce(this.config, this.transportDeps);
+        const nonceRes = await fetchNonce(this.config, depsWithSession);
         nonce = nonceRes.nonce;
         this.timing?.markNonce(this.nowFn());
       } catch (err) {
@@ -351,7 +406,7 @@ export class BotGuardClient {
         env,
         behaviour,
       },
-      this.transportDeps,
+      depsWithSession,
     );
   }
 
@@ -397,7 +452,10 @@ export class BotGuardClient {
         env,
         behaviour,
       },
-      this.transportDeps,
+      {
+        ...this.transportDeps,
+        sessionId: this.currentSessionId,
+      },
     );
   }
 
@@ -456,6 +514,12 @@ export const BotGuard = Object.freeze({
   },
   get config(): Readonly<BotGuardConfig> {
     return defaultClient.currentConfig;
+  },
+  get sessionId(): string {
+    return defaultClient.currentSessionId;
+  },
+  rotateSession(): string {
+    return defaultClient.rotateSession();
   },
 });
 

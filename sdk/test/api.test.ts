@@ -1,5 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { type AssessResponse, BotGuard, BotGuardClient, type ChallengeInfo } from '../src/index';
+import {
+  type AssessResponse,
+  BotGuard,
+  BotGuardClient,
+  type ChallengeInfo,
+  SESSION_ROTATION_MS,
+  generateSessionId,
+} from '../src/index';
 
 let clock = 0;
 const now = (): number => clock;
@@ -169,5 +176,43 @@ describe('BotGuard public API & BotGuardClient (P6-07)', () => {
     const res = await promise;
     expect(res.degraded).toBe(true);
     expect(res.request_id).toContain('challenge_cancelled');
+  });
+
+  it('rotates random in-memory session identifiers per page load and after SESSION_ROTATION_MS without storage (P9-05)', async () => {
+    const ids = new Set(Array.from({ length: 20 }, () => generateSessionId()));
+    expect(ids.size).toBe(20);
+    for (const id of ids) {
+      expect(id).toMatch(/^[0-9a-f]{32}$/);
+    }
+
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ nonce: 'n-s1', expires_in: 300 }))
+      .mockResolvedValueOnce(jsonResponse(SAMPLE_ALLOW));
+
+    const client = new BotGuardClient({
+      now,
+      transportDeps: { fetchImpl: fetchMock },
+    });
+    client.start();
+    const firstSessionId = client.currentSessionId;
+    expect(firstSessionId).toMatch(/^[0-9a-f]{32}$/);
+
+    await client.assess('login');
+    const assessInit = fetchMock.mock.calls[1]?.[1];
+    const headers = assessInit?.headers as Record<string, string> | undefined;
+    expect(headers?.['X-Session-Id']).toBe(firstSessionId);
+
+    // Advance past SESSION_ROTATION_MS -> automatically rotates
+    clock += SESSION_ROTATION_MS + 1;
+    const rotatedSessionId = client.currentSessionId;
+    expect(rotatedSessionId).toMatch(/^[0-9a-f]{32}$/);
+    expect(rotatedSessionId).not.toBe(firstSessionId);
+
+    // Never persisted to localStorage, sessionStorage, or cookies
+    expect(window.localStorage.length).toBe(0);
+    expect(window.sessionStorage.length).toBe(0);
+    expect(document.cookie).toBe('');
+    client.stop();
   });
 });

@@ -26,14 +26,19 @@ from __future__ import annotations
 import hashlib
 import ipaddress
 import secrets
+from datetime import UTC, datetime
 
 from app.store import Store
 
 # Store key prefix — keeps nonces isolated from other store entries.
 _NONCE_PREFIX = "nonce:"
 
+# Process-local random seed mixed into daily session salts so cross-day digests
+# cannot be reversed even for low-entropy inputs.
+_PROCESS_SESSION_SEED = secrets.token_hex(16)
+
 # ---------------------------------------------------------------------------
-# Context hashing
+# Context hashing & rotating session identifiers (P5-03, P9-05)
 # ---------------------------------------------------------------------------
 
 
@@ -42,19 +47,79 @@ def _coarsen_ip(ip_str: str) -> str:
 
     Args:
         ip_str: Dotted-decimal IPv4 or colon-hex IPv6 address string.
-            Unrecognised strings are returned unchanged.
+            Unrecognised strings return ``"unknown"`` so raw strings are never
+            echoed into logs or persistence.
 
     Returns:
-        Network prefix string, e.g. ``"192.168.1.0/24"``.
+        Network prefix string, e.g. ``"192.168.1.0/24"``, or ``"unknown"``.
     """
     try:
-        addr = ipaddress.ip_address(ip_str)
+        addr = ipaddress.ip_address(ip_str.strip())
         if isinstance(addr, ipaddress.IPv4Address):
-            return str(ipaddress.ip_network(f"{ip_str}/24", strict=False))
+            return str(ipaddress.ip_network(f"{addr}/24", strict=False))
         # IPv6
-        return str(ipaddress.ip_network(f"{ip_str}/48", strict=False))
+        return str(ipaddress.ip_network(f"{addr}/48", strict=False))
     except ValueError:
-        return ip_str
+        return "unknown"
+
+
+def generate_session_id() -> str:
+    """Generate a random 128-bit ephemeral session token (32 hex chars)."""
+    return secrets.token_hex(16)
+
+
+def daily_session_salt(
+    now: datetime | None = None,
+    *,
+    secret: str = "",
+) -> str:
+    """Return a daily rotating salt bound to the UTC calendar date (``YYYY-MM-DD``).
+
+    Guarantees that session hashes rotate at UTC midnight and have zero
+    cross-day linkage.
+    """
+    ts = now if now is not None else datetime.now(UTC)
+    if ts.tzinfo is None:
+        ts = ts.replace(tzinfo=UTC)
+    else:
+        ts = ts.astimezone(UTC)
+    day_key = ts.strftime("%Y-%m-%d")
+    seed = secret or _PROCESS_SESSION_SEED
+    raw = f"botguard-session-salt|{day_key}|{seed}"
+    return hashlib.blake2b(raw.encode("utf-8"), digest_size=16).hexdigest()
+
+
+def make_session_hash(
+    client_ip: str | None,
+    user_agent: str | None,
+    *,
+    client_session_id: str | None = None,
+    now: datetime | None = None,
+    secret: str = "",
+) -> str:
+    """Compute a privacy-preserving, daily-rotating session hash (P9-05).
+
+    Properties:
+    - **Random per page load / rotating**: Incorporates the SDK's in-memory per-page-load
+      ``client_session_id`` (from ``X-Session-Id``). When absent, a fresh random token is
+      generated so anonymous calls are never statically linked.
+    - **No cross-day linkage**: Mixes in :func:`daily_session_salt` scoped to the UTC day,
+      so identical client inputs on two different days produce unlinkable hashes.
+    - **Coarse IP only**: Uses only the ``/24`` (IPv4) or ``/48`` (IPv6) bucket.
+
+    Returns:
+        16-character hex string (64-bit BLAKE2b digest).
+    """
+    coarse_ip = _coarsen_ip(client_ip or "0.0.0.0")
+    ua = user_agent or ""
+    ephemeral_id = (
+        client_session_id.strip()[:128]
+        if client_session_id and client_session_id.strip()
+        else generate_session_id()
+    )
+    salt = daily_session_salt(now, secret=secret)
+    raw = f"{salt}|{coarse_ip}|{ua}|{ephemeral_id}"
+    return hashlib.blake2b(raw.encode("utf-8"), digest_size=8).hexdigest()
 
 
 def make_context_hash(ip: str, user_agent: str) -> str:

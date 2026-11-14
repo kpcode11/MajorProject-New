@@ -41,6 +41,7 @@ from app.nonce import (
     _coarsen_ip,
     context_hash_from_headers,
     issue_nonce,
+    make_session_hash,
     verify_nonce,
 )
 from app.policy import Decision, PolicyEngine, load_policy
@@ -91,6 +92,8 @@ _REDACTED_LOG_KEYS: frozenset[str] = frozenset(
         "payload",
         "body",
         "user_agent",
+        "session_id",
+        "x_session_id",
     }
 )
 
@@ -308,6 +311,11 @@ def _user_agent(request: Request) -> str:
     return request.headers.get("user-agent", "")
 
 
+def _client_session_id(request: Request) -> str | None:
+    raw = request.headers.get("x-session-id", "").strip()
+    return raw[:128] if raw else None
+
+
 # ---------------------------------------------------------------------------
 # P5-10 — Protected-route dependency: require_human_token(action)
 # ---------------------------------------------------------------------------
@@ -427,6 +435,7 @@ def create_app(
     app.state.policy = policy_engine
     app.state.db = db_mgr
     app.state.rate_limiter = rate_limiter
+    app.state.session_clock = lambda: datetime.now(UTC)
 
     app.add_middleware(MaxBodySizeMiddleware, max_bytes=cfg.max_body_bytes)
 
@@ -656,11 +665,18 @@ def create_app(
 
         latency_ms = (time.perf_counter() - t0) * 1000.0
         dev_cls = payload.behaviour.device_class if payload.behaviour else None
+        sess_hash = make_session_hash(
+            ip,
+            ua,
+            client_session_id=_client_session_id(request),
+            now=app.state.session_clock(),
+            secret=app.state.settings.jwt_secret,
+        )
 
         # 5. Persist assessment & challenge (buffered automatically if DB is down)
         app.state.db.record_assessment(
             assessment_id=rid,
-            session_hash=ctx_hash,
+            session_hash=sess_hash,
             action=payload.action,
             device_class=dev_cls,
             score=score_res.score,
