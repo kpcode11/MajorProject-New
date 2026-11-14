@@ -127,6 +127,7 @@ class ScoreResult:
     touch_score: float | None = None
     fired_rules: list[str] = field(default_factory=list)
     top_features: dict[str, list[str]] = field(default_factory=dict)
+    derived_features: dict[str, float] = field(default_factory=dict)
     degraded: bool = False
     explainability_note: str = EXPLAINABILITY_LIMITATION_NOTE
 
@@ -606,6 +607,7 @@ class ModelScorer:
         )
         self.band_low_cutoff = band_low_cutoff
         self.band_medium_cutoff = band_medium_cutoff
+        self._last_modality_features: dict[str, dict[str, float]] = {}
 
     @property
     def model_versions(self) -> ModelVersions:
@@ -657,8 +659,11 @@ class ModelScorer:
         # Average feature values across windows for top-3 attribution
         mean_features: dict[str, float] = {}
         for col_idx, feat_name in enumerate(model.feature_order):
-            mean_features[feat_name] = float(np.mean(mat[:, col_idx]))
+            val = float(np.mean(mat[:, col_idx]))
+            if math.isfinite(val):
+                mean_features[feat_name] = round(val, 6)
 
+        self._last_modality_features[model.modality] = mean_features
         top3 = top_k_contributing_features(mean_features, model, k=3)
         return agg_score, top3
 
@@ -752,6 +757,7 @@ class ModelScorer:
         keyboard_score: float | None = None
         touch_score: float | None = None
         top_features: dict[str, list[str]] = {}
+        derived_features: dict[str, float] = {}
         degraded = False
 
         if coerced_beh is not None:
@@ -766,6 +772,8 @@ class ModelScorer:
                         mouse_score, mouse_top3 = self.score_mouse(coerced_beh.mouse, coerced_env)
                         if mouse_top3:
                             top_features["mouse"] = mouse_top3
+                        for fk, fv in self._last_modality_features.get("mouse", {}).items():
+                            derived_features[f"mouse:{fk}"] = fv
 
                 if (
                     coerced_beh.keys is not None
@@ -777,12 +785,15 @@ class ModelScorer:
                         keyboard_score, kb_top3 = self.score_keyboard(coerced_beh.keys)
                         if kb_top3:
                             top_features["keyboard"] = kb_top3
+                        for fk, fv in self._last_modality_features.get("keyboard", {}).items():
+                            derived_features[f"keyboard:{fk}"] = fv
             except Exception:
                 # Fail-safe (P5-05 / P5-11): model error falls back to rules-only with degraded=True
                 mouse_score = None
                 keyboard_score = None
                 touch_score = None
                 top_features = {}
+                derived_features = {}
                 degraded = True
 
         stacker_coeffs = (
@@ -819,6 +830,7 @@ class ModelScorer:
             touch_score=touch_score,
             fired_rules=list(rule_eval.fired_rules),
             top_features=top_features,
+            derived_features=derived_features,
             degraded=degraded,
         )
 

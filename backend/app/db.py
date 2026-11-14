@@ -184,6 +184,9 @@ class DatabaseManager:
         self._lock = threading.Lock()
         self._buffer: deque[tuple[str, dict[str, Any]]] = deque(maxlen=MAX_BUFFER_SIZE)
         self._simulate_down: bool = False
+        self.last_purge_at: datetime | None = None
+        self.last_features_purged: int = 0
+        self.last_assessments_purged: int = 0
         if auto_migrate:
             run_migrations(self.engine)
 
@@ -393,6 +396,33 @@ class DatabaseManager:
         with self.session() as sess:
             return sess.get(ChallengeRecord, challenge_id)
 
+    def get_challenges_for_assessment(self, assessment_id: str) -> list[ChallengeRecord]:
+        """Fetch all :class:`ChallengeRecord` rows associated with ``assessment_id``."""
+        with self.session() as sess:
+            stmt = (
+                select(ChallengeRecord)
+                .where(ChallengeRecord.assessment_id == assessment_id)
+                .order_by(ChallengeRecord.issued_at.asc())
+            )
+            return list(sess.scalars(stmt))
+
+    def set_feedback(
+        self,
+        assessment_id: str,
+        feedback: str | None,
+    ) -> AssessmentRecord | None:
+        """Mark an assessment as false positive (``'fp'``), false negative (``'fn'``), or clear."""
+        if feedback is not None and feedback not in ("fp", "fn"):
+            raise ValueError(f"feedback must be 'fp', 'fn', or None; got {feedback!r}")
+        with self.session() as sess:
+            row = sess.get(AssessmentRecord, assessment_id)
+            if row is None:
+                return None
+            row.feedback = feedback
+            sess.commit()
+            sess.refresh(row)
+            return row
+
     def purge_expired_features(self, *, now: datetime | None = None) -> int:
         """Null out expired ``features`` blobs while retaining assessment rows."""
         cutoff = now or _utc_now()
@@ -410,4 +440,30 @@ class DatabaseManager:
                 row.features = None
                 row.features_expires_at = None
             sess.commit()
+            self.last_purge_at = cutoff
+            self.last_features_purged = len(rows)
+            return len(rows)
+
+    def purge_expired_assessments(self, *, now: datetime | None = None) -> int:
+        """Delete assessment rows (and linked challenges) older than ``assessment_ttl_seconds``."""
+        cutoff = now or _utc_now()
+        threshold = cutoff - timedelta(seconds=self.assessment_ttl_seconds)
+        with self.session() as sess:
+            rows = list(
+                sess.scalars(select(AssessmentRecord).where(AssessmentRecord.ts <= threshold))
+            )
+            if rows:
+                ids = [r.id for r in rows]
+                chals = list(
+                    sess.scalars(
+                        select(ChallengeRecord).where(ChallengeRecord.assessment_id.in_(ids))
+                    )
+                )
+                for c in chals:
+                    sess.delete(c)
+                for row in rows:
+                    sess.delete(row)
+                sess.commit()
+            self.last_purge_at = cutoff
+            self.last_assessments_purged = len(rows)
             return len(rows)

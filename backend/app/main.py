@@ -656,6 +656,7 @@ def create_app(
             model_versions=score_res.model_versions.model_dump(),
             latency_ms=latency_ms,
             degraded=decision.degraded,
+            derived_features=score_res.derived_features,
         )
         if issued_challenge is not None:
             app.state.db.record_challenge_issued(
@@ -866,10 +867,12 @@ def create_app(
             db_ok=db_ok,
         )
 
+    from app.admin import create_admin_router
     from app.portal import PortalStatsTracker, create_portal_router
 
     app.state.portal_stats = PortalStatsTracker()
     app.include_router(create_portal_router())
+    app.include_router(create_admin_router())
 
     return app
 

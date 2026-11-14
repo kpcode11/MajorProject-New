@@ -103,24 +103,24 @@
 | P7-18 | 7 | Portal end-to-end tests | DONE | 0088803 | Added backend/tests/test_e2e_portal.py (5 E2E tests) and portal/test/e2e.test.tsx (4 E2E tests) covering normal interaction -> token -> OTP accepted, headless direct click -> denied/challenged, no token -> 401, keyboard-only Tab+Enter -> step-up pass, and off vs passive mode. |
 | P7-19 | 7 | Demo startup command | DONE | 19a87b5 | Added demo() in scripts/tasks.py starting backend (STORE_BACKEND=memory, SQLite, 127.0.0.1:8000) and portal dev server (127.0.0.1:5173) plus deploy/docker-compose.yml (optional Redis + PostgreSQL infra profile); 2 tests in test_demo_task.py. |
 | P7-20 | 7 | Demo script | DONE | 4a93ffb | Added docs/demo_script.md documenting python scripts/tasks.py demo, PROTECTION_MODE=off vs passive, /portal-api/stats, keyboard-only accessibility flow, and Tiers 1-4 simulator runs; verified in test_demo_task.py. |
-| P7-21 | 7 | Simulator summary | DONE | HEAD | Added format_sim_summary_markdown and write_sim_summary_markdown in simulator/run_all.py and generated results/system/sim_summary.md with per-tier counts/rates and non-generalisation disclaimer; 3 tests in test_simulator_run_all.py. |
-| P8-01 | 8 | Human touch-data decision | TODO | | |
-| P8-02A | 8 | Touch dataset inventory | TODO | | |
-| P8-03A | 8 | Touch data loader | TODO | | |
-| P8-04A | 8 | Touch features | TODO | | |
-| P8-05A | 8 | Synthetic touch bots | TODO | | |
-| P8-06A | 8 | Touch model evaluation | TODO | | |
-| P8-07A | 8 | Touch fusion | TODO | | |
-| P8-08A | 8 | Touch scoring integration | TODO | | |
-| P8-09A | 8 | Touch model card | TODO | | |
-| P8-02B | 8 | Touch collector without model | TODO | | |
-| P8-03B | 8 | Touch logging integration | TODO | | |
-| P8-04B | 8 | No-touch-model policy | TODO | | |
-| P8-05B | 8 | Touch missing-modality fairness | TODO | | |
-| P8-06B | 8 | Mobile step-up UI | TODO | | |
-| P8-07B | 8 | Mobile simulator | TODO | | |
-| P8-08B | 8 | Mobile limitation documentation | TODO | | |
-| P9-01 | 9 | Admin API | TODO | | |
+| P7-21 | 7 | Simulator summary | DONE | 65895be | Added format_sim_summary_markdown and write_sim_summary_markdown in simulator/run_all.py and generated results/system/sim_summary.md with per-tier counts/rates and non-generalisation disclaimer; 3 tests in test_simulator_run_all.py. |
+| P8-01 | 8 | Human touch-data decision | SKIPPED | | Skipped per human decision on 2026-11-14 to omit Phase 8 mobile touch dataset and ML model and proceed directly to Phase 9. |
+| P8-02A | 8 | Touch dataset inventory | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-03A | 8 | Touch data loader | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-04A | 8 | Touch features | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-05A | 8 | Synthetic touch bots | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-06A | 8 | Touch model evaluation | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-07A | 8 | Touch fusion | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-08A | 8 | Touch scoring integration | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-09A | 8 | Touch model card | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-02B | 8 | Touch collector without model | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-03B | 8 | Touch logging integration | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-04B | 8 | No-touch-model policy | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-05B | 8 | Touch missing-modality fairness | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-06B | 8 | Mobile step-up UI | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-07B | 8 | Mobile simulator | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-08B | 8 | Mobile limitation documentation | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P9-01 | 9 | Admin API | DONE | HEAD | Added backend/app/admin.py (/admin/overview, /admin/scores, /admin/assessments, /admin/assessments/{id}, /admin/feedback, /admin/sim-results, /admin/privacy, /admin/privacy/purge) protected by ADMIN_API_KEY; 4 tests in test_admin_api.py. |
 | P9-02 | 9 | Admin dashboard | TODO | | |
 | P9-03 | 9 | Dashboard tests | TODO | | |
 | P9-04 | 9 | Retention purge | TODO | | |
@@ -156,7 +156,6 @@ Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 ## Human checkpoints pending
 
 - P0-03 — provide environment details and permission/status for `git clone`.
-- P8-01 — decide whether a public touch dataset can be obtained.
 
 ## Results index (files under results/)
 

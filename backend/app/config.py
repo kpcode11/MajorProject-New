@@ -69,6 +69,8 @@ _DEFAULTS: dict[str, object] = {
     "ASSESSMENT_TTL_SECONDS": str(30 * 24 * 3600),
     # Portal protection mode (P7-05): "passive" (default) or "off"
     "PROTECTION_MODE": "passive",
+    # Admin API key for /admin/* endpoints (P9-01; student project key; production needs SSO/RBAC)
+    "ADMIN_API_KEY": "dev-admin-key",
 }
 
 
@@ -104,6 +106,7 @@ class Settings:
     rate_limit_challenge_per_min: int = 10
     rate_limit_challenge_session_per_min: int = 5
     challenge_ttl_seconds: int = 60
+    admin_api_key: str = "dev-admin-key"
 
     def jwt_private_key(self) -> str | None:
         """Return the PEM private key string, or None if not configured."""
@@ -212,6 +215,7 @@ def load_settings(yaml_path: Path | None = None) -> Settings:
             get("RATE_LIMIT_CHALLENGE_SESSION_PER_MIN"), "RATE_LIMIT_CHALLENGE_SESSION_PER_MIN"
         ),
         challenge_ttl_seconds=_int(get("CHALLENGE_TTL_SECONDS"), "CHALLENGE_TTL_SECONDS"),
+        admin_api_key=_str(get("ADMIN_API_KEY")),
     )
 
 
