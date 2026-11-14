@@ -1,26 +1,21 @@
 # Handoff
 
-**Updated:** 2026-11-14 14:10  |  **By:** Antigravity  |  **Branch:** phase-9-dashboard-privacy  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-14 14:22  |  **By:** Antigravity  |  **Branch:** phase-9-dashboard-privacy  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P9-01 — Admin API (`/admin/overview`, `/admin/scores`, `/admin/assessments`, `/admin/assessments/{id}`, `/admin/feedback`, `/admin/sim-results`, `/admin/privacy`)
-- State: `DONE` (next task is **P9-02** — `Admin dashboard`)
+- ID: P9-02 — Admin dashboard (React + Recharts views styled with `supabase/DESIGN.md`)
+- State: `DONE` (next task is **P9-03** — `Dashboard tests`)
 
 ## Done in Phase 9 so far
 - Recorded human decision in `docs/decision_log.md` to skip Phase 8 (`P8-*` marked `SKIPPED` in `PROGRESS.md`) and proceed directly to Phase 9 (`phase-9-dashboard-privacy`), using `supabase/DESIGN.md` for the Phase 9 Admin Dashboard UI (`P9-02`).
-- **P9-01:** Added `ADMIN_API_KEY` in `backend/app/config.py`, `backend/app/admin.py` (`create_admin_router`, `require_admin_api_key`), derived feature propagation in `backend/app/scoring.py` and `backend/app/main.py`, feedback/purge helpers in `backend/app/db.py`, and 4 unit tests in `backend/tests/test_admin_api.py`.
+- **P9-01 (`c7073d9`):** Added `ADMIN_API_KEY` in `backend/app/config.py`, `backend/app/admin.py` (`create_admin_router`, `require_admin_api_key`), derived feature propagation in `backend/app/scoring.py` and `backend/app/main.py`, feedback/purge helpers in `backend/app/db.py`, and 4 unit tests in `backend/tests/test_admin_api.py`.
+- **P9-02:** Implemented the 6 Admin Dashboard views in `portal/src/pages/AdminDashboardPage.tsx` (Overview, Score distribution histogram with threshold lines, Session detail with derived features only, Simulator results per tier, Analyst feedback queue, and Privacy & retention panel), typed client `portal/src/adminApi.ts`, `supabase/DESIGN.md` token system `portal/src/designTokens.ts`, declarative chart primitives `portal/src/dashboard/RechartsCompat.tsx`, and `dashboard/` entrypoints.
 
 ## Exact next step
-- Start **P9-02** (`Admin dashboard`): build the React + Recharts Admin Dashboard views styled strictly according to `supabase/DESIGN.md` (`#3ecf8e` primary emerald with `#171717` near-black text on primary, `#ffffff` canvas, `#fafafa` canvas-soft, `#1c1c1c` canvas-night for code/featured panels, `#dfdfdf` 1px hairlines, 6px button radius, 12px card radius, weight 500 tight display headings):
-  1. Overview: requests per minute, allow/challenge/deny split, latency, model versions.
-  2. Score distribution histogram with threshold lines.
-  3. Session detail: decision, band, rules fired, top contributing features (derived values only, no raw traces).
-  4. Simulator results per tier (from `/admin/sim-results`).
-  5. Feedback queue: mark "false positive / false negative" (stored, never auto-used for training).
-  6. Privacy panel: retention settings, record counts, last purge.
+- Start **P9-03** (`Dashboard tests`): add dashboard component tests (`portal/test/dashboard.test.tsx`) covering all 6 views and interactions (overview metrics, score histogram & threshold lines, session detail derived features, simulator tier outcomes, marking `fp`/`fn` feedback, and triggering privacy purge) plus an end-to-end smoke test verifying dashboard data loading from the backend.
 
 ## Files touched (recent)
-- `backend/app/admin.py`, `backend/tests/test_admin_api.py` (new); `backend/app/config.py`, `backend/app/db.py`, `backend/app/scoring.py`, `backend/app/main.py`, `backend/tests/test_api.py`, `docs/decision_log.md`, `PROGRESS.md`, `HANDOFF.md`
+- `portal/src/designTokens.ts`, `portal/src/adminApi.ts`, `portal/src/dashboard/RechartsCompat.tsx`, `portal/src/pages/AdminDashboardPage.tsx`, `dashboard/README.md`, `dashboard/index.ts` (new); `portal/src/App.tsx`, `portal/src/pages/LandingPage.tsx`, `portal/vite.config.ts`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/status.py

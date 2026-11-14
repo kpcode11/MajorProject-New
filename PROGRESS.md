@@ -120,8 +120,8 @@
 | P8-06B | 8 | Mobile step-up UI | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
 | P8-07B | 8 | Mobile simulator | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
 | P8-08B | 8 | Mobile limitation documentation | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
-| P9-01 | 9 | Admin API | DONE | HEAD | Added backend/app/admin.py (/admin/overview, /admin/scores, /admin/assessments, /admin/assessments/{id}, /admin/feedback, /admin/sim-results, /admin/privacy, /admin/privacy/purge) protected by ADMIN_API_KEY; 4 tests in test_admin_api.py. |
-| P9-02 | 9 | Admin dashboard | TODO | | |
+| P9-01 | 9 | Admin API | DONE | c7073d9 | Added backend/app/admin.py (/admin/overview, /admin/scores, /admin/assessments, /admin/assessments/{id}, /admin/feedback, /admin/sim-results, /admin/privacy, /admin/privacy/purge) protected by ADMIN_API_KEY; 4 tests in test_admin_api.py. |
+| P9-02 | 9 | Admin dashboard | DONE | HEAD | Added portal/src/pages/AdminDashboardPage.tsx, portal/src/adminApi.ts, portal/src/designTokens.ts (supabase/DESIGN.md tokens), portal/src/dashboard/RechartsCompat.tsx, and dashboard/ exports implementing all 6 admin dashboard views. |
 | P9-03 | 9 | Dashboard tests | TODO | | |
 | P9-04 | 9 | Retention purge | TODO | | |
 | P9-05 | 9 | Rotating session identifiers | TODO | | |

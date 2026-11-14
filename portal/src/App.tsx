@@ -11,6 +11,13 @@
  */
 import { BotGuardProvider, useBotGuard } from '@botguard/sdk/react';
 import { useState, type ReactNode } from 'react';
+import {
+  SUPABASE_COLORS,
+  SUPABASE_COMPONENTS,
+  SUPABASE_FONTS,
+  SUPABASE_RADII,
+} from './designTokens.js';
+import { AdminDashboardPage } from './pages/AdminDashboardPage.js';
 import { CentreSearchPage } from './pages/CentreSearchPage.js';
 import { LandingPage, type PortalPageId } from './pages/LandingPage.js';
 import { ResidentLoginPage } from './pages/ResidentLoginPage.js';
@@ -23,6 +30,7 @@ const NAV_ITEMS: ReadonlyArray<{ id: PortalPageId; label: string; testId: string
   { id: 'login', label: 'Resident login', testId: 'nav-login' },
   { id: 'update-details', label: 'Update details', testId: 'nav-update-details' },
   { id: 'centre-search', label: 'Centre search', testId: 'nav-centre-search' },
+  { id: 'admin', label: 'Admin dashboard', testId: 'nav-admin' },
 ];
 
 function resolveInitialPage(explicitPage?: PortalPageId): PortalPageId {
@@ -34,7 +42,8 @@ function resolveInitialPage(explicitPage?: PortalPageId): PortalPageId {
     queryPage === 'landing' ||
     queryPage === 'login' ||
     queryPage === 'update-details' ||
-    queryPage === 'centre-search'
+    queryPage === 'centre-search' ||
+    queryPage === 'admin'
   ) {
     return queryPage;
   }
@@ -43,7 +52,8 @@ function resolveInitialPage(explicitPage?: PortalPageId): PortalPageId {
     hashPage === 'landing' ||
     hashPage === 'login' ||
     hashPage === 'update-details' ||
-    hashPage === 'centre-search'
+    hashPage === 'centre-search' ||
+    hashPage === 'admin'
   ) {
     return hashPage;
   }
@@ -109,12 +119,13 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
 
       <header
         style={{
-          background: '#ffffff',
-          borderBottom: '1px solid #e2e8f0',
+          background: SUPABASE_COLORS.canvas,
+          borderBottom: `1px solid ${SUPABASE_COLORS.hairline}`,
           padding: '16px 24px',
           display: 'flex',
           flexDirection: 'column',
           gap: '14px',
+          fontFamily: SUPABASE_FONTS.sans,
         }}
       >
         <div
@@ -127,10 +138,18 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
           }}
         >
           <div>
-            <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 700, color: '#0f172a' }}>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: '22px',
+                fontWeight: 500,
+                letterSpacing: '-0.42px',
+                color: SUPABASE_COLORS.ink,
+              }}
+            >
               Mock Resident Self-Service Portal
             </h1>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#475569' }}>
+            <p style={{ margin: '4px 0 0', fontSize: '13px', color: SUPABASE_COLORS.inkMute }}>
               Protected by passive behavioural verification — no CAPTCHA puzzles
             </p>
           </div>
@@ -147,16 +166,11 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
                 data-testid={item.testId}
                 aria-current={isActive ? 'page' : undefined}
                 onClick={() => setActivePage(item.id)}
-                style={{
-                  padding: '8px 14px',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  border: isActive ? '1px solid #0284c7' : '1px solid #cbd5e1',
-                  background: isActive ? '#0284c7' : '#f8fafc',
-                  color: isActive ? '#ffffff' : '#1e293b',
-                }}
+                style={
+                  isActive
+                    ? SUPABASE_COMPONENTS.buttonPrimaryGreen
+                    : SUPABASE_COMPONENTS.buttonSecondaryOutline
+                }
               >
                 {item.label}
               </button>
@@ -168,27 +182,30 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
       <main
         style={{
           flex: 1,
-          maxWidth: '960px',
+          maxWidth: activePage === 'admin' ? '1200px' : '960px',
           width: '100%',
           margin: '0 auto',
           padding: '24px',
           boxSizing: 'border-box',
+          backgroundColor: SUPABASE_COLORS.canvas,
         }}
       >
         {activePage === 'landing' && <LandingPage onNavigate={setActivePage} />}
         {activePage === 'login' && <ResidentLoginPage />}
         {activePage === 'update-details' && <UpdateDetailsPage />}
         {activePage === 'centre-search' && <CentreSearchPage />}
+        {activePage === 'admin' && <AdminDashboardPage />}
       </main>
 
       <footer
         style={{
-          borderTop: '1px solid #e2e8f0',
+          borderTop: `1px solid ${SUPABASE_COLORS.hairline}`,
           padding: '14px 24px',
           textAlign: 'center',
           fontSize: '12px',
-          color: '#64748b',
-          background: '#ffffff',
+          color: SUPABASE_COLORS.inkMute,
+          background: SUPABASE_COLORS.canvas,
+          borderRadius: SUPABASE_RADII.xs,
         }}
       >
         {DEMO_DISCLAIMER_TEXT} · Local-only test target

@@ -3,14 +3,14 @@
  */
 import type { ReactNode } from 'react';
 
-export type PortalPageId = 'landing' | 'login' | 'update-details' | 'centre-search';
+export type PortalPageId = 'landing' | 'login' | 'update-details' | 'centre-search' | 'admin';
 
 export interface LandingPageProps {
   onNavigate: (page: PortalPageId) => void;
 }
 
 const SERVICE_CARDS: ReadonlyArray<{
-  id: Exclude<PortalPageId, 'landing'>;
+  id: Exclude<PortalPageId, 'landing' | 'admin'>;
   testId: string;
   title: string;
   actionLabel: string;
