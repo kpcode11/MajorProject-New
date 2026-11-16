@@ -98,6 +98,36 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <style>{`
+        .portal-skip-link {
+          position: absolute;
+          left: -9999px;
+          top: 8px;
+          z-index: 1000;
+          padding: 8px 14px;
+          background: #0f172a;
+          color: #ffffff;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 600;
+          text-decoration: none;
+        }
+        .portal-skip-link:focus {
+          left: 16px;
+          outline: 3px solid #0369a1;
+          outline-offset: 2px;
+        }
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        [tabindex="0"]:focus-visible {
+          outline: 2px solid #0369a1;
+          outline-offset: 2px;
+        }
+      `}</style>
+      <a href="#portal-main-content" className="portal-skip-link" data-testid="skip-to-main">
+        Skip to main content
+      </a>
       <div
         role="region"
         aria-label="Demonstration disclaimer"
@@ -180,6 +210,8 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
       </header>
 
       <main
+        id="portal-main-content"
+        tabIndex={-1}
         style={{
           flex: 1,
           maxWidth: activePage === 'admin' ? '1200px' : '960px',

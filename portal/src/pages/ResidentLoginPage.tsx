@@ -54,7 +54,10 @@ export function ResidentLoginPage(): ReactNode {
       <h2 id="login-page-heading" style={{ marginTop: 0, fontSize: '20px', color: '#0f172a' }}>
         Resident login
       </h2>
-      <p style={{ color: '#475569', fontSize: '14px', marginBottom: '20px' }}>
+      <p
+        id="resident-identifier-hint"
+        style={{ color: '#475569', fontSize: '14px', marginBottom: '20px' }}
+      >
         Enter a synthetic mock identifier (for example, <code>9999-0000-1234</code>) and click{' '}
         <strong>Send OTP</strong>. Do not enter any real Aadhaar or government ID number.
       </p>
@@ -81,6 +84,12 @@ export function ResidentLoginPage(): ReactNode {
             inputMode="numeric"
             placeholder="e.g. 999900001234"
             data-testid="identifier-input"
+            aria-invalid={validationError ? 'true' : undefined}
+            aria-describedby={
+              validationError
+                ? 'resident-identifier-hint login-validation-error'
+                : 'resident-identifier-hint'
+            }
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             style={{
@@ -95,6 +104,7 @@ export function ResidentLoginPage(): ReactNode {
           />
           {validationError && (
             <p
+              id="login-validation-error"
               role="alert"
               data-testid="login-validation-error"
               style={{ color: '#b91c1c', fontSize: '13px', marginTop: '6px', marginBottom: 0 }}
@@ -114,7 +124,7 @@ export function ResidentLoginPage(): ReactNode {
             fontWeight: 600,
             borderRadius: '8px',
             border: 'none',
-            background: submitting ? '#64748b' : '#0284c7',
+            background: submitting ? '#475569' : '#0369a1',
             color: '#ffffff',
             cursor: submitting ? 'wait' : 'pointer',
           }}

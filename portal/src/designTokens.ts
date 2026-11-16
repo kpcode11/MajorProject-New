@@ -17,6 +17,7 @@ import type { CSSProperties } from 'react';
 export const SUPABASE_COLORS = {
   primary: '#3ecf8e',
   primaryDeep: '#24b47e',
+  primaryText: '#157347',
   primarySoft: '#4ade80',
   ink: '#171717',
   inkSecondary: '#212121',

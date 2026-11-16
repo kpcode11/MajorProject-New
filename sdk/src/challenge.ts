@@ -171,7 +171,7 @@ export function defaultPressHoldRenderer(
       type: 'button',
       class: 'botguard-challenge-hold-btn',
       'data-testid': 'stepup-hold-btn',
-      'aria-label': `Press and hold for ${secs} seconds to verify`,
+      'aria-label': `Press and hold to verify (${secs} seconds)`,
       style:
         'width:100%;padding:12px 16px;font-size:15px;font-weight:600;color:#ffffff;' +
         'background:#1d4ed8;border:2px solid transparent;border-radius:8px;cursor:pointer;' +
@@ -187,7 +187,8 @@ export function defaultPressHoldRenderer(
       type: 'button',
       class: 'botguard-challenge-kb-btn',
       'data-testid': 'stepup-kb-btn',
-      'aria-label': 'Keyboard accessible single-press verification alternative',
+      'aria-label':
+        'Use Keyboard Single-Press Verify (Keyboard accessible verification alternative)',
       style:
         'margin-top:10px;width:100%;padding:8px 12px;font-size:13px;color:#1e293b;' +
         'background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;cursor:pointer;',
@@ -217,7 +218,7 @@ export function defaultPressHoldRenderer(
       'data-testid': 'stepup-cancel-btn',
       'aria-label': 'Cancel verification',
       style:
-        'margin-top:8px;padding:6px 12px;font-size:12px;color:#64748b;background:transparent;' +
+        'margin-top:8px;padding:6px 12px;font-size:12px;color:#475569;background:transparent;' +
         'border:none;cursor:pointer;text-decoration:underline;',
     },
     'Cancel',
@@ -264,6 +265,7 @@ export function defaultPressHoldRenderer(
     holdReached = false;
     statusLive.textContent = 'Holding… keep pressing.';
     holdBtn.textContent = 'Keep Holding…';
+    holdBtn.setAttribute('aria-label', 'Keep Holding…');
     setProgress(0);
 
     progressTimer = setInterval(() => {
@@ -274,6 +276,7 @@ export function defaultPressHoldRenderer(
         holdReached = true;
         statusLive.textContent = 'Hold complete — release to finish.';
         holdBtn.textContent = 'Release to Complete';
+        holdBtn.setAttribute('aria-label', 'Release to Complete');
       }
     }, 30);
   };
@@ -298,6 +301,7 @@ export function defaultPressHoldRenderer(
     } else {
       setProgress(0);
       holdBtn.textContent = 'Press and Hold to Verify';
+      holdBtn.setAttribute('aria-label', `Press and hold to verify (${secs} seconds)`);
       statusLive.textContent = `Released too early (${Math.round(elapsed)} ms). Please hold for ${secs} s.`;
     }
   };

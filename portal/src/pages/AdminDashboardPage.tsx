@@ -421,7 +421,7 @@ export function AdminDashboardPage({
                 fontWeight: 500,
               }}
             >
-              <span style={{ color: SUPABASE_COLORS.primaryDeep }}>
+              <span style={{ color: SUPABASE_COLORS.primaryText }}>
                 {overview.decisions.allow}A
               </span>
               <span style={{ color: SUPABASE_COLORS.ink }}>{overview.decisions.challenge}C</span>
@@ -577,7 +577,7 @@ export function AdminDashboardPage({
             <ReferenceLine
               x={activeThreshold.allow_below}
               label={`allow < ${activeThreshold.allow_below.toFixed(2)}`}
-              stroke={SUPABASE_COLORS.primaryDeep}
+              stroke={SUPABASE_COLORS.primaryText}
             />
             <ReferenceLine
               x={activeThreshold.deny_at_or_above}
@@ -661,12 +661,24 @@ export function AdminDashboardPage({
                     color: SUPABASE_COLORS.inkMute,
                   }}
                 >
-                  <th style={{ padding: '8px' }}>ID</th>
-                  <th style={{ padding: '8px' }}>Action</th>
-                  <th style={{ padding: '8px' }}>Decision</th>
-                  <th style={{ padding: '8px' }}>Score</th>
-                  <th style={{ padding: '8px' }}>Rules</th>
-                  <th style={{ padding: '8px' }}>Feedback</th>
+                  <th scope="col" style={{ padding: '8px' }}>
+                    ID
+                  </th>
+                  <th scope="col" style={{ padding: '8px' }}>
+                    Action
+                  </th>
+                  <th scope="col" style={{ padding: '8px' }}>
+                    Decision
+                  </th>
+                  <th scope="col" style={{ padding: '8px' }}>
+                    Score
+                  </th>
+                  <th scope="col" style={{ padding: '8px' }}>
+                    Rules
+                  </th>
+                  <th scope="col" style={{ padding: '8px' }}>
+                    Feedback
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -690,7 +702,15 @@ export function AdminDashboardPage({
                       <tr
                         key={item.id}
                         data-testid={`assessment-row-${item.id}`}
+                        tabIndex={0}
+                        aria-label={`Inspect assessment ${item.id.slice(0, 8)} (${item.action}, ${item.decision})`}
                         onClick={() => void handleSelectAssessment(item.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            void handleSelectAssessment(item.id);
+                          }
+                        }}
                         style={{
                           borderBottom: `1px solid ${SUPABASE_COLORS.hairlineCool}`,
                           backgroundColor: isSelected
@@ -947,15 +967,33 @@ export function AdminDashboardPage({
                   color: SUPABASE_COLORS.inkMute,
                 }}
               >
-                <th style={{ padding: '8px' }}>Mode</th>
-                <th style={{ padding: '8px' }}>Tier</th>
-                <th style={{ padding: '8px' }}>Total</th>
-                <th style={{ padding: '8px' }}>Allowed</th>
-                <th style={{ padding: '8px' }}>Challenged</th>
-                <th style={{ padding: '8px' }}>Denied</th>
-                <th style={{ padding: '8px' }}>Blocked at API</th>
-                <th style={{ padding: '8px' }}>Caught Rate</th>
-                <th style={{ padding: '8px' }}>Mean Latency</th>
+                <th scope="col" style={{ padding: '8px' }}>
+                  Mode
+                </th>
+                <th scope="col" style={{ padding: '8px' }}>
+                  Tier
+                </th>
+                <th scope="col" style={{ padding: '8px' }}>
+                  Total
+                </th>
+                <th scope="col" style={{ padding: '8px' }}>
+                  Allowed
+                </th>
+                <th scope="col" style={{ padding: '8px' }}>
+                  Challenged
+                </th>
+                <th scope="col" style={{ padding: '8px' }}>
+                  Denied
+                </th>
+                <th scope="col" style={{ padding: '8px' }}>
+                  Blocked at API
+                </th>
+                <th scope="col" style={{ padding: '8px' }}>
+                  Caught Rate
+                </th>
+                <th scope="col" style={{ padding: '8px' }}>
+                  Mean Latency
+                </th>
               </tr>
             </thead>
             <tbody>
