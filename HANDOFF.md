@@ -1,10 +1,10 @@
 # Handoff
 
-**Updated:** 2026-11-18 19:20  |  **By:** Antigravity  |  **Branch:** phase-9-dashboard-privacy  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-18 19:47  |  **By:** Antigravity  |  **Branch:** phase-9-dashboard-privacy  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P9-12 — Missing-modality E2E test
-- State: `DONE` (next task is **P9-13** — `Accessibility limitations`)
+- ID: P9-13 — Accessibility limitations
+- State: `DONE` (all core Phase 9 tasks `P9-01`..`P9-13` are `DONE`; next optional tasks are **P9-14** / **P9-15** or Phase 10 **P10-01** — `Reproducible full evaluation`)
 
 ## Done in Phase 9 so far
 - Recorded human decision in `docs/decision_log.md` to skip Phase 8 (`P8-*` marked `SKIPPED` in `PROGRESS.md`) and proceed directly to Phase 9 (`phase-9-dashboard-privacy`), using `supabase/DESIGN.md` for the Phase 9 Admin Dashboard UI (`P9-02`).
@@ -17,13 +17,16 @@
 - **P9-07 (`39b397d`):** Wrote `docs/privacy_impact.md` documenting purpose, necessity, less-invasive alternatives considered, and retention TTLs for every signal group, plus explicit UIDAI/DPDP Act 2023-style engineering assumptions and legal review caveats.
 - **P9-08 (`ffbf0e5`):** Implemented local feature extraction mode (`sendRawTrace=false`) in `sdk/src/features.ts`, `sdk/src/config.ts`, and `sdk/src/index.ts`, added backend support for `mouse.features` / `mouse.feature_windows` and `keys.features` in `backend/app/schemas.py` and `backend/app/scoring.py`, verified $10^{-9}$ golden parity across Python and TypeScript fixtures (`sdk/test/features_parity.test.ts`, `sdk/test/fixtures/golden_feature_fixtures.json`, `backend/tests/test_local_features.py`), and saved model evaluation results to `results/system/local_features_parity.json`.
 - **P9-09 (`d3606f9`):** Added `axe-core` and WCAG 2.1 AA contrast audit in `portal/test/accessibility.test.tsx` (auditing 11 states across Landing, Resident Login, Update Details, Centre Search, Admin Dashboard, and Step-up Challenge dialog) and saved results to `results/system/axe_audit.json`.
-- **P9-10:** Added `portal/test/keyboard_e2e.test.tsx` (3 keyboard-only E2E tests covering `Tab` navigation from Landing -> Login via both the top nav bar and service card, validation error recovery, character-by-character typing with realistic dwell/flight timings, `Enter` form submission, modal `Tab`/`Shift+Tab` focus trap verification, completion via both `stepup-kb-btn` single-press and `stepup-hold-btn` physical `Space` hold, and direct `allow` flow with zero pointer events) and `test_e2e_keyboard_only_login_otp_flow_with_tab_enter_and_stepup` in `backend/tests/test_e2e_portal.py`.
+- **P9-10 (`d23a26f`):** Added `portal/test/keyboard_e2e.test.tsx` (3 keyboard-only E2E tests) and `test_e2e_keyboard_only_login_otp_flow_with_tab_enter_and_stepup` in `backend/tests/test_e2e_portal.py`.
+- **P9-11 (`1305d22`):** Documented NVDA / Windows Narrator / VoiceOver smoke-test walkthrough in `docs/accessibility.md` and added ARIA landmark/live-region/progressbar announcement smoke test in `portal/test/accessibility.test.tsx`.
+- **P9-12 (`4521b1e`):** Enforced missing-mouse valid-keyboard fairness cap (`MISSING_MOUSE_VALID_KB_MAX_SCORE=0.50`, `MIN_TYPING_WINDOW_KEYS=10`) in `backend/app/scoring.py` and added 6 E2E tests in `backend/tests/test_missing_modality_e2e.py`.
+- **P9-13:** Documented missing-modality fairness rules and 6 known accessibility limitations in `docs/accessibility.md`.
 
 ## Exact next step
-- Start **P9-11** (`Human screen-reader check` `[HUMAN]`) or **P9-12** (`Missing-modality E2E test`).
+- Decide whether to skip optional trajectory neural model tasks (**P9-14** / **P9-15**) and proceed to Phase 10 (**P10-01** — `Reproducible full evaluation`).
 
 ## Files touched (recent)
-- `portal/test/keyboard_e2e.test.tsx`, `backend/tests/test_e2e_portal.py`, `PROGRESS.md`, `HANDOFF.md`
+- `docs/accessibility.md`, `backend/app/scoring.py`, `backend/tests/test_missing_modality_e2e.py`, `portal/test/accessibility.test.tsx`, `portal/test/keyboard_e2e.test.tsx`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/status.py
