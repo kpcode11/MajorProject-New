@@ -1,0 +1,5 @@
+bot_tier,description,n_sessions,rules_only_caught_rate,model_only_caught_rate,combined_max_caught_rate,mean_rule_score,mean_model_score,mean_combined_score
+tier1_http,No token / plain HTTP,25,1.0,0.0,1.0,1.0,0.0,1.0
+tier2_playwright,Headless WebDriver + software WebGL + 0 moves,25,1.0,1.0,1.0,0.726,0.5,0.726
+tier3_stealth,Stealth init-script + linear mechanical mouse,25,1.0,1.0,1.0,0.3,0.962,0.962
+tier4_humanlike,Cubic Bezier + smoothstep + Gaussian jitter,25,0.0,1.0,0.92,0.0,0.784,0.784

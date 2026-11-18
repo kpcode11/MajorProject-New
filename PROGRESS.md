@@ -132,11 +132,11 @@
 | P9-10 | 9 | Keyboard-only portal test | DONE | d23a26f | Added portal/test/keyboard_e2e.test.tsx (3 keyboard-only E2E flows from Landing -> Login -> typing -> Enter submit -> step-up single-press / physical Spacebar hold / direct allow -> OTP accepted) and test_e2e_keyboard_only_login_otp_flow_with_tab_enter_and_stepup in backend/tests/test_e2e_portal.py. |
 | P9-11 | 9 | Human screen-reader check | DONE | 1305d22 | Documented NVDA / Windows Narrator / VoiceOver smoke-test walkthrough and announcement checklist in docs/accessibility.md (with explicit methodology note) and added automated ARIA landmark/live-region/progressbar announcement smoke test in portal/test/accessibility.test.tsx. |
 | P9-12 | 9 | Missing-modality E2E test | DONE | 4521b1e | Enforced missing-mouse valid-keyboard fairness cap (MISSING_MOUSE_VALID_KB_MAX_SCORE=0.50, MIN_TYPING_WINDOW_KEYS=10) in backend/app/scoring.py and added 6 E2E tests in backend/tests/test_missing_modality_e2e.py across otp_request, details_update, centre_search, short PIN, slow assistive typing, and sendRawTrace=false. |
-| P9-13 | 9 | Accessibility limitations | DONE | HEAD | Documented missing-modality fairness rules and 6 known accessibility limitations (no assistive-tech training cohort, voice dictation/virtual keyboards, step-up hold vs single-press trade-off, omitted mobile touch, English-only demo copy, and automated DOM vs live human study scope) in docs/accessibility.md. |
-| P9-14 | 9 | Optional trajectory neural model | TODO | | |
-| P9-15 | 9 | Neural-model fusion | TODO | | |
-| P10-01 | 10 | Reproducible full evaluation | TODO | | |
-| P10-02 | 10 | Final experiments | TODO | | |
+| P9-13 | 9 | Accessibility limitations | DONE | e511f01 | Documented missing-modality fairness rules and 6 known accessibility limitations (no assistive-tech training cohort, voice dictation/virtual keyboards, step-up hold vs single-press trade-off, omitted mobile touch, English-only demo copy, and automated DOM vs live human study scope) in docs/accessibility.md. |
+| P9-14 | 9 | Optional trajectory neural model | SKIPPED | | Skipped optional trajectory neural model upgrade per human decision on 2026-11-18 to proceed directly to Phase 10. |
+| P9-15 | 9 | Neural-model fusion | SKIPPED | | Skipped optional trajectory neural model fusion per human decision on 2026-11-18 to proceed directly to Phase 10. |
+| P10-01 | 10 | Reproducible full evaluation | DONE | HEAD | Implemented scripts/eval_all.py and wired python scripts/tasks.py eval-all generating 78 CSV/Markdown tables and 7 PNG figures under results/ and syncing report-ready assets to docs/report_assets/ (manifest in results/eval_all_manifest.json and docs/report_assets/manifest.json); tested in ml/tests/test_eval_all.py. |
+| P10-02 | 10 | Final experiments | DONE | HEAD | Generated and verified all Appendix E final experiment tables and figures: dataset summary, baselines, in-dist/cross-phase/cross-dataset/LOBO mouse splits, per-generator/K3-holdout/speed-tercile keyboard splits, pseudo-session fusion & modality availability, feature-group/shortcut/rule-layer ablations, isotonic/Platt calibration, 1%/5%/20% bot prevalence reweighting, and policy challenge-band threshold trade-off curves. |
 | P10-03 | 10 | System-level results | TODO | | |
 | P10-04 | 10 | Load testing | TODO | | |
 | P10-05 | 10 | Security checks | TODO | | |
@@ -159,7 +159,8 @@ Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 
 ## Results index (files under results/)
 
-- `results/mouse/` — `baselines.csv`, `hparams.json`, `evaluation_splits.csv`, `lobo_evaluation.csv`, `human_fpr_captchasolve30k.csv`, `aggregation.csv`, `calibration.json`, `ablations.csv`, `shap_summary.csv`, `shap_top3_examples.json`, `fingerprint.json`
-- `results/keyboard/` — `privacy_scan.json`, `baselines.csv`, `hparams.json`, `evaluation.csv`, `evaluation_splits.csv`, `per_generator.csv`, `speed_terciles.csv`, `calibration.json`, `feature_importance.csv`, `failure_analysis.md`, `summary.json`
-- `results/fusion/` — `fusion_comparison.csv`, `modality_availability.csv`
-- `results/system/` — `scoring_latency.json`, `sdk_size.json`, `sim_runs.jsonl`, `sim_summary.md`, `local_features_parity.json`
+- `results/mouse/` — `dataset_summary.{csv,md}`, `baselines.{csv,md}`, `hparams.json`, `evaluation_splits.{csv,md}`, `lobo_evaluation.{csv,md}`, `human_fpr_captchasolve30k.{csv,md}`, `aggregation.csv`, `calibration.json`, `ablations.{csv,md}`, `prevalence_evaluation.{csv,md}`, `shap_summary.{csv,png}`, `shap_top3_examples.json`, `fingerprint.json`, `roc_pr_curves.png`, `reliability_diagram.png`, `ablation_bar_chart.png`
+- `results/keyboard/` — `privacy_scan.json`, `baselines.{csv,md}`, `hparams.json`, `evaluation.csv`, `evaluation_splits.{csv,md}`, `per_generator.{csv,md}`, `speed_terciles.{csv,md}`, `prevalence_evaluation.{csv,md}`, `calibration.json`, `feature_importance.csv`, `failure_analysis.md`, `summary.json`
+- `results/fusion/` — `fusion_comparison.{csv,md}`, `modality_availability.{csv,md}`, `threshold_tradeoff.{csv,md}`, `threshold_tradeoff_curve.png`
+- `results/system/` — `scoring_latency.json`, `latency_histogram.png`, `sdk_size.json`, `sim_runs.jsonl`, `sim_summary.md`, `rule_layer_ablation.{csv,md}`, `local_features_parity.json`, `axe_audit.json`
+- `docs/report_assets/` — `manifest.json`, `table1_dataset_summary.{csv,md}`..`table8_simulator_summary.md`, `fig1_roc_pr_curves.png`..`fig7_latency_histogram.png`
