@@ -40,3 +40,10 @@ Do not alter an existing decision; add a dated entry instead.
 - **Scope:** The project's pure R01-R13 rules remain the evaluated baseline.
   A future offline BotD comparison may be added only with a pinned version,
   documented licence, fixture adapter, and a new decision entry.
+
+### 2026-11-14 — Skip Phase 8 (mobile touch dataset and ML model) and proceed to Phase 9
+
+- **Decision:** Skip Phase 8 (`P8-01`..`P8-09A` / `P8-02B`..`P8-08B`, mobile touch dataset acquisition and touch ML model training) per explicit human direction and proceed directly to Phase 9 (`P9-01` onwards). Use `supabase/DESIGN.md` as the design specification for the Phase 9 admin dashboard UI (`P9-02`).
+- **Rationale:** The human project owner elected not to pursue mobile touch dataset acquisition or touch model training, focusing instead on the desktop multimodal (mouse + keyboard + environment rules) pipeline and Phase 9 operational dashboard, privacy enforcement, and accessibility verification.
+- **Scope:** All Phase 8 tasks in `PROGRESS.md` are marked `SKIPPED` with this rationale. Touch fields in schemas and model version dicts remain optional (`touch: null`) and missing-modality handling remains active.
+

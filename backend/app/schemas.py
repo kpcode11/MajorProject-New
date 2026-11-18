@@ -303,6 +303,15 @@ class MouseBehaviour(BaseModel):
         le=10_000,
         description="Total count of wheel/scroll events.",
     )
+    features: dict[str, float | None] | None = Field(
+        default=None,
+        description="Optional locally extracted mouse feature dict (P9-08 sendRawTrace=false).",
+    )
+    feature_windows: list[dict[str, float | None]] | None = Field(
+        default=None,
+        max_length=20,
+        description="Optional locally extracted mouse feature windows (P9-08 sendRawTrace=false).",
+    )
 
     @field_validator("points", mode="before")
     @classmethod
@@ -381,6 +390,10 @@ class KeyBehaviour(BaseModel):
         ge=0,
         le=MAX_KEY_EVENTS,
         description="Number of key events where isTrusted was false (read by rule R11).",
+    )
+    features: dict[str, float | None] | None = Field(
+        default=None,
+        description="Optional locally extracted keyboard features (P9-08 sendRawTrace=false).",
     )
 
     @field_validator("events", mode="before")

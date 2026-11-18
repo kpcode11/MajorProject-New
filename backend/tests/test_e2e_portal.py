@@ -307,3 +307,133 @@ def test_e2e_protection_mode_off_vs_passive_across_all_tiers(
     assert r2.outcome in ("denied", "challenged")
     assert r3.outcome in ("denied", "challenged")
     assert pas_client.get("/portal-api/stats").json()["rejected"] == 3
+
+
+def test_e2e_keyboard_only_login_otp_flow_with_tab_enter_and_stepup(
+    base_e2e_settings: Settings,
+) -> None:
+    """P9-10: Complete login/OTP flow with keyboard navigation only (Tab + typing + Enter)."""
+    cfg = dataclasses.replace(base_e2e_settings, protection_mode="passive")
+    app = create_app(
+        settings=cfg,
+        store=InMemoryStore(),
+        scorer=default_app.state.scorer,
+        db=DatabaseManager(cfg.database_url),
+    )
+    client = _AsgiTestClient(app)
+
+    nonce_resp = client.get("/v1/nonce")
+    assert nonce_resp.status_code == 200
+    nonce = nonce_resp.json()["nonce"]
+
+    # Build a keyboard-only trace: 3 Tab presses ("other"), 14 identifier keystrokes
+    # ("digit" and "punct"), and 1 Enter submit ("enter"), with zero mouse movement points
+    # and two zero-dwell keyboard-activated button clicks ([0, 0, t, t]).
+    tab_events: list[list[Any]] = [
+        ["other", 210.0, 275.0],
+        ["other", 420.0, 488.0],
+        ["other", 640.0, 712.0],
+    ]
+    typing_events = [
+        [cls, round(t0 + 900.0, 1), round(t1 + 900.0, 1)]
+        for cls, t0, t1 in build_reference_human_key_events(seed=19)
+    ]
+    last_t = float(typing_events[-1][2])
+    enter_event: list[list[Any]] = [["enter", round(last_t + 180.0, 1), round(last_t + 258.0, 1)]]
+    all_key_events = tab_events + typing_events + enter_event
+    submit_t = round(last_t + 260.0, 1)
+
+    assess_resp = client.post(
+        "/v1/assess",
+        json={
+            "nonce": nonce,
+            "action": "otp_request",
+            "sdk_version": "1.0.0",
+            "env": build_reference_human_env_signals(),
+            "behaviour": {
+                "mouse": {
+                    "points": [],
+                    "clicks": [
+                        [0, 0, 488.0, 488.0],
+                        [0, 0, submit_t, submit_t],
+                    ],
+                    "untrusted_count": 0,
+                    "wheel_events": 0,
+                },
+                "keys": {
+                    "events": all_key_events,
+                    "paste_events": 0,
+                    "autofill_suspected": False,
+                    "untrusted_count": 0,
+                },
+                "timing": {
+                    "ms_since_load": submit_t + 150.0,
+                    "ms_to_first_interaction": 210.0,
+                    "ms_since_nonce": submit_t,
+                    "scroll_events": 0,
+                    "focus_changes": 4,
+                },
+                "device_class": "desktop",
+            },
+        },
+    )
+    assert assess_resp.status_code == 200
+    assess_data = assess_resp.json()
+    assert assess_data["decision"] in ("allow", "challenge")
+
+    token = assess_data.get("token")
+    if assess_data["decision"] == "challenge":
+        challenge_info = assess_data["challenge"]
+        assert challenge_info is not None
+        hold_ms = float(challenge_info["hold_ms"])
+        c_nonce = client.get("/v1/nonce").json()["nonce"]
+        chal_resp = client.post(
+            "/v1/assess/challenge",
+            json={
+                "nonce": c_nonce,
+                "challenge_id": challenge_info["id"],
+                "action": "otp_request",
+                "hold_start_ms": 120.0,
+                "hold_end_ms": round(120.0 + hold_ms + 38.5, 1),
+                "env": build_reference_human_env_signals(),
+                "behaviour": {
+                    "mouse": {
+                        "points": [],
+                        "clicks": [],
+                        "untrusted_count": 0,
+                        "wheel_events": 0,
+                    },
+                    "keys": {
+                        "events": [
+                            ["other", 30.0, 92.0],
+                            ["space", 120.0, round(120.0 + hold_ms + 38.5, 1)],
+                        ],
+                        "paste_events": 0,
+                        "autofill_suspected": False,
+                        "untrusted_count": 0,
+                    },
+                    "timing": {
+                        "ms_since_load": round(submit_t + hold_ms + 600.0, 1),
+                        "ms_to_first_interaction": 30.0,
+                        "ms_since_nonce": round(hold_ms + 220.0, 1),
+                        "scroll_events": 0,
+                        "focus_changes": 1,
+                    },
+                    "device_class": "desktop",
+                },
+            },
+        )
+        assert chal_resp.status_code == 200
+        chal_data = chal_resp.json()
+        assert chal_data["decision"] == "allow"
+        token = chal_data["token"]
+
+    assert isinstance(token, str) and len(token) > 20
+    otp_resp = client.post(
+        "/portal-api/otp/request",
+        json={"action": "otp_request", "identifier_length": 14},
+        headers={"X-Human-Token": token},
+    )
+    assert otp_resp.status_code == 200
+    assert otp_resp.json()["status"] == "otp_sent"
+    assert client.get("/portal-api/stats").json()["accepted"] == 1

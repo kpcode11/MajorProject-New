@@ -105,7 +105,13 @@ export function CentreSearchPage(): ReactNode {
         <div style={{ flex: '1 1 240px' }}>
           <label
             htmlFor="centre-query"
-            style={{ display: 'block', fontWeight: 600, fontSize: '14px', marginBottom: '6px' }}
+            style={{
+              display: 'block',
+              fontWeight: 600,
+              fontSize: '14px',
+              marginBottom: '6px',
+              color: '#1e293b',
+            }}
           >
             PIN Code or District
           </label>
@@ -116,6 +122,8 @@ export function CentreSearchPage(): ReactNode {
             autoComplete="off"
             placeholder="e.g. 560001 or Bengaluru"
             data-testid="centre-query-input"
+            aria-invalid={validationError ? 'true' : undefined}
+            aria-describedby={validationError ? 'centre-validation-error' : undefined}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             style={{
@@ -132,7 +140,13 @@ export function CentreSearchPage(): ReactNode {
         <div style={{ flex: '0 1 220px' }}>
           <label
             htmlFor="centre-service"
-            style={{ display: 'block', fontWeight: 600, fontSize: '14px', marginBottom: '6px' }}
+            style={{
+              display: 'block',
+              fontWeight: 600,
+              fontSize: '14px',
+              marginBottom: '6px',
+              color: '#1e293b',
+            }}
           >
             Service Type
           </label>
@@ -149,6 +163,7 @@ export function CentreSearchPage(): ReactNode {
               borderRadius: '8px',
               border: '1px solid #94a3b8',
               background: '#ffffff',
+              color: '#0f172a',
               boxSizing: 'border-box',
             }}
           >
@@ -169,7 +184,7 @@ export function CentreSearchPage(): ReactNode {
             fontWeight: 600,
             borderRadius: '8px',
             border: 'none',
-            background: searching ? '#64748b' : '#0284c7',
+            background: searching ? '#475569' : '#0369a1',
             color: '#ffffff',
             cursor: searching ? 'wait' : 'pointer',
           }}
@@ -180,6 +195,7 @@ export function CentreSearchPage(): ReactNode {
 
       {validationError && (
         <p
+          id="centre-validation-error"
           role="alert"
           data-testid="centre-validation-error"
           style={{ color: '#b91c1c', fontSize: '13px', marginTop: 0, marginBottom: '16px' }}
@@ -211,6 +227,7 @@ export function CentreSearchPage(): ReactNode {
       {centres.length > 0 && (
         <ul
           data-testid="centre-results"
+          aria-label="Enrolment and update centres"
           style={{
             listStyle: 'none',
             padding: 0,
@@ -233,7 +250,7 @@ export function CentreSearchPage(): ReactNode {
             >
               <div style={{ fontWeight: 700, fontSize: '15px', color: '#0f172a' }}>
                 {centre.name}{' '}
-                <span style={{ color: '#64748b', fontWeight: 500 }}>({centre.code})</span>
+                <span style={{ color: '#475569', fontWeight: 500 }}>({centre.code})</span>
               </div>
               <div style={{ fontSize: '13px', color: '#334155', marginTop: '4px' }}>
                 District: {centre.district} · Hours: {centre.hours}

@@ -24,6 +24,8 @@ export interface KeyBehaviour {
   paste_events: number;
   autofill_suspected: boolean;
   untrusted_count: number;
+  /** Locally extracted aggregate keyboard features when `sendRawTrace: false` (P9-08). */
+  features?: Record<string, number | null>;
 }
 
 /** Collector settings (a subset of the SDK config). */

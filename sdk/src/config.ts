@@ -55,6 +55,11 @@ export interface BotGuardConfig {
   retryBaseDelayMs: number;
   /** Defer non-urgent aggregation to `requestIdleCallback` when available. */
   useIdleCallback: boolean;
+  /**
+   * When `false` (P9-08 local feature extraction mode), compute derived mouse and keyboard
+   * features locally in the browser and omit raw `points`/`clicks`/`events` arrays.
+   */
+  sendRawTrace: boolean;
   /** Emit debug messages through `console.debug`. Never logs payload contents. */
   debug: boolean;
 }
@@ -81,6 +86,7 @@ export const DEFAULT_CONFIG: Readonly<BotGuardConfig> = Object.freeze({
   maxRetries: 2,
   retryBaseDelayMs: 250,
   useIdleCallback: true,
+  sendRawTrace: true,
   debug: false,
 });
 
@@ -148,6 +154,7 @@ export function resolveConfig(options: BotGuardOptions = {}): Readonly<BotGuardC
     maxRetries: checkInt('maxRetries', merged.maxRetries, 0, 5),
     retryBaseDelayMs: checkInt('retryBaseDelayMs', merged.retryBaseDelayMs, 0, 10_000),
     useIdleCallback: Boolean(merged.useIdleCallback),
+    sendRawTrace: Boolean(merged.sendRawTrace),
     debug: Boolean(merged.debug),
   };
   return Object.freeze(config);

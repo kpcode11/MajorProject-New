@@ -84,7 +84,13 @@ export function UpdateDetailsPage(): ReactNode {
         <div>
           <label
             htmlFor="detail-name"
-            style={{ display: 'block', fontWeight: 600, fontSize: '14px', marginBottom: '6px' }}
+            style={{
+              display: 'block',
+              fontWeight: 600,
+              fontSize: '14px',
+              marginBottom: '6px',
+              color: '#1e293b',
+            }}
           >
             Synthetic Resident Full Name
           </label>
@@ -95,6 +101,7 @@ export function UpdateDetailsPage(): ReactNode {
             autoComplete="off"
             placeholder="e.g. Aarav Demo Citizen"
             data-testid="detail-name-input"
+            aria-describedby={validationError ? 'details-validation-error' : undefined}
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             style={{
@@ -111,7 +118,13 @@ export function UpdateDetailsPage(): ReactNode {
         <div>
           <label
             htmlFor="detail-address"
-            style={{ display: 'block', fontWeight: 600, fontSize: '14px', marginBottom: '6px' }}
+            style={{
+              display: 'block',
+              fontWeight: 600,
+              fontSize: '14px',
+              marginBottom: '6px',
+              color: '#1e293b',
+            }}
           >
             Synthetic Address Line
           </label>
@@ -122,6 +135,7 @@ export function UpdateDetailsPage(): ReactNode {
             autoComplete="off"
             placeholder="e.g. 42 Research Park Avenue"
             data-testid="detail-address-input"
+            aria-describedby={validationError ? 'details-validation-error' : undefined}
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             style={{
@@ -139,7 +153,13 @@ export function UpdateDetailsPage(): ReactNode {
           <div style={{ flex: '1 1 180px' }}>
             <label
               htmlFor="detail-pincode"
-              style={{ display: 'block', fontWeight: 600, fontSize: '14px', marginBottom: '6px' }}
+              style={{
+                display: 'block',
+                fontWeight: 600,
+                fontSize: '14px',
+                marginBottom: '6px',
+                color: '#1e293b',
+              }}
             >
               PIN Code
             </label>
@@ -151,6 +171,7 @@ export function UpdateDetailsPage(): ReactNode {
               inputMode="numeric"
               placeholder="e.g. 560001"
               data-testid="detail-pincode-input"
+              aria-describedby={validationError ? 'details-validation-error' : undefined}
               value={pincode}
               onChange={(e) => setPincode(e.target.value)}
               style={{
@@ -167,7 +188,13 @@ export function UpdateDetailsPage(): ReactNode {
           <div style={{ flex: '1 1 200px' }}>
             <label
               htmlFor="detail-city"
-              style={{ display: 'block', fontWeight: 600, fontSize: '14px', marginBottom: '6px' }}
+              style={{
+                display: 'block',
+                fontWeight: 600,
+                fontSize: '14px',
+                marginBottom: '6px',
+                color: '#1e293b',
+              }}
             >
               District / City
             </label>
@@ -184,6 +211,7 @@ export function UpdateDetailsPage(): ReactNode {
                 borderRadius: '8px',
                 border: '1px solid #94a3b8',
                 background: '#ffffff',
+                color: '#0f172a',
                 boxSizing: 'border-box',
               }}
             >
@@ -199,7 +227,13 @@ export function UpdateDetailsPage(): ReactNode {
         <div>
           <label
             htmlFor="detail-language"
-            style={{ display: 'block', fontWeight: 600, fontSize: '14px', marginBottom: '6px' }}
+            style={{
+              display: 'block',
+              fontWeight: 600,
+              fontSize: '14px',
+              marginBottom: '6px',
+              color: '#1e293b',
+            }}
           >
             Preferred Notification Language
           </label>
@@ -216,6 +250,7 @@ export function UpdateDetailsPage(): ReactNode {
               borderRadius: '8px',
               border: '1px solid #94a3b8',
               background: '#ffffff',
+              color: '#0f172a',
               boxSizing: 'border-box',
             }}
           >
@@ -232,6 +267,7 @@ export function UpdateDetailsPage(): ReactNode {
             name="confirmed"
             type="checkbox"
             data-testid="detail-confirm-checkbox"
+            aria-describedby={validationError ? 'details-validation-error' : undefined}
             checked={confirmed}
             onChange={(e) => setConfirmed(e.target.checked)}
           />
@@ -242,6 +278,7 @@ export function UpdateDetailsPage(): ReactNode {
 
         {validationError && (
           <p
+            id="details-validation-error"
             role="alert"
             data-testid="details-validation-error"
             style={{ color: '#b91c1c', fontSize: '13px', margin: 0 }}
@@ -261,7 +298,7 @@ export function UpdateDetailsPage(): ReactNode {
               fontWeight: 600,
               borderRadius: '8px',
               border: 'none',
-              background: submitting ? '#64748b' : '#0284c7',
+              background: submitting ? '#475569' : '#0369a1',
               color: '#ffffff',
               cursor: submitting ? 'wait' : 'pointer',
             }}

@@ -1,39 +1,32 @@
 # Handoff
 
-**Updated:** 2026-11-11 16:12  |  **By:** Antigravity  |  **Branch:** phase-7-mock-portal  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-18 19:47  |  **By:** Antigravity  |  **Branch:** phase-9-dashboard-privacy  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: Phase 7 (`P7-01`..`P7-21`) complete; next task is **P8-01** (`Human touch-data decision`) after Phase 7 exit / human demo check.
-- State: `DONE` (all Phase 7 tasks `P7-01`..`P7-21` completed)
+- ID: P9-13 — Accessibility limitations
+- State: `DONE` (all core Phase 9 tasks `P9-01`..`P9-13` are `DONE`; next optional tasks are **P9-14** / **P9-15** or Phase 10 **P10-01** — `Reproducible full evaluation`)
 
-## Done in Phase 7 so far
-- **P7-01 (`556745c`):** Created `portal/` React 19 + Vite 8 + TypeScript 6 + Vitest 5 + ESLint 10 + Prettier scaffold linking `@botguard/sdk` (`file:../sdk`).
-- **P7-02 (`47e287c`):** Added mock portal pages (`LandingPage.tsx`, `ResidentLoginPage.tsx` with identifier text field and **Send OTP** button, `UpdateDetailsPage.tsx` form, `CentreSearchPage.tsx`), client helper `portal/src/api.ts`, and 4 unit tests in `portal/test/app.test.tsx`.
-- **P7-03 (`1d9bd4a`):** Added `backend/app/portal.py` (`create_portal_router`) mounting `POST /portal-api/otp/request`, `POST /portal-api/details/update`, and `POST /portal-api/centres/search` protected by `require_human_token`.
-- **P7-04 (`4790ef6`):** Added `PortalStatsTracker` and `GET /portal-api/stats` tracking `accepted`, `rejected`, `total`, `by_action`, and `by_reason` counters.
-- **P7-05 (`5f02c1e`):** Added `PROTECTION_MODE` (`off | passive`, default `passive`) in `backend/app/config.py`, bypassed token enforcement when `off`, and exposed `protection_mode` in `GET /portal-api/stats`.
-- **P7-06 (`5af2f3a`):** Enhanced the default accessible press-and-hold step-up UI (`sdk/src/challenge.ts`) with `data-testid` hooks, `Space`/`Enter` single-press keyboard alternative handler (`onKbAltKeyDown`), visible `:focus-visible` ring, Tab focus trapping, and focus restoration, and verified end-to-end step-up interaction in `portal/test/app.test.tsx`.
-- **P7-07 (`554c422`):** Enhanced `POST /v1/assess/challenge` in `backend/app/main.py` to re-score using the original session's `original_score` blended with any challenge `env`/`behaviour` features and hold timing, returning `allow` (with token) or `deny`.
-- **P7-08 (`97d96b7`):** Added configurable `RATE_LIMIT_CHALLENGE_PER_MIN`, `RATE_LIMIT_CHALLENGE_SESSION_PER_MIN`, and `CHALLENGE_TTL_SECONDS`, enforced per-session and per-IP-bucket sliding-window rate limits on `POST /v1/assess/challenge`, and verified single-use `challenge_id` consumption.
-- **P7-09 (`06bbafc`):** Verified ARIA labels/roles, initial focus, `Tab`/`Shift+Tab` modal focus trap, focus restoration on close, visible `:focus-visible` outline, and keyboard `Space`/`Enter` single-press path without countdown pressure in `sdk/test/challenge.test.ts`.
-- **P7-10 (`20615d7`):** Added dedicated step-up challenge test suite `backend/tests/test_challenge.py` and timeout test in `sdk/test/challenge.test.ts`.
-- **P7-11 (`b65d5ae`):** Added `simulator/allowlist.txt`, `simulator/safety.py` (`validate_target_url`, `load_allowlist`, `extract_host`, `SimulatorTargetError`), `simulator/__init__.py`, `backend/tests/test_simulator_safety.py` (16 unit tests), and wired `simulator/` into `scripts/tasks.py` `lint()`.
-- **P7-12 (`7b234d9`):** Added `simulator/tier1_http.py` (`run_tier1_session`, `SimRunResult`, `SimOutcome`, `DEFAULT_TIER1_USER_AGENTS`), exported them in `simulator/__init__.py`, and added unit tests in `backend/tests/test_simulator_tier1.py`.
-- **P7-13 (`f5e438f`):** Added `simulator/tier2_playwright.py` (`run_tier2_session`, `drive_tier2_playwright_page`, `build_tier2_env_signals`, `build_tier2_behaviour_payload`, `PlaywrightPageLike`) and 3 unit tests in `backend/tests/test_simulator_tier2.py`.
-- **P7-14 (`ea2e017`):** Added `simulator/tier3_stealth.py` (`run_tier3_session`, `drive_tier3_playwright_page`, `apply_tier3_context_adjustments`, `build_tier3_env_signals`, `build_tier3_behaviour_payload`, `TIER3_INIT_SCRIPT`, `TIER3_PROFILES`) and 4 unit tests in `backend/tests/test_simulator_tier3.py`.
-- **P7-15 (`c7dd2aa`):** Added `simulator/humanlike.py` (`bezier_path`, `generate_humanlike_mouse_trajectory`, `generate_humanlike_key_events`) and `simulator/tier4_humanlike.py` (`run_tier4_session`, `drive_tier4_playwright_page`) and 4 unit tests in `backend/tests/test_simulator_tier4.py`.
-- **P7-16 (`e4a3ec3`):** Added `simulator/run_all.py` (`run_all_tiers`, `run_randomized_tier_session`, `summarize_sim_runs`, `write_sim_runs_jsonl`), generated `results/system/sim_runs.jsonl`, and added 2 unit tests in `backend/tests/test_simulator_run_all.py`.
-- **P7-17 (`e4b864c`):** Added `simulator/reference_human.py` (`run_reference_human_session`, `REFERENCE_HUMAN_MOUSE_POINTS`, `DEMO_SCRIPT_DISCLAIMER`, `build_reference_human_behaviour_payload`) and 3 unit tests in `backend/tests/test_simulator_reference_human.py`.
-- **P7-18 (`0088803`):** Added `backend/tests/test_e2e_portal.py` (5 E2E tests) and `portal/test/e2e.test.tsx` (4 E2E tests).
-- **P7-19 (`19a87b5`):** Added `demo()` in `scripts/tasks.py` and `deploy/docker-compose.yml` (`infra` profile for Redis and PostgreSQL), tested in `backend/tests/test_demo_task.py`.
-- **P7-20 (`4a93ffb`):** Added `docs/demo_script.md` detailing the step-by-step live demonstration workflow (`python scripts/tasks.py demo`, `PROTECTION_MODE=off` vs `passive`, `/portal-api/stats`, keyboard-only accessibility path, and Tiers 1–4 simulator runs).
-- **P7-21:** Added `format_sim_summary_markdown` and `write_sim_summary_markdown` in `simulator/run_all.py`, generated `results/system/sim_summary.md` reporting per-tier counts and rates across `off` and `passive` protection modes (with explicit non-generalisation disclaimer), and added verification in `backend/tests/test_simulator_run_all.py`.
+## Done in Phase 9 so far
+- Recorded human decision in `docs/decision_log.md` to skip Phase 8 (`P8-*` marked `SKIPPED` in `PROGRESS.md`) and proceed directly to Phase 9 (`phase-9-dashboard-privacy`), using `supabase/DESIGN.md` for the Phase 9 Admin Dashboard UI (`P9-02`).
+- **P9-01 (`c7073d9`):** Added `ADMIN_API_KEY` in `backend/app/config.py`, `backend/app/admin.py` (`create_admin_router`, `require_admin_api_key`), derived feature propagation in `backend/app/scoring.py` and `backend/app/main.py`, feedback/purge helpers in `backend/app/db.py`, and 4 unit tests in `backend/tests/test_admin_api.py`.
+- **P9-02 (`affede1`):** Implemented the 6 Admin Dashboard views in `portal/src/pages/AdminDashboardPage.tsx`, `portal/src/adminApi.ts`, `portal/src/designTokens.ts`, `portal/src/dashboard/RechartsCompat.tsx`, and `dashboard/`.
+- **P9-03 (`143026b`):** Added `portal/test/dashboard.test.tsx` and `backend/tests/test_dashboard_smoke.py`.
+- **P9-04 (`7f10bd9`):** Implemented `backend/app/retention.py` (`run_retention_purge`, `RetentionScheduler`, `FakeClock`, `SystemClock`, `PurgeResult`, and CLI `python -m app.retention --once`), added `RETENTION_PURGE_INTERVAL_SECONDS` in `backend/app/config.py`, wired lifespan scheduling in `backend/app/main.py` and `POST /admin/privacy/purge` in `backend/app/admin.py`, and added 6 unit tests in `backend/tests/test_retention.py`.
+- **P9-05 (`c965218`):** Implemented in-memory rotating per-page-load session identifiers in the SDK (`generateSessionId`, `SESSION_ROTATION_MS`, `X-Session-Id` header in `sdk/src/index.ts` and `sdk/src/transport.ts`) and daily-rotated session hashing (`daily_session_salt`, `make_session_hash`, coarse `/24` & `/48` IP buckets in `backend/app/nonce.py` and `backend/app/main.py`), verified by `backend/tests/test_session_privacy.py` and `sdk/test/api.test.ts`.
+- **P9-06 (`ee236bf`):** Added `backend/tests/test_privacy_scan.py` to execute end-to-end portal (`otp_request`, `details_update`, `centre_search`), step-up challenge, bot rejection, and extra-field form injection flows, then scan every database table/column/cell and structured log line to verify zero leakage of typed characters, form values, full IPs, or persistent device identifiers.
+- **P9-07 (`39b397d`):** Wrote `docs/privacy_impact.md` documenting purpose, necessity, less-invasive alternatives considered, and retention TTLs for every signal group, plus explicit UIDAI/DPDP Act 2023-style engineering assumptions and legal review caveats.
+- **P9-08 (`ffbf0e5`):** Implemented local feature extraction mode (`sendRawTrace=false`) in `sdk/src/features.ts`, `sdk/src/config.ts`, and `sdk/src/index.ts`, added backend support for `mouse.features` / `mouse.feature_windows` and `keys.features` in `backend/app/schemas.py` and `backend/app/scoring.py`, verified $10^{-9}$ golden parity across Python and TypeScript fixtures (`sdk/test/features_parity.test.ts`, `sdk/test/fixtures/golden_feature_fixtures.json`, `backend/tests/test_local_features.py`), and saved model evaluation results to `results/system/local_features_parity.json`.
+- **P9-09 (`d3606f9`):** Added `axe-core` and WCAG 2.1 AA contrast audit in `portal/test/accessibility.test.tsx` (auditing 11 states across Landing, Resident Login, Update Details, Centre Search, Admin Dashboard, and Step-up Challenge dialog) and saved results to `results/system/axe_audit.json`.
+- **P9-10 (`d23a26f`):** Added `portal/test/keyboard_e2e.test.tsx` (3 keyboard-only E2E tests) and `test_e2e_keyboard_only_login_otp_flow_with_tab_enter_and_stepup` in `backend/tests/test_e2e_portal.py`.
+- **P9-11 (`1305d22`):** Documented NVDA / Windows Narrator / VoiceOver smoke-test walkthrough in `docs/accessibility.md` and added ARIA landmark/live-region/progressbar announcement smoke test in `portal/test/accessibility.test.tsx`.
+- **P9-12 (`4521b1e`):** Enforced missing-mouse valid-keyboard fairness cap (`MISSING_MOUSE_VALID_KB_MAX_SCORE=0.50`, `MIN_TYPING_WINDOW_KEYS=10`) in `backend/app/scoring.py` and added 6 E2E tests in `backend/tests/test_missing_modality_e2e.py`.
+- **P9-13:** Documented missing-modality fairness rules and 6 known accessibility limitations in `docs/accessibility.md`.
 
 ## Exact next step
-- Phase 7 (`P7-01`..`P7-21`) is complete. After the human demo check (`docs/demo_script.md`), merge `phase-7-mock-portal` into `main`, create `phase-8-mobile-touch`, and start **P8-01** (`Human touch-data decision` in `docs/plan/phase_8.md`).
+- Decide whether to skip optional trajectory neural model tasks (**P9-14** / **P9-15**) and proceed to Phase 10 (**P10-01** — `Reproducible full evaluation`).
 
 ## Files touched (recent)
-- `results/system/sim_summary.md` (new); `simulator/run_all.py`, `simulator/__init__.py`, `backend/tests/test_simulator_run_all.py`, `results/system/sim_runs.jsonl`, `PROGRESS.md`, `HANDOFF.md`
+- `docs/accessibility.md`, `backend/app/scoring.py`, `backend/tests/test_missing_modality_e2e.py`, `portal/test/accessibility.test.tsx`, `portal/test/keyboard_e2e.test.tsx`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/status.py
@@ -41,6 +34,7 @@
     python scripts/tasks.py test-fast
 
 ## Known problems / gotchas
+- Always use `_AsgiTestClient` from `test_api.py` in backend unit tests (never `fastapi.testclient.TestClient`, which hangs inside the Windows sandbox due to `anyio` socketpair creation).
 - Run `npm` inside `sdk/` or `portal/`, never the repository root.
 - Git writes require elevated permissions outside the sandbox.
 

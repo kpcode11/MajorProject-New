@@ -147,6 +147,7 @@ export interface TransportDeps {
   fetchImpl?: typeof fetch;
   sleep?: (ms: number) => Promise<void>;
   nowEpochMs?: () => number;
+  sessionId?: string;
 }
 
 /** Input passed to {@link buildAssessPayload}. */
@@ -341,6 +342,7 @@ async function requestJson<T>(
         headers: {
           Accept: 'application/json',
           ...(init.body ? { 'Content-Type': 'application/json' } : {}),
+          ...(deps.sessionId ? { 'X-Session-Id': deps.sessionId } : {}),
           ...(init.headers ?? {}),
         },
       });

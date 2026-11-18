@@ -1,0 +1,109 @@
+{
+  "task": "P9-09",
+  "axe_version": "4.13.0",
+  "total_states_audited": 11,
+  "total_violations": 0,
+  "critical_violations": 0,
+  "serious_violations": 0,
+  "audits": [
+    {
+      "target": "landing",
+      "passes_count": 24,
+      "violations_count": 0,
+      "critical_violations": 0,
+      "serious_violations": 0,
+      "contrast_elements_checked": 28,
+      "min_contrast_ratio": 4.95
+    },
+    {
+      "target": "login:initial",
+      "passes_count": 28,
+      "violations_count": 0,
+      "critical_violations": 0,
+      "serious_violations": 0,
+      "contrast_elements_checked": 17,
+      "min_contrast_ratio": 4.95
+    },
+    {
+      "target": "login:validation_error",
+      "passes_count": 28,
+      "violations_count": 0,
+      "critical_violations": 0,
+      "serious_violations": 0,
+      "contrast_elements_checked": 18,
+      "min_contrast_ratio": 4.95
+    },
+    {
+      "target": "login:result",
+      "passes_count": 28,
+      "violations_count": 0,
+      "critical_violations": 0,
+      "serious_violations": 0,
+      "contrast_elements_checked": 23,
+      "min_contrast_ratio": 4.95
+    },
+    {
+      "target": "update-details:initial",
+      "passes_count": 29,
+      "violations_count": 0,
+      "critical_violations": 0,
+      "serious_violations": 0,
+      "contrast_elements_checked": 29,
+      "min_contrast_ratio": 4.95
+    },
+    {
+      "target": "update-details:validation_error",
+      "passes_count": 29,
+      "violations_count": 0,
+      "critical_violations": 0,
+      "serious_violations": 0,
+      "contrast_elements_checked": 30,
+      "min_contrast_ratio": 4.95
+    },
+    {
+      "target": "centre-search:initial",
+      "passes_count": 29,
+      "violations_count": 0,
+      "critical_violations": 0,
+      "serious_violations": 0,
+      "contrast_elements_checked": 20,
+      "min_contrast_ratio": 4.95
+    },
+    {
+      "target": "centre-search:validation_error",
+      "passes_count": 29,
+      "violations_count": 0,
+      "critical_violations": 0,
+      "serious_violations": 0,
+      "contrast_elements_checked": 21,
+      "min_contrast_ratio": 4.95
+    },
+    {
+      "target": "centre-search:results",
+      "passes_count": 31,
+      "violations_count": 0,
+      "critical_violations": 0,
+      "serious_violations": 0,
+      "contrast_elements_checked": 35,
+      "min_contrast_ratio": 4.95
+    },
+    {
+      "target": "admin-dashboard",
+      "passes_count": 36,
+      "violations_count": 0,
+      "critical_violations": 0,
+      "serious_violations": 0,
+      "contrast_elements_checked": 195,
+      "min_contrast_ratio": 4.74
+    },
+    {
+      "target": "stepup-challenge-dialog",
+      "passes_count": 30,
+      "violations_count": 0,
+      "critical_violations": 0,
+      "serious_violations": 0,
+      "contrast_elements_checked": 23,
+      "min_contrast_ratio": 4.95
+    }
+  ]
+}

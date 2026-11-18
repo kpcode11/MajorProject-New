@@ -474,6 +474,29 @@
             "title": "Events",
             "type": "array"
           },
+          "features": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional locally extracted keyboard features (P9-08 sendRawTrace=false).",
+            "title": "Features"
+          },
           "paste_events": {
             "default": 0,
             "description": "Count of paste/autofill paste events.",
@@ -508,6 +531,56 @@
             "maxItems": 600,
             "title": "Clicks",
             "type": "array"
+          },
+          "feature_windows": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "maxItems": 20,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional locally extracted mouse feature windows (P9-08 sendRawTrace=false).",
+            "title": "Feature Windows"
+          },
+          "features": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional locally extracted mouse feature dict (P9-08 sendRawTrace=false).",
+            "title": "Features"
           },
           "points": {
             "description": "At most 600 [x, y, t_ms] samples.",
@@ -1394,6 +1467,29 @@
             "title": "Events",
             "type": "array"
           },
+          "features": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional locally extracted keyboard features (P9-08 sendRawTrace=false).",
+            "title": "Features"
+          },
           "paste_events": {
             "default": 0,
             "description": "Count of paste/autofill paste events.",
@@ -1428,6 +1524,56 @@
             "maxItems": 600,
             "title": "Clicks",
             "type": "array"
+          },
+          "feature_windows": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "maxItems": 20,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional locally extracted mouse feature windows (P9-08 sendRawTrace=false).",
+            "title": "Feature Windows"
+          },
+          "features": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional locally extracted mouse feature dict (P9-08 sendRawTrace=false).",
+            "title": "Features"
           },
           "points": {
             "description": "At most 600 [x, y, t_ms] samples.",

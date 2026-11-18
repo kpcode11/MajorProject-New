@@ -185,6 +185,7 @@ class _AsgiTestClient:
         if raw_body:
             req_headers.setdefault("content-length", str(len(raw_body)))
 
+        clean_path, _, query_str = path.partition("?")
         asgi_headers = [(k.encode("latin-1"), v.encode("latin-1")) for k, v in req_headers.items()]
         scope: dict[str, Any] = {
             "type": "http",
@@ -192,9 +193,9 @@ class _AsgiTestClient:
             "http_version": "1.1",
             "method": method.upper(),
             "scheme": "http",
-            "path": path,
-            "raw_path": path.encode("ascii"),
-            "query_string": b"",
+            "path": clean_path,
+            "raw_path": clean_path.encode("ascii"),
+            "query_string": query_str.encode("ascii"),
             "headers": asgi_headers,
             "client": (self.ip, 54321),
             "server": ("testserver", 80),

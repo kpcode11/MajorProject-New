@@ -24,7 +24,8 @@ import logging
 import secrets
 import time
 import uuid
-from collections.abc import Callable
+from collections.abc import AsyncIterator, Callable
+from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from typing import Any, Literal
 
@@ -40,6 +41,7 @@ from app.nonce import (
     _coarsen_ip,
     context_hash_from_headers,
     issue_nonce,
+    make_session_hash,
     verify_nonce,
 )
 from app.policy import Decision, PolicyEngine, load_policy
@@ -90,6 +92,8 @@ _REDACTED_LOG_KEYS: frozenset[str] = frozenset(
         "payload",
         "body",
         "user_agent",
+        "session_id",
+        "x_session_id",
     }
 )
 
@@ -307,6 +311,11 @@ def _user_agent(request: Request) -> str:
     return request.headers.get("user-agent", "")
 
 
+def _client_session_id(request: Request) -> str | None:
+    raw = request.headers.get("x-session-id", "").strip()
+    return raw[:128] if raw else None
+
+
 # ---------------------------------------------------------------------------
 # P5-10 — Protected-route dependency: require_human_token(action)
 # ---------------------------------------------------------------------------
@@ -401,10 +410,24 @@ def create_app(
     )
     rate_limiter = RateLimiter(backing_store, cfg)
 
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        from app.retention import RetentionScheduler
+
+        interval = cfg.retention_purge_interval_seconds
+        scheduler = RetentionScheduler(db_mgr, interval_seconds=interval)
+        _app.state.retention_scheduler = scheduler
+        scheduler.start()
+        try:
+            yield
+        finally:
+            scheduler.stop()
+
     app = FastAPI(
         title="BotGuard Scoring API",
         version="0.1.0",
         description="Passive behavioural bot-detection scoring service (Phase 5).",
+        lifespan=lifespan,
     )
     app.state.settings = cfg
     app.state.store = backing_store
@@ -412,6 +435,7 @@ def create_app(
     app.state.policy = policy_engine
     app.state.db = db_mgr
     app.state.rate_limiter = rate_limiter
+    app.state.session_clock = lambda: datetime.now(UTC)
 
     app.add_middleware(MaxBodySizeMiddleware, max_bytes=cfg.max_body_bytes)
 
@@ -641,11 +665,18 @@ def create_app(
 
         latency_ms = (time.perf_counter() - t0) * 1000.0
         dev_cls = payload.behaviour.device_class if payload.behaviour else None
+        sess_hash = make_session_hash(
+            ip,
+            ua,
+            client_session_id=_client_session_id(request),
+            now=app.state.session_clock(),
+            secret=app.state.settings.jwt_secret,
+        )
 
         # 5. Persist assessment & challenge (buffered automatically if DB is down)
         app.state.db.record_assessment(
             assessment_id=rid,
-            session_hash=ctx_hash,
+            session_hash=sess_hash,
             action=payload.action,
             device_class=dev_cls,
             score=score_res.score,
@@ -656,6 +687,7 @@ def create_app(
             model_versions=score_res.model_versions.model_dump(),
             latency_ms=latency_ms,
             degraded=decision.degraded,
+            derived_features=score_res.derived_features,
         )
         if issued_challenge is not None:
             app.state.db.record_challenge_issued(
@@ -866,10 +898,12 @@ def create_app(
             db_ok=db_ok,
         )
 
+    from app.admin import create_admin_router
     from app.portal import PortalStatsTracker, create_portal_router
 
     app.state.portal_stats = PortalStatsTracker()
     app.include_router(create_portal_router())
+    app.include_router(create_admin_router())
 
     return app
 

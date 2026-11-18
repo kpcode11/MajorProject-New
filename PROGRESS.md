@@ -1,6 +1,6 @@
 # Progress
 
-**Current phase:** 7  |  **Branch:** phase-7-mock-portal  |  **Last updated:** 2026-11-08  |  **Last agent/tool:** Antigravity
+**Current phase:** 9  |  **Branch:** phase-9-dashboard-privacy  |  **Last updated:** 2026-11-14  |  **Last agent/tool:** Cursor Grok
 
 ## Task table
 
@@ -103,36 +103,36 @@
 | P7-18 | 7 | Portal end-to-end tests | DONE | 0088803 | Added backend/tests/test_e2e_portal.py (5 E2E tests) and portal/test/e2e.test.tsx (4 E2E tests) covering normal interaction -> token -> OTP accepted, headless direct click -> denied/challenged, no token -> 401, keyboard-only Tab+Enter -> step-up pass, and off vs passive mode. |
 | P7-19 | 7 | Demo startup command | DONE | 19a87b5 | Added demo() in scripts/tasks.py starting backend (STORE_BACKEND=memory, SQLite, 127.0.0.1:8000) and portal dev server (127.0.0.1:5173) plus deploy/docker-compose.yml (optional Redis + PostgreSQL infra profile); 2 tests in test_demo_task.py. |
 | P7-20 | 7 | Demo script | DONE | 4a93ffb | Added docs/demo_script.md documenting python scripts/tasks.py demo, PROTECTION_MODE=off vs passive, /portal-api/stats, keyboard-only accessibility flow, and Tiers 1-4 simulator runs; verified in test_demo_task.py. |
-| P7-21 | 7 | Simulator summary | DONE | HEAD | Added format_sim_summary_markdown and write_sim_summary_markdown in simulator/run_all.py and generated results/system/sim_summary.md with per-tier counts/rates and non-generalisation disclaimer; 3 tests in test_simulator_run_all.py. |
-| P8-01 | 8 | Human touch-data decision | TODO | | |
-| P8-02A | 8 | Touch dataset inventory | TODO | | |
-| P8-03A | 8 | Touch data loader | TODO | | |
-| P8-04A | 8 | Touch features | TODO | | |
-| P8-05A | 8 | Synthetic touch bots | TODO | | |
-| P8-06A | 8 | Touch model evaluation | TODO | | |
-| P8-07A | 8 | Touch fusion | TODO | | |
-| P8-08A | 8 | Touch scoring integration | TODO | | |
-| P8-09A | 8 | Touch model card | TODO | | |
-| P8-02B | 8 | Touch collector without model | TODO | | |
-| P8-03B | 8 | Touch logging integration | TODO | | |
-| P8-04B | 8 | No-touch-model policy | TODO | | |
-| P8-05B | 8 | Touch missing-modality fairness | TODO | | |
-| P8-06B | 8 | Mobile step-up UI | TODO | | |
-| P8-07B | 8 | Mobile simulator | TODO | | |
-| P8-08B | 8 | Mobile limitation documentation | TODO | | |
-| P9-01 | 9 | Admin API | TODO | | |
-| P9-02 | 9 | Admin dashboard | TODO | | |
-| P9-03 | 9 | Dashboard tests | TODO | | |
-| P9-04 | 9 | Retention purge | TODO | | |
-| P9-05 | 9 | Rotating session identifiers | TODO | | |
-| P9-06 | 9 | Privacy regression scan | TODO | | |
-| P9-07 | 9 | Privacy impact assessment | TODO | | |
-| P9-08 | 9 | Optional local feature extraction | TODO | | |
-| P9-09 | 9 | Accessibility audit | TODO | | |
-| P9-10 | 9 | Keyboard-only portal test | TODO | | |
-| P9-11 | 9 | Human screen-reader check | TODO | | |
-| P9-12 | 9 | Missing-modality E2E test | TODO | | |
-| P9-13 | 9 | Accessibility limitations | TODO | | |
+| P7-21 | 7 | Simulator summary | DONE | 65895be | Added format_sim_summary_markdown and write_sim_summary_markdown in simulator/run_all.py and generated results/system/sim_summary.md with per-tier counts/rates and non-generalisation disclaimer; 3 tests in test_simulator_run_all.py. |
+| P8-01 | 8 | Human touch-data decision | SKIPPED | | Skipped per human decision on 2026-11-14 to omit Phase 8 mobile touch dataset and ML model and proceed directly to Phase 9. |
+| P8-02A | 8 | Touch dataset inventory | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-03A | 8 | Touch data loader | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-04A | 8 | Touch features | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-05A | 8 | Synthetic touch bots | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-06A | 8 | Touch model evaluation | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-07A | 8 | Touch fusion | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-08A | 8 | Touch scoring integration | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-09A | 8 | Touch model card | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-02B | 8 | Touch collector without model | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-03B | 8 | Touch logging integration | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-04B | 8 | No-touch-model policy | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-05B | 8 | Touch missing-modality fairness | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-06B | 8 | Mobile step-up UI | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-07B | 8 | Mobile simulator | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P8-08B | 8 | Mobile limitation documentation | SKIPPED | | Skipped per human decision on 2026-11-14 (Phase 8 omitted). |
+| P9-01 | 9 | Admin API | DONE | c7073d9 | Added backend/app/admin.py (/admin/overview, /admin/scores, /admin/assessments, /admin/assessments/{id}, /admin/feedback, /admin/sim-results, /admin/privacy, /admin/privacy/purge) protected by ADMIN_API_KEY; 4 tests in test_admin_api.py. |
+| P9-02 | 9 | Admin dashboard | DONE | affede1 | Added portal/src/pages/AdminDashboardPage.tsx, portal/src/adminApi.ts, portal/src/designTokens.ts (supabase/DESIGN.md tokens), portal/src/dashboard/RechartsCompat.tsx, and dashboard/ exports implementing all 6 admin dashboard views. |
+| P9-03 | 9 | Dashboard tests | DONE | 143026b | Added portal/test/dashboard.test.tsx (overview, histogram thresholds, session derived features, simulator tiers, fp/fn feedback, privacy purge, portal-shell smoke) and backend/tests/test_dashboard_smoke.py (admin views load from ASGI backend). |
+| P9-04 | 9 | Retention purge | DONE | 7f10bd9 | Implemented backend/app/retention.py (run_retention_purge, RetentionScheduler, FakeClock, CLI --once), wired RETENTION_PURGE_INTERVAL_SECONDS in config/main/admin, and added 6 unit tests in backend/tests/test_retention.py. |
+| P9-05 | 9 | Rotating session identifiers | DONE | c965218 | Added random per-page-load rotating session IDs in SDK (generateSessionId, SESSION_ROTATION_MS, X-Session-Id header) and daily-rotated session hashes (daily_session_salt, make_session_hash) with coarse /24 and /48 IP logging in backend/app/nonce.py and backend/app/main.py; tested in backend/tests/test_session_privacy.py and sdk/test/api.test.ts. |
+| P9-06 | 9 | Privacy regression scan | DONE | ee236bf | Added backend/tests/test_privacy_scan.py scanning all DB tables/columns/cells and structured log lines across E2E portal, step-up challenge, bot, and form-injection flows for typed characters, form values, full IPs, and persistent device IDs. |
+| P9-07 | 9 | Privacy impact assessment | DONE | 39b397d | Wrote docs/privacy_impact.md covering all 7 signal groups (purpose, necessity, less-invasive alternatives, retention), prohibited-signal invariants, and explicit UIDAI/DPDP Act 2023 engineering assumptions and legal review caveats. |
+| P9-08 | 9 | Optional local feature extraction | DONE | ffbf0e5 | Implemented SDK local feature extraction mode (sendRawTrace=false in sdk/src/features.ts, sdk/src/config.ts, sdk/src/index.ts), backend local-feature scoring (backend/app/schemas.py, backend/app/scoring.py), golden parity tests (1e-9 tolerance in sdk/test/features_parity.test.ts and backend/tests/test_local_features.py), and results/system/local_features_parity.json. |
+| P9-09 | 9 | Accessibility audit | DONE | d3606f9 | Added axe-core and WCAG 2.1 AA contrast audit in portal/test/accessibility.test.tsx (11 states across Landing, Login, Update Details, Centre Search, Admin Dashboard, and Step-up Challenge dialog; 0 violations) and results/system/axe_audit.json; fixed button/text contrast, skip link, aria-invalid/aria-describedby form error associations, table scope="col", keyboard row selection, and WCAG 2.5.3 label-in-name attributes. |
+| P9-10 | 9 | Keyboard-only portal test | DONE | d23a26f | Added portal/test/keyboard_e2e.test.tsx (3 keyboard-only E2E flows from Landing -> Login -> typing -> Enter submit -> step-up single-press / physical Spacebar hold / direct allow -> OTP accepted) and test_e2e_keyboard_only_login_otp_flow_with_tab_enter_and_stepup in backend/tests/test_e2e_portal.py. |
+| P9-11 | 9 | Human screen-reader check | DONE | 1305d22 | Documented NVDA / Windows Narrator / VoiceOver smoke-test walkthrough and announcement checklist in docs/accessibility.md (with explicit methodology note) and added automated ARIA landmark/live-region/progressbar announcement smoke test in portal/test/accessibility.test.tsx. |
+| P9-12 | 9 | Missing-modality E2E test | DONE | 4521b1e | Enforced missing-mouse valid-keyboard fairness cap (MISSING_MOUSE_VALID_KB_MAX_SCORE=0.50, MIN_TYPING_WINDOW_KEYS=10) in backend/app/scoring.py and added 6 E2E tests in backend/tests/test_missing_modality_e2e.py across otp_request, details_update, centre_search, short PIN, slow assistive typing, and sendRawTrace=false. |
+| P9-13 | 9 | Accessibility limitations | DONE | HEAD | Documented missing-modality fairness rules and 6 known accessibility limitations (no assistive-tech training cohort, voice dictation/virtual keyboards, step-up hold vs single-press trade-off, omitted mobile touch, English-only demo copy, and automated DOM vs live human study scope) in docs/accessibility.md. |
 | P9-14 | 9 | Optional trajectory neural model | TODO | | |
 | P9-15 | 9 | Neural-model fusion | TODO | | |
 | P10-01 | 10 | Reproducible full evaluation | TODO | | |
@@ -156,11 +156,10 @@ Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 ## Human checkpoints pending
 
 - P0-03 — provide environment details and permission/status for `git clone`.
-- P8-01 — decide whether a public touch dataset can be obtained.
 
 ## Results index (files under results/)
 
 - `results/mouse/` — `baselines.csv`, `hparams.json`, `evaluation_splits.csv`, `lobo_evaluation.csv`, `human_fpr_captchasolve30k.csv`, `aggregation.csv`, `calibration.json`, `ablations.csv`, `shap_summary.csv`, `shap_top3_examples.json`, `fingerprint.json`
 - `results/keyboard/` — `privacy_scan.json`, `baselines.csv`, `hparams.json`, `evaluation.csv`, `evaluation_splits.csv`, `per_generator.csv`, `speed_terciles.csv`, `calibration.json`, `feature_importance.csv`, `failure_analysis.md`, `summary.json`
 - `results/fusion/` — `fusion_comparison.csv`, `modality_availability.csv`
-- `results/system/` — `scoring_latency.json`, `sdk_size.json`, `sim_runs.jsonl`, `sim_summary.md`
+- `results/system/` — `scoring_latency.json`, `sdk_size.json`, `sim_runs.jsonl`, `sim_summary.md`, `local_features_parity.json`

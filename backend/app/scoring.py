@@ -76,6 +76,8 @@ EXPECTED_KEYBOARD_FEATURE_NAMES: tuple[str, ...] = tuple(KEYBOARD_FEATURE_NAMES)
 
 MIN_MOUSE_MOVE_POINTS: int = 8
 MIN_KEYBOARD_EVENTS: int = 2
+MIN_TYPING_WINDOW_KEYS: int = 10
+MISSING_MOUSE_VALID_KB_MAX_SCORE: float = 0.50
 
 EXPLAINABILITY_LIMITATION_NOTE: str = (
     "ONNX Runtime classifiers output class probabilities rather than exact per-tree "
@@ -127,6 +129,7 @@ class ScoreResult:
     touch_score: float | None = None
     fired_rules: list[str] = field(default_factory=list)
     top_features: dict[str, list[str]] = field(default_factory=dict)
+    derived_features: dict[str, float] = field(default_factory=dict)
     degraded: bool = False
     explainability_note: str = EXPLAINABILITY_LIMITATION_NOTE
 
@@ -606,6 +609,7 @@ class ModelScorer:
         )
         self.band_low_cutoff = band_low_cutoff
         self.band_medium_cutoff = band_medium_cutoff
+        self._last_modality_features: dict[str, dict[str, float]] = {}
 
     @property
     def model_versions(self) -> ModelVersions:
@@ -657,8 +661,11 @@ class ModelScorer:
         # Average feature values across windows for top-3 attribution
         mean_features: dict[str, float] = {}
         for col_idx, feat_name in enumerate(model.feature_order):
-            mean_features[feat_name] = float(np.mean(mat[:, col_idx]))
+            val = float(np.mean(mat[:, col_idx]))
+            if math.isfinite(val):
+                mean_features[feat_name] = round(val, 6)
 
+        self._last_modality_features[model.modality] = mean_features
         top3 = top_k_contributing_features(mean_features, model, k=3)
         return agg_score, top3
 
@@ -667,13 +674,29 @@ class ModelScorer:
         mouse: MouseBehaviour | None,
         env: EnvSignals | None = None,
     ) -> tuple[float | None, list[str]]:
-        """Extract features and score a mouse payload if sufficient events exist."""
+        """Extract features or use local features to score a mouse payload."""
         if mouse is None or self.mouse_model is None:
             return None, []
         include_shortcuts = "window_n_points" in self.mouse_model.feature_order
-        windows = extract_mouse_feature_windows(
-            mouse, env, include_shortcut_features=include_shortcuts
-        )
+        if len(mouse.points) >= MIN_MOUSE_MOVE_POINTS:
+            windows = extract_mouse_feature_windows(
+                mouse, env, include_shortcut_features=include_shortcuts
+            )
+        elif mouse.feature_windows:
+            windows = [
+                {str(k): (float(v) if v is not None else float("nan")) for k, v in win.items()}
+                for win in mouse.feature_windows
+                if win
+            ]
+        elif mouse.features:
+            windows = [
+                {
+                    str(k): (float(v) if v is not None else float("nan"))
+                    for k, v in mouse.features.items()
+                }
+            ]
+        else:
+            return None, []
         if not windows:
             return None, []
         return self._run_onnx_windows(self.mouse_model, windows)
@@ -682,10 +705,18 @@ class ModelScorer:
         self,
         keys: KeyBehaviour | None,
     ) -> tuple[float | None, list[str]]:
-        """Extract features and score a keyboard payload if sufficient events exist."""
+        """Extract features or use local features to score a keyboard payload."""
         if keys is None or self.keyboard_model is None:
             return None, []
-        feat_dict = extract_keyboard_feature_dict(keys)
+        if len(keys.events) >= MIN_KEYBOARD_EVENTS:
+            feat_dict = extract_keyboard_feature_dict(keys)
+        elif keys.features:
+            feat_dict = {
+                str(k): (float(v) if v is not None else float("nan"))
+                for k, v in keys.features.items()
+            }
+        else:
+            return None, []
         if feat_dict is None:
             return None, []
         return self._run_onnx_windows(self.keyboard_model, [feat_dict])
@@ -752,37 +783,70 @@ class ModelScorer:
         keyboard_score: float | None = None
         touch_score: float | None = None
         top_features: dict[str, list[str]] = {}
+        derived_features: dict[str, float] = {}
         degraded = False
 
         if coerced_beh is not None:
             try:
-                if (
-                    coerced_beh.mouse is not None
-                    and len(coerced_beh.mouse.points) >= MIN_MOUSE_MOVE_POINTS
-                ):
+                has_mouse = coerced_beh.mouse is not None and (
+                    len(coerced_beh.mouse.points) >= MIN_MOUSE_MOVE_POINTS
+                    or bool(coerced_beh.mouse.feature_windows or coerced_beh.mouse.features)
+                )
+                if has_mouse and coerced_beh.mouse is not None:
                     if self.mouse_model is None:
                         degraded = True
                     else:
                         mouse_score, mouse_top3 = self.score_mouse(coerced_beh.mouse, coerced_env)
                         if mouse_top3:
                             top_features["mouse"] = mouse_top3
+                        for fk, fv in self._last_modality_features.get("mouse", {}).items():
+                            derived_features[f"mouse:{fk}"] = fv
 
-                if (
-                    coerced_beh.keys is not None
-                    and len(coerced_beh.keys.events) >= MIN_KEYBOARD_EVENTS
-                ):
+                has_keys = coerced_beh.keys is not None and (
+                    len(coerced_beh.keys.events) >= MIN_KEYBOARD_EVENTS
+                    or bool(coerced_beh.keys.features)
+                )
+                if has_keys and coerced_beh.keys is not None:
                     if self.keyboard_model is None:
                         degraded = True
                     else:
                         keyboard_score, kb_top3 = self.score_keyboard(coerced_beh.keys)
+                        kb_feats = self._last_modality_features.get("keyboard", {})
+                        # Missing-modality fairness policy (P3-10 / P9-12): a session with no
+                        # mouse movement events and valid human keyboard navigation (short <10-key
+                        # Tab/Enter/PIN navigation or non-constant human typing with zero untrusted
+                        # events) is never auto-denied solely due to missing mouse telemetry or
+                        # sub-window key counts; cap at medium challenge band (0.50).
+                        if (
+                            not has_mouse
+                            and keyboard_score is not None
+                            and coerced_beh.keys.untrusted_count == 0
+                            and not coerced_beh.keys.autofill_suspected
+                        ):
+                            n_keys_val = kb_feats.get("n_keys", float(len(coerced_beh.keys.events)))
+                            ident_frac = kb_feats.get("identical_interval_fraction", float("nan"))
+                            dwell_std = kb_feats.get("dwell_std", float("nan"))
+                            is_short_nav = math.isnan(n_keys_val) or n_keys_val < float(
+                                MIN_TYPING_WINDOW_KEYS
+                            )
+                            is_non_synthetic_rhythm = (
+                                math.isnan(ident_frac) or ident_frac < 0.80
+                            ) and (math.isnan(dwell_std) or dwell_std > 2.0)
+                            if is_short_nav or is_non_synthetic_rhythm:
+                                keyboard_score = min(
+                                    keyboard_score, MISSING_MOUSE_VALID_KB_MAX_SCORE
+                                )
                         if kb_top3:
                             top_features["keyboard"] = kb_top3
+                        for fk, fv in kb_feats.items():
+                            derived_features[f"keyboard:{fk}"] = fv
             except Exception:
                 # Fail-safe (P5-05 / P5-11): model error falls back to rules-only with degraded=True
                 mouse_score = None
                 keyboard_score = None
                 touch_score = None
                 top_features = {}
+                derived_features = {}
                 degraded = True
 
         stacker_coeffs = (
@@ -819,6 +883,7 @@ class ModelScorer:
             touch_score=touch_score,
             fired_rules=list(rule_eval.fired_rules),
             top_features=top_features,
+            derived_features=derived_features,
             degraded=degraded,
         )
 

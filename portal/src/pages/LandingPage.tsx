@@ -3,14 +3,14 @@
  */
 import type { ReactNode } from 'react';
 
-export type PortalPageId = 'landing' | 'login' | 'update-details' | 'centre-search';
+export type PortalPageId = 'landing' | 'login' | 'update-details' | 'centre-search' | 'admin';
 
 export interface LandingPageProps {
   onNavigate: (page: PortalPageId) => void;
 }
 
 const SERVICE_CARDS: ReadonlyArray<{
-  id: Exclude<PortalPageId, 'landing'>;
+  id: Exclude<PortalPageId, 'landing' | 'admin'>;
   testId: string;
   title: string;
   actionLabel: string;
@@ -129,8 +129,8 @@ export function LandingPage({ onNavigate }: LandingPageProps): ReactNode {
                 style={{
                   padding: '10px 16px',
                   borderRadius: '8px',
-                  border: '1px solid #0284c7',
-                  background: '#0284c7',
+                  border: '1px solid #0369a1',
+                  background: '#0369a1',
                   color: '#ffffff',
                   fontSize: '14px',
                   fontWeight: 600,
