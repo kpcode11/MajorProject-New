@@ -76,6 +76,8 @@ EXPECTED_KEYBOARD_FEATURE_NAMES: tuple[str, ...] = tuple(KEYBOARD_FEATURE_NAMES)
 
 MIN_MOUSE_MOVE_POINTS: int = 8
 MIN_KEYBOARD_EVENTS: int = 2
+MIN_TYPING_WINDOW_KEYS: int = 10
+MISSING_MOUSE_VALID_KB_MAX_SCORE: float = 0.50
 
 EXPLAINABILITY_LIMITATION_NOTE: str = (
     "ONNX Runtime classifiers output class probabilities rather than exact per-tree "
@@ -809,9 +811,34 @@ class ModelScorer:
                         degraded = True
                     else:
                         keyboard_score, kb_top3 = self.score_keyboard(coerced_beh.keys)
+                        kb_feats = self._last_modality_features.get("keyboard", {})
+                        # Missing-modality fairness policy (P3-10 / P9-12): a session with no
+                        # mouse movement events and valid human keyboard navigation (short <10-key
+                        # Tab/Enter/PIN navigation or non-constant human typing with zero untrusted
+                        # events) is never auto-denied solely due to missing mouse telemetry or
+                        # sub-window key counts; cap at medium challenge band (0.50).
+                        if (
+                            not has_mouse
+                            and keyboard_score is not None
+                            and coerced_beh.keys.untrusted_count == 0
+                            and not coerced_beh.keys.autofill_suspected
+                        ):
+                            n_keys_val = kb_feats.get("n_keys", float(len(coerced_beh.keys.events)))
+                            ident_frac = kb_feats.get("identical_interval_fraction", float("nan"))
+                            dwell_std = kb_feats.get("dwell_std", float("nan"))
+                            is_short_nav = math.isnan(n_keys_val) or n_keys_val < float(
+                                MIN_TYPING_WINDOW_KEYS
+                            )
+                            is_non_synthetic_rhythm = (
+                                math.isnan(ident_frac) or ident_frac < 0.80
+                            ) and (math.isnan(dwell_std) or dwell_std > 2.0)
+                            if is_short_nav or is_non_synthetic_rhythm:
+                                keyboard_score = min(
+                                    keyboard_score, MISSING_MOUSE_VALID_KB_MAX_SCORE
+                                )
                         if kb_top3:
                             top_features["keyboard"] = kb_top3
-                        for fk, fv in self._last_modality_features.get("keyboard", {}).items():
+                        for fk, fv in kb_feats.items():
                             derived_features[f"keyboard:{fk}"] = fv
             except Exception:
                 # Fail-safe (P5-05 / P5-11): model error falls back to rules-only with degraded=True
