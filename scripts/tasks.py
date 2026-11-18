@@ -26,10 +26,11 @@ IMPLEMENTED = (
     "train-keyboard",
     "keyboard-privacy",
     "eval-all",
+    "loadtest",
     "serve",
     "demo",
 )
-PLANNED = ("train-touch", "loadtest")
+PLANNED = ("train-touch",)
 
 
 def package_python(package: Path) -> Path:
@@ -355,6 +356,21 @@ def eval_all() -> None:
     )
 
 
+def loadtest() -> None:
+    """Run the four Phase 10 load-test scenarios and write results/system/loadtest_summary.*."""
+    interpreter = require_environment(PACKAGES[1])
+    run(
+        [
+            str(interpreter),
+            str(ROOT / "loadtest" / "runner.py"),
+            "--results-dir",
+            str(ROOT / "results"),
+            "--report-assets-dir",
+            str(ROOT / "docs" / "report_assets"),
+        ]
+    )
+
+
 def serve() -> None:
     """Start the FastAPI scoring and token backend via uvicorn."""
     interpreter = require_environment(PACKAGES[1])
@@ -481,6 +497,8 @@ def main() -> int:
             train_mouse(args.stage, args.max_sessions)
         elif command == "eval-all":
             eval_all()
+        elif command == "loadtest":
+            loadtest()
         elif command == "serve":
             serve()
         elif command == "demo":
