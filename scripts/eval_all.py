@@ -871,6 +871,30 @@ def run_eval_all(
         shutil.copy2(sys_dir / "sim_summary.md", dst_sim_md)
         generated_files.append(dst_sim_md.relative_to(ROOT).as_posix())
 
+    import importlib.util
+
+    sys_res_spec = importlib.util.spec_from_file_location(
+        "system_results", ROOT / "scripts" / "system_results.py"
+    )
+    if sys_res_spec is not None and sys_res_spec.loader is not None:
+        sys_res_mod = importlib.util.module_from_spec(sys_res_spec)
+        sys_res_spec.loader.exec_module(sys_res_mod)
+        sys_res_mod.generate_system_results(
+            results_dir=results_dir,
+            report_assets_dir=report_assets_dir,
+        )
+        for p in (
+            sys_dir / "sim_summary.csv",
+            sys_dir / "system_results.csv",
+            sys_dir / "system_results.md",
+            sys_dir / "system_results.json",
+            report_assets_dir / "table8_simulator_summary.csv",
+            report_assets_dir / "table8_system_results.csv",
+            report_assets_dir / "table8_system_results.md",
+        ):
+            if p.exists():
+                generated_files.append(p.relative_to(ROOT).as_posix())
+
     # ------------------------------------------------------------------
     # 3. Generate all 7 required Appendix E.5.1 figures into results/
     #    and copy them to docs/report_assets/.
