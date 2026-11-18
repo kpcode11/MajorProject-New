@@ -644,4 +644,100 @@ describe('Portal & Step-up Challenge Accessibility Audit (P9-09)', () => {
     cancelBtn?.click();
     await expect(challengePromise).rejects.toThrow();
   });
+
+  it('verifies screen-reader landmarks, aria-live announcements, and step-up progressbar states (P9-11)', async () => {
+    vi.useFakeTimers();
+    try {
+      act(() => {
+        root?.render(<App initialPage="login" />);
+      });
+      const rootEl = getContainer();
+
+      // 1. Landmarks & live status badge
+      expect(
+        rootEl.querySelector('[role="region"][aria-label="Demonstration disclaimer"]'),
+      ).not.toBeNull();
+      expect(rootEl.querySelector('nav[aria-label="Portal sections"]')).not.toBeNull();
+      expect(rootEl.querySelector('main#portal-main-content')).not.toBeNull();
+      expect(
+        rootEl.querySelector('[data-testid="botguard-status"]')?.getAttribute('aria-live'),
+      ).toBe('polite');
+
+      // 2. Form label + hint association
+      const input = rootEl.querySelector(
+        '[data-testid="identifier-input"]',
+      ) as HTMLInputElement | null;
+      expect(input?.getAttribute('aria-describedby')).toBe('resident-identifier-hint');
+      expect(rootEl.querySelector('#resident-identifier-hint')?.textContent).toContain(
+        'Enter a synthetic mock identifier',
+      );
+
+      // 3. Step-up dialog screen-reader live announcements during hold & early release
+      let clockMs = 1000;
+      const challengePromise = renderPressHoldChallenge(
+        {
+          id: 'chal_sr_911',
+          type: 'press_hold',
+          hold_ms: 800,
+          expires_in: 60,
+        },
+        'otp_request',
+        {
+          mountTarget: rootEl,
+          requireTrusted: false,
+          now: () => clockMs,
+        },
+      );
+
+      const dialog = rootEl.querySelector('[data-testid="stepup-dialog"]');
+      const progress = rootEl.querySelector('[data-testid="stepup-progress"]');
+      const status = rootEl.querySelector('[data-testid="stepup-status"]');
+      const holdBtn = rootEl.querySelector(
+        '[data-testid="stepup-hold-btn"]',
+      ) as HTMLButtonElement | null;
+      const kbBtn = rootEl.querySelector(
+        '[data-testid="stepup-kb-btn"]',
+      ) as HTMLButtonElement | null;
+
+      expect(dialog?.getAttribute('role')).toBe('dialog');
+      expect(dialog?.getAttribute('aria-modal')).toBe('true');
+      expect(dialog?.getAttribute('aria-labelledby')).toBe('botguard-challenge-title');
+      expect(dialog?.getAttribute('aria-describedby')).toBe('botguard-challenge-desc');
+      expect(progress?.getAttribute('role')).toBe('progressbar');
+      expect(progress?.getAttribute('aria-valuemax')).toBe('800');
+      expect(status?.getAttribute('role')).toBe('status');
+      expect(status?.getAttribute('aria-live')).toBe('polite');
+
+      // Begin hold and release early -> live announcement informs screen-reader user
+      act(() => {
+        holdBtn?.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+      });
+      expect(status?.textContent).toBe('Holding… keep pressing.');
+
+      clockMs = 1250;
+      act(() => {
+        holdBtn?.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', bubbles: true }));
+      });
+      expect(status?.textContent).toContain('Released too early (250 ms)');
+      expect(progress?.getAttribute('aria-valuenow')).toBe('0');
+
+      // Activate keyboard single-press verify -> announces keyboard verification path -> completes
+      clockMs = 2000;
+      act(() => {
+        kbBtn?.click();
+      });
+      expect(status?.textContent).toBe('Verifying via keyboard accessibility path…');
+
+      clockMs = 2850;
+      await act(async () => {
+        vi.advanceTimersByTime(850);
+        await Promise.resolve();
+      });
+
+      const res = await challengePromise;
+      expect(res.holdEndMs - res.holdStartMs).toBeGreaterThanOrEqual(800);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

@@ -3,8 +3,8 @@
 **Updated:** 2026-11-18 19:20  |  **By:** Antigravity  |  **Branch:** phase-9-dashboard-privacy  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P9-10 — Keyboard-only portal test
-- State: `DONE` (next task is **P9-11** — `Human screen-reader check` `[HUMAN]`, or **P9-12** — `Missing-modality E2E test`)
+- ID: P9-11 — Human screen-reader check
+- State: `DONE` (next task is **P9-12** — `Missing-modality E2E test`)
 
 ## Done in Phase 9 so far
 - Recorded human decision in `docs/decision_log.md` to skip Phase 8 (`P8-*` marked `SKIPPED` in `PROGRESS.md`) and proceed directly to Phase 9 (`phase-9-dashboard-privacy`), using `supabase/DESIGN.md` for the Phase 9 Admin Dashboard UI (`P9-02`).
