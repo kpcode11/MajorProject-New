@@ -1,10 +1,10 @@
 # Handoff
 
-**Updated:** 2026-11-16 11:55  |  **By:** Antigravity  |  **Branch:** phase-9-dashboard-privacy  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-18 19:20  |  **By:** Antigravity  |  **Branch:** phase-9-dashboard-privacy  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P9-09 — Accessibility audit
-- State: `DONE` (next task is **P9-10** — `Keyboard-only portal test`)
+- ID: P9-10 — Keyboard-only portal test
+- State: `DONE` (next task is **P9-11** — `Human screen-reader check` `[HUMAN]`, or **P9-12** — `Missing-modality E2E test`)
 
 ## Done in Phase 9 so far
 - Recorded human decision in `docs/decision_log.md` to skip Phase 8 (`P8-*` marked `SKIPPED` in `PROGRESS.md`) and proceed directly to Phase 9 (`phase-9-dashboard-privacy`), using `supabase/DESIGN.md` for the Phase 9 Admin Dashboard UI (`P9-02`).
@@ -16,13 +16,14 @@
 - **P9-06 (`ee236bf`):** Added `backend/tests/test_privacy_scan.py` to execute end-to-end portal (`otp_request`, `details_update`, `centre_search`), step-up challenge, bot rejection, and extra-field form injection flows, then scan every database table/column/cell and structured log line to verify zero leakage of typed characters, form values, full IPs, or persistent device identifiers.
 - **P9-07 (`39b397d`):** Wrote `docs/privacy_impact.md` documenting purpose, necessity, less-invasive alternatives considered, and retention TTLs for every signal group, plus explicit UIDAI/DPDP Act 2023-style engineering assumptions and legal review caveats.
 - **P9-08 (`ffbf0e5`):** Implemented local feature extraction mode (`sendRawTrace=false`) in `sdk/src/features.ts`, `sdk/src/config.ts`, and `sdk/src/index.ts`, added backend support for `mouse.features` / `mouse.feature_windows` and `keys.features` in `backend/app/schemas.py` and `backend/app/scoring.py`, verified $10^{-9}$ golden parity across Python and TypeScript fixtures (`sdk/test/features_parity.test.ts`, `sdk/test/fixtures/golden_feature_fixtures.json`, `backend/tests/test_local_features.py`), and saved model evaluation results to `results/system/local_features_parity.json`.
-- **P9-09:** Added `axe-core` and WCAG 2.1 AA contrast audit in `portal/test/accessibility.test.tsx` (auditing 11 states across Landing, Resident Login, Update Details, Centre Search, Admin Dashboard, and Step-up Challenge dialog) and saved results to `results/system/axe_audit.json`. Fixed WCAG AA button/text colour contrast (`#0369a1` primary portal buttons, `#157347` `primaryText` on light canvas), added skip-to-main-content link and focus-visible outlines in `portal/src/App.tsx`, added `aria-invalid` / `aria-describedby` error associations in portal forms, added `scope="col"` and keyboard row selection (`tabIndex={0}`, `Enter`/`Space`) in `portal/src/pages/AdminDashboardPage.tsx`, and aligned `aria-label` attributes with visible button labels (WCAG 2.5.3) in `sdk/src/challenge.ts`.
+- **P9-09 (`d3606f9`):** Added `axe-core` and WCAG 2.1 AA contrast audit in `portal/test/accessibility.test.tsx` (auditing 11 states across Landing, Resident Login, Update Details, Centre Search, Admin Dashboard, and Step-up Challenge dialog) and saved results to `results/system/axe_audit.json`.
+- **P9-10:** Added `portal/test/keyboard_e2e.test.tsx` (3 keyboard-only E2E tests covering `Tab` navigation from Landing -> Login via both the top nav bar and service card, validation error recovery, character-by-character typing with realistic dwell/flight timings, `Enter` form submission, modal `Tab`/`Shift+Tab` focus trap verification, completion via both `stepup-kb-btn` single-press and `stepup-hold-btn` physical `Space` hold, and direct `allow` flow with zero pointer events) and `test_e2e_keyboard_only_login_otp_flow_with_tab_enter_and_stepup` in `backend/tests/test_e2e_portal.py`.
 
 ## Exact next step
-- Start **P9-10** (`Keyboard-only portal test`): complete the login/OTP flow with keyboard navigation only in an E2E test.
+- Start **P9-11** (`Human screen-reader check` `[HUMAN]`) or **P9-12** (`Missing-modality E2E test`).
 
 ## Files touched (recent)
-- `portal/package.json`, `portal/package-lock.json`, `portal/src/App.tsx`, `portal/src/designTokens.ts`, `portal/src/pages/LandingPage.tsx`, `portal/src/pages/ResidentLoginPage.tsx`, `portal/src/pages/UpdateDetailsPage.tsx`, `portal/src/pages/CentreSearchPage.tsx`, `portal/src/pages/AdminDashboardPage.tsx`, `portal/test/accessibility.test.tsx`, `sdk/src/challenge.ts`, `results/system/axe_audit.json`, `results/system/sdk_size.json`, `data/fixtures/backend_contract_schema.json`, `PROGRESS.md`, `HANDOFF.md`
+- `portal/test/keyboard_e2e.test.tsx`, `backend/tests/test_e2e_portal.py`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/status.py
