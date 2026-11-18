@@ -1,32 +1,23 @@
 # Handoff
 
-**Updated:** 2026-11-18 19:47  |  **By:** Antigravity  |  **Branch:** phase-9-dashboard-privacy  |  **Last commit:** see `git log -1`
+**Updated:** 2026-11-18 21:33  |  **By:** Antigravity  |  **Branch:** phase-10-final-eval-release  |  **Last commit:** see `git log -1`
 
 ## Current task
-- ID: P9-13 — Accessibility limitations
-- State: `DONE` (all core Phase 9 tasks `P9-01`..`P9-13` are `DONE`; next optional tasks are **P9-14** / **P9-15** or Phase 10 **P10-01** — `Reproducible full evaluation`)
+- ID: P10-05 — Security checks
+- State: `DONE` (next task is **P10-06** — `Final model card`)
 
-## Done in Phase 9 so far
-- Recorded human decision in `docs/decision_log.md` to skip Phase 8 (`P8-*` marked `SKIPPED` in `PROGRESS.md`) and proceed directly to Phase 9 (`phase-9-dashboard-privacy`), using `supabase/DESIGN.md` for the Phase 9 Admin Dashboard UI (`P9-02`).
-- **P9-01 (`c7073d9`):** Added `ADMIN_API_KEY` in `backend/app/config.py`, `backend/app/admin.py` (`create_admin_router`, `require_admin_api_key`), derived feature propagation in `backend/app/scoring.py` and `backend/app/main.py`, feedback/purge helpers in `backend/app/db.py`, and 4 unit tests in `backend/tests/test_admin_api.py`.
-- **P9-02 (`affede1`):** Implemented the 6 Admin Dashboard views in `portal/src/pages/AdminDashboardPage.tsx`, `portal/src/adminApi.ts`, `portal/src/designTokens.ts`, `portal/src/dashboard/RechartsCompat.tsx`, and `dashboard/`.
-- **P9-03 (`143026b`):** Added `portal/test/dashboard.test.tsx` and `backend/tests/test_dashboard_smoke.py`.
-- **P9-04 (`7f10bd9`):** Implemented `backend/app/retention.py` (`run_retention_purge`, `RetentionScheduler`, `FakeClock`, `SystemClock`, `PurgeResult`, and CLI `python -m app.retention --once`), added `RETENTION_PURGE_INTERVAL_SECONDS` in `backend/app/config.py`, wired lifespan scheduling in `backend/app/main.py` and `POST /admin/privacy/purge` in `backend/app/admin.py`, and added 6 unit tests in `backend/tests/test_retention.py`.
-- **P9-05 (`c965218`):** Implemented in-memory rotating per-page-load session identifiers in the SDK (`generateSessionId`, `SESSION_ROTATION_MS`, `X-Session-Id` header in `sdk/src/index.ts` and `sdk/src/transport.ts`) and daily-rotated session hashing (`daily_session_salt`, `make_session_hash`, coarse `/24` & `/48` IP buckets in `backend/app/nonce.py` and `backend/app/main.py`), verified by `backend/tests/test_session_privacy.py` and `sdk/test/api.test.ts`.
-- **P9-06 (`ee236bf`):** Added `backend/tests/test_privacy_scan.py` to execute end-to-end portal (`otp_request`, `details_update`, `centre_search`), step-up challenge, bot rejection, and extra-field form injection flows, then scan every database table/column/cell and structured log line to verify zero leakage of typed characters, form values, full IPs, or persistent device identifiers.
-- **P9-07 (`39b397d`):** Wrote `docs/privacy_impact.md` documenting purpose, necessity, less-invasive alternatives considered, and retention TTLs for every signal group, plus explicit UIDAI/DPDP Act 2023-style engineering assumptions and legal review caveats.
-- **P9-08 (`ffbf0e5`):** Implemented local feature extraction mode (`sendRawTrace=false`) in `sdk/src/features.ts`, `sdk/src/config.ts`, and `sdk/src/index.ts`, added backend support for `mouse.features` / `mouse.feature_windows` and `keys.features` in `backend/app/schemas.py` and `backend/app/scoring.py`, verified $10^{-9}$ golden parity across Python and TypeScript fixtures (`sdk/test/features_parity.test.ts`, `sdk/test/fixtures/golden_feature_fixtures.json`, `backend/tests/test_local_features.py`), and saved model evaluation results to `results/system/local_features_parity.json`.
-- **P9-09 (`d3606f9`):** Added `axe-core` and WCAG 2.1 AA contrast audit in `portal/test/accessibility.test.tsx` (auditing 11 states across Landing, Resident Login, Update Details, Centre Search, Admin Dashboard, and Step-up Challenge dialog) and saved results to `results/system/axe_audit.json`.
-- **P9-10 (`d23a26f`):** Added `portal/test/keyboard_e2e.test.tsx` (3 keyboard-only E2E tests) and `test_e2e_keyboard_only_login_otp_flow_with_tab_enter_and_stepup` in `backend/tests/test_e2e_portal.py`.
-- **P9-11 (`1305d22`):** Documented NVDA / Windows Narrator / VoiceOver smoke-test walkthrough in `docs/accessibility.md` and added ARIA landmark/live-region/progressbar announcement smoke test in `portal/test/accessibility.test.tsx`.
-- **P9-12 (`4521b1e`):** Enforced missing-mouse valid-keyboard fairness cap (`MISSING_MOUSE_VALID_KB_MAX_SCORE=0.50`, `MIN_TYPING_WINDOW_KEYS=10`) in `backend/app/scoring.py` and added 6 E2E tests in `backend/tests/test_missing_modality_e2e.py`.
-- **P9-13:** Documented missing-modality fairness rules and 6 known accessibility limitations in `docs/accessibility.md`.
+## Done in Phase 10 so far
+- Recorded human decision in `docs/decision_log.md` to skip optional trajectory neural model tasks (`P9-14`, `P9-15` marked `SKIPPED` in `PROGRESS.md`) and proceed directly to Phase 10.
+- **P10-01 & P10-02 (`87f6b29`):** Implemented `scripts/eval_all.py` and wired `python scripts/tasks.py eval-all` in `scripts/tasks.py`, generating 78 CSV/Markdown tables and 7 PNG figures under `results/` and syncing report-ready assets to `docs/report_assets/` (`results/eval_all_manifest.json`, `docs/report_assets/manifest.json`), verified by `ml/tests/test_eval_all.py`.
+- **P10-03 (`7d8b3c6`):** Added `scripts/system_results.py` (wired into `scripts/eval_all.py`) generating `results/system/sim_summary.csv` and `results/system/system_results.{json,csv,md}` (`docs/report_assets/table8_system_results.{csv,md}`) consolidating simulator tier outcomes, per-tier latency distributions, ONNX+rule scoring latency percentiles, throughput (`325.58 req/s`), SDK gzip sizes, and `axe-core` audit counts; verified by `backend/tests/test_system_results.py`.
+- **P10-04 (`7b7e3e2`):** Added `loadtest/runner.py` (wired to `python scripts/tasks.py loadtest`), `loadtest/locustfile.py`, and `loadtest/k6_scenarios.js` executing the 4 required scenarios (`normal_mix`, `protected_endpoint_flood`, `nonce_flood`, `malformed_assess_flood`; `630` requests @ `1155.42 req/s`, `0` `5xx` errors, and `0/460` malicious requests reaching the protected API), saving `results/system/loadtest_summary.{json,csv,md}` and `docs/report_assets/table8_loadtest_summary.{csv,md}`, verified by `backend/tests/test_loadtest.py`.
+- **P10-05:** Executed the 72-test security suite (`test_nonce.py`, `test_tokens.py`, `test_ratelimit.py`, `test_api.py`, `test_challenge.py`, `test_portal_api.py`, `test_privacy_scan.py`, `test_session_privacy.py`, `test_loadtest.py`; `72/72` passed), ran `bandit -r backend/app` (`5,557` LOC; remediated `B101` asserts in `backend/app/tokens.py` and annotated false-positive fallback strings in `config.py`, `nonce.py`, `ratelimit.py`, achieving `0 HIGH`, `0 MEDIUM`, `0 LOW` findings), ran `pip-audit` and `npm audit` (`0` production runtime vulnerabilities in `sdk/` and `portal/`), and saved `results/system/security_checks.{json,md}` via `scripts/security_checks.py`, verified by `backend/tests/test_security_checks.py`.
 
 ## Exact next step
-- Decide whether to skip optional trajectory neural model tasks (**P9-14** / **P9-15**) and proceed to Phase 10 (**P10-01** — `Reproducible full evaluation`).
+- Start **P10-06** (`Final model card`): finalise `docs/model_card.md` (intended use, data, metrics with confidence intervals, limitations, fairness/accessibility notes, update policy).
 
 ## Files touched (recent)
-- `docs/accessibility.md`, `backend/app/scoring.py`, `backend/tests/test_missing_modality_e2e.py`, `portal/test/accessibility.test.tsx`, `portal/test/keyboard_e2e.test.tsx`, `PROGRESS.md`, `HANDOFF.md`
+- `backend/app/tokens.py`, `backend/app/config.py`, `backend/app/nonce.py`, `backend/app/ratelimit.py`, `scripts/security_checks.py`, `backend/tests/test_security_checks.py`, `results/system/security_checks.json`, `results/system/security_checks.md`, `PROGRESS.md`, `HANDOFF.md`
 
 ## Commands to run first
     python scripts/status.py
@@ -34,7 +25,7 @@
     python scripts/tasks.py test-fast
 
 ## Known problems / gotchas
-- Always use `_AsgiTestClient` from `test_api.py` in backend unit tests (never `fastapi.testclient.TestClient`, which hangs inside the Windows sandbox due to `anyio` socketpair creation).
+- Always use `_AsgiTestClient` from `test_api.py` (or direct coroutine `.send(None)` stepping) in backend unit tests; never use `fastapi.testclient.TestClient` or `asyncio.run()` inside the Windows sandbox because event-loop self-pipe `socketpair()` hangs.
 - Run `npm` inside `sdk/` or `portal/`, never the repository root.
 - Git writes require elevated permissions outside the sandbox.
 

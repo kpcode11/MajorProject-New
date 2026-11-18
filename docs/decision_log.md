@@ -47,3 +47,10 @@ Do not alter an existing decision; add a dated entry instead.
 - **Rationale:** The human project owner elected not to pursue mobile touch dataset acquisition or touch model training, focusing instead on the desktop multimodal (mouse + keyboard + environment rules) pipeline and Phase 9 operational dashboard, privacy enforcement, and accessibility verification.
 - **Scope:** All Phase 8 tasks in `PROGRESS.md` are marked `SKIPPED` with this rationale. Touch fields in schemas and model version dicts remain optional (`touch: null`) and missing-modality handling remains active.
 
+### 2026-11-18 — Skip optional Phase 9 trajectory neural model tasks (`P9-14`, `P9-15`) and proceed to Phase 10
+
+- **Decision:** Skip optional trajectory neural model tasks `P9-14` (`1D-CNN or small GRU on raw mouse trajectories`) and `P9-15` (`Neural-model fusion`) per explicit human instruction and proceed directly to Phase 10 (`P10-01` onwards).
+- **Rationale:** `docs/plan/phase_9.md` designates `P9-14` and `P9-15` as optional model upgrades, and the primary LightGBM mouse model + calibrated Logistic Regression keyboard model + score-level fusion (`mouse-v1`, `keyboard-v1`, `fusion-v1`) already satisfy all cross-dataset and latency requirements.
+- **Scope:** `P9-14` and `P9-15` are marked `SKIPPED` in `PROGRESS.md`.
+
+

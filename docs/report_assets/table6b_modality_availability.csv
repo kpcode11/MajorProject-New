@@ -1,0 +1,5 @@
+regime,mouse_present,keyboard_present,example_mouse_score,example_keyboard_score,average_fused,noisy_or_fused,treated_as_bot_on_missing
+both_available,True,True,0.15,0.25,0.2,0.3625,False
+mouse_only_available,True,False,0.15,,0.15,0.15,False
+keyboard_only_available,False,True,,0.25,0.25,0.25,False
+neither_available,False,False,,,,,False

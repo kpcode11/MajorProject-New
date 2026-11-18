@@ -25,10 +25,12 @@ IMPLEMENTED = (
     "train-mouse",
     "train-keyboard",
     "keyboard-privacy",
+    "eval-all",
+    "loadtest",
     "serve",
     "demo",
 )
-PLANNED = ("train-touch", "eval-all", "loadtest")
+PLANNED = ("train-touch",)
 
 
 def package_python(package: Path) -> Path:
@@ -53,7 +55,9 @@ def node_npm(pkg_dir: Path, *scripts: str) -> None:
     """Run npm scripts in ``pkg_dir``; skip with a notice when Node or dependencies are missing."""
     npm = shutil.which("npm")
     if npm is None or not (pkg_dir / "node_modules").exists():
-        print(f"{pkg_dir.name}: skipped (install Node.js and run: python scripts/tasks.py setup)")
+        print(
+            f"{pkg_dir.name}: skipped (install Node.js and run: python scripts/tasks.py setup)"
+        )
         return
     for script in scripts:
         run([npm, "run", "--silent", script], cwd=pkg_dir)
@@ -104,7 +108,9 @@ def lint() -> None:
     if sim_dir.exists():
         backend_py = require_environment(PACKAGES[1])
         run([str(backend_py), "-m", "ruff", "check", str(sim_dir)], cwd=ROOT)
-        run([str(backend_py), "-m", "ruff", "format", "--check", str(sim_dir)], cwd=ROOT)
+        run(
+            [str(backend_py), "-m", "ruff", "format", "--check", str(sim_dir)], cwd=ROOT
+        )
         run([str(backend_py), "-m", "mypy", "--strict", str(sim_dir)], cwd=ROOT)
     node_npm(SDK, "lint", "typecheck")
     node_npm(PORTAL, "lint", "typecheck")
@@ -193,7 +199,13 @@ def train_keyboard(stage: str, max_participants: int | None) -> None:
                 "--input-root",
                 str(ROOT / "data" / "interim" / "aalto_keystrokes"),
                 "--output",
-                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+                str(
+                    ROOT
+                    / "data"
+                    / "processed"
+                    / "keyboard_features"
+                    / "features.parquet"
+                ),
             ]
         )
     elif stage == "evaluate":
@@ -202,7 +214,13 @@ def train_keyboard(stage: str, max_participants: int | None) -> None:
                 str(interpreter),
                 str(ROOT / "scripts" / "evaluate_keyboard.py"),
                 "--input",
-                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+                str(
+                    ROOT
+                    / "data"
+                    / "processed"
+                    / "keyboard_features"
+                    / "features.parquet"
+                ),
                 "--output",
                 str(ROOT / "results" / "keyboard" / "evaluation.csv"),
             ]
@@ -213,13 +231,21 @@ def train_keyboard(stage: str, max_participants: int | None) -> None:
                 str(interpreter),
                 str(ROOT / "scripts" / "export_keyboard_onnx.py"),
                 "--input",
-                str(ROOT / "data" / "processed" / "keyboard_features" / "features.parquet"),
+                str(
+                    ROOT
+                    / "data"
+                    / "processed"
+                    / "keyboard_features"
+                    / "features.parquet"
+                ),
                 "--output-dir",
                 str(ROOT / "backend" / "models" / "keyboard-v1"),
             ]
         )
     else:
-        raise ValueError("train-keyboard supports --stage events, features, evaluate, or onnx")
+        raise ValueError(
+            "train-keyboard supports --stage events, features, evaluate, or onnx"
+        )
 
 
 def keyboard_privacy() -> None:
@@ -247,7 +273,11 @@ def train_mouse(stage: str, max_sessions: int | None) -> None:
                 str(ROOT / "data" / "interim"),
                 "--output-root",
                 str(ROOT / "data" / "processed" / "mouse_features"),
-                *([] if max_sessions is None else ["--max-sessions", str(max_sessions)]),
+                *(
+                    []
+                    if max_sessions is None
+                    else ["--max-sessions", str(max_sessions)]
+                ),
             ]
         )
     elif stage == "baselines":
@@ -311,6 +341,36 @@ def train_mouse(stage: str, max_sessions: int | None) -> None:
         )
 
 
+def eval_all() -> None:
+    """Regenerate all Phase 10 evaluation tables and figures and sync docs/report_assets/."""
+    interpreter = require_environment(PACKAGES[0])
+    run(
+        [
+            str(interpreter),
+            str(ROOT / "scripts" / "eval_all.py"),
+            "--results-dir",
+            str(ROOT / "results"),
+            "--report-assets-dir",
+            str(ROOT / "docs" / "report_assets"),
+        ]
+    )
+
+
+def loadtest() -> None:
+    """Run the four Phase 10 load-test scenarios and write results/system/loadtest_summary.*."""
+    interpreter = require_environment(PACKAGES[1])
+    run(
+        [
+            str(interpreter),
+            str(ROOT / "loadtest" / "runner.py"),
+            "--results-dir",
+            str(ROOT / "results"),
+            "--report-assets-dir",
+            str(ROOT / "docs" / "report_assets"),
+        ]
+    )
+
+
 def serve() -> None:
     """Start the FastAPI scoring and token backend via uvicorn."""
     interpreter = require_environment(PACKAGES[1])
@@ -333,7 +393,9 @@ def demo(*, protection_mode: str = "passive", dry_run: bool = False) -> None:
     """Start the backend (in-memory store, SQLite) and the portal dev server (P7-19)."""
     mode = protection_mode.strip().lower()
     if mode not in {"passive", "off"}:
-        raise ValueError(f"--protection-mode must be 'passive' or 'off', got {protection_mode!r}")
+        raise ValueError(
+            f"--protection-mode must be 'passive' or 'off', got {protection_mode!r}"
+        )
 
     backend_py = require_environment(PACKAGES[1])
     npm = shutil.which("npm")
@@ -373,7 +435,9 @@ def demo(*, protection_mode: str = "passive", dry_run: bool = False) -> None:
         f"STORE_BACKEND={backend_env['STORE_BACKEND']}, "
         f"DATABASE_URL={backend_env['DATABASE_URL']})"
     )
-    print("  Backend API : http://127.0.0.1:8000 (stats: http://127.0.0.1:8000/portal-api/stats)")
+    print(
+        "  Backend API : http://127.0.0.1:8000 (stats: http://127.0.0.1:8000/portal-api/stats)"
+    )
     print("  Mock Portal : http://127.0.0.1:5173")
     if dry_run:
         print(f"  [dry-run] backend_cmd: {' '.join(backend_cmd)}")
@@ -406,7 +470,9 @@ def main() -> int:
     parser.add_argument("--stage", default="features")
     parser.add_argument("--max-sessions", type=int, default=None)
     parser.add_argument("--max-participants", type=int, default=None)
-    parser.add_argument("--protection-mode", default="passive", choices=("passive", "off"))
+    parser.add_argument(
+        "--protection-mode", default="passive", choices=("passive", "off")
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     command = args.command
@@ -429,6 +495,10 @@ def main() -> int:
             keyboard_privacy()
         elif command == "train-mouse":
             train_mouse(args.stage, args.max_sessions)
+        elif command == "eval-all":
+            eval_all()
+        elif command == "loadtest":
+            loadtest()
         elif command == "serve":
             serve()
         elif command == "demo":

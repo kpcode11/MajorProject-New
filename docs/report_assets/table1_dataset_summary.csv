@@ -1,0 +1,16 @@
+dataset,domain,bot_type,label,n_windows,n_sessions
+delbot_mouse,circle_task,human,0,1070,954
+delbot_mouse,circle_task,gan,1,1899,1899
+delbot_mouse,circle_task,naturalmousemotion,1,877,234
+delbot_mouse,circle_task,pyhm,1,55,55
+delbot_mouse,circle_task,pynput,1,531,351
+ieee_blog_bots,blog_platform,human,0,501,44
+ieee_blog_bots,blog_platform,fallible,1,302,35
+ieee_blog_bots,blog_platform,humanish,1,59,12
+ieee_blog_bots,blog_platform,mimic,1,252,35
+web_bot_detection,wiki_part1,human,0,3149,50
+web_bot_detection,wiki_part1,advanced,1,2882,50
+web_bot_detection,wiki_part1,moderate,1,1543,50
+web_bot_detection,wiki_part2,human,0,7225,59
+web_bot_detection,wiki_part2,advanced,1,5421,120
+web_bot_detection,wiki_part2,moderate,1,2631,120

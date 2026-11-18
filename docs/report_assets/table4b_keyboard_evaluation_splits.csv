@@ -1,0 +1,5 @@
+group,roc_auc,pr_auc,balanced_accuracy,accuracy,brier_score,eer,thr_1pct_fpr,recall_at_1pct_fpr,actual_fpr_at_1pct_thr,thr_5pct_fpr,recall_at_5pct_fpr,actual_fpr_at_5pct_thr,bot_recall_at_05,tp,fp,tn,fn,n_rows,n_humans,n_bots,model,roc_auc_ci_low,roc_auc_ci_high,pr_auc_ci_low,pr_auc_ci_high
+logistic_regression:overall_with_K3,0.9011,0.9611,0.6876,0.5375,0.4521,0.1957,0.0896,0.3982,0.0101,0.006,0.5316,0.0501,0.3774,3013,6,2769,4970,10758,2775,7983,logistic_regression,0.888,0.9138,0.954,0.9683
+logistic_regression:in_dist_K1_K2_K4,1.0,1.0,0.9989,0.999,0.0007,0.0005,0.0896,1.0,0.0101,0.006,1.0,0.0501,1.0,3003,6,2769,0,5778,2775,3003,logistic_regression,1.0,1.0,1.0,1.0
+lightgbm_tuned:overall_with_K3,0.9969,0.9986,0.69,0.54,0.4592,0.0101,0.0,0.9907,0.0101,0.0,0.9992,0.0501,0.3801,3034,0,2775,4949,10758,2775,7983,lightgbm_tuned,0.9935,0.9993,0.9968,0.9997
+lightgbm_tuned:in_dist_K1_K2_K4,1.0,1.0,1.0,1.0,0.0,0.0,0.0,1.0,0.0101,0.0,1.0,0.0501,1.0,3003,0,2775,0,5778,2775,3003,lightgbm_tuned,1.0,1.0,1.0,1.0
