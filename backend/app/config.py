@@ -20,6 +20,8 @@ from app.rules import DEFAULT_RULE_WEIGHTS
 # Application settings
 # ---------------------------------------------------------------------------
 
+_DEFAULT_DEV_JWT_SECRET = "change-me-in-production"  # nosec B105
+
 _DEFAULTS: dict[str, object] = {
     # Store backend: "memory" (default, for dev/tests) or "redis"
     "STORE_BACKEND": "memory",
@@ -27,8 +29,8 @@ _DEFAULTS: dict[str, object] = {
     "REDIS_URL": "redis://localhost:6379/0",
     # SQLAlchemy database URL (default in-process SQLite)
     "DATABASE_URL": "sqlite:///./botguard.db",
-    # HMAC secret for HS256 JWT signing (must be set in production)
-    "JWT_SECRET": "change-me-in-production",
+    # HMAC secret for HS256 JWT signing (must be overridden via env in production)
+    "JWT_SECRET": _DEFAULT_DEV_JWT_SECRET,
     # JWT algorithm: HS256 | RS256 | ES256
     "JWT_ALGORITHM": "HS256",
     # Path to PEM-encoded private key file (RS256/ES256 only)

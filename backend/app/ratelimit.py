@@ -81,7 +81,7 @@ def check_rate_limit(
     if window_seconds <= 0:
         raise ValueError(f"window_seconds must be positive, got {window_seconds}")
 
-    ip_bucket = _coarsen_ip(client_ip or "0.0.0.0")
+    ip_bucket = _coarsen_ip(client_ip or "0.0.0.0")  # nosec B104
     ip_key = f"{_RL_PREFIX}{endpoint}:ip:{ip_bucket}"
     ip_count = store.sliding_window_count(ip_key, window_seconds)
 

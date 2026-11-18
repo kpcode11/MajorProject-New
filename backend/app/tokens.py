@@ -205,8 +205,9 @@ class _PurePythonES256Algorithm(Algorithm):
             hashlib.sha256,
         ).digest()
         k = (int.from_bytes(k_seed, "big") % (_P256_N - 1)) + 1
-        pt = _p256_mul(k, (_P256_GX, _P256_GY))
-        assert pt is not None
+        pt = _p256_mul(k, (_P256_GX, (_P256_GY)))
+        if pt is None:
+            raise jwt.InvalidKeyError("ES256 scalar multiplication produced point at infinity")
         r = pt[0] % _P256_N
         s = (pow(k, _P256_N - 2, _P256_N) * (z + r * d)) % _P256_N
         if s > _P256_N // 2:
@@ -285,7 +286,8 @@ def generate_pem_keypair(algorithm: Literal["RS256", "ES256"] = "RS256") -> tupl
         seed_int = int.from_bytes(hashlib.sha256(b"botguard-es256-key").digest(), "big")
         d = (seed_int % (_P256_N - 1)) + 1
         pub_pt = _p256_mul(d, (_P256_GX, _P256_GY))
-        assert pub_pt is not None
+        if pub_pt is None:
+            raise ValueError("ES256 public key derivation produced point at infinity")
         qx, qy = pub_pt
         priv_payload = base64.b64encode(
             json.dumps({"alg": "ES256", "d": d, "qx": qx, "qy": qy}).encode("utf-8")

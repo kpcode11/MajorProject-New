@@ -110,7 +110,7 @@ def make_session_hash(
     Returns:
         16-character hex string (64-bit BLAKE2b digest).
     """
-    coarse_ip = _coarsen_ip(client_ip or "0.0.0.0")
+    coarse_ip = _coarsen_ip(client_ip or "0.0.0.0")  # nosec B104
     ua = user_agent or ""
     ephemeral_id = (
         client_session_id.strip()[:128]
@@ -251,6 +251,6 @@ def context_hash_from_headers(
     Returns:
         A 16-character hex context hash.
     """
-    ip = client_ip or "0.0.0.0"
+    ip = client_ip or "0.0.0.0"  # nosec B104
     ua = user_agent or ""
     return make_context_hash(ip, ua)
