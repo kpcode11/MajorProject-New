@@ -467,5 +467,5 @@ Following the project's scientific-honesty checklist (see [`docs/model_card.md`]
 - **CaptchaSolve30k:** Public human game-interaction trajectory dataset. Used strictly as a human-only FPR stress test in compliance with its licence forbidding re-identification and biometric profiling.
 - **Aalto 136M Keystrokes Dataset:** Dhakal, V., Feit, A. M., Kristensson, P. O., & Oulasvirta, A. (2018). *Observations on Typing from 136 Million Keystrokes.* Proceedings of CHI 2018, DOI [`10.1145/3173574.3174220`](https://doi.org/10.1145/3173574.3174220). (CC BY-NC-SA 4.0; key identities stripped at ingestion.)
 
-### Repository Licence
-This codebase is released for academic and Smart India Hackathon (SIH1672) demonstration purposes. External datasets remain governed by their respective upstream licences and are never committed to this repository.
+### Repository Licence & Citation
+This codebase is released under the [MIT License](LICENSE). If you use this software or evaluation pipeline, please cite it using [`CITATION.cff`](CITATION.cff). External datasets remain governed by their respective upstream licences and are never committed to this repository.
