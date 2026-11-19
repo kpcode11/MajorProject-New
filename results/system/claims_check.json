@@ -1,0 +1,182 @@
+{
+  "passed": true,
+  "docs_checked": [
+    "README.md",
+    "docs/model_card.md"
+  ],
+  "corpus_size": 3195,
+  "claims_extracted": 400,
+  "claim_failures_count": 0,
+  "canonical_checks_total": 14,
+  "canonical_checks_failed": 0,
+  "claim_failures": [],
+  "canonical_checks": [
+    {
+      "name": "mouse_in_dist_all_features_roc_auc",
+      "source": "results/mouse/evaluation_splits.csv",
+      "expected": 0.9999,
+      "formatted": "0.9999",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "mouse_cross_phase_p1_to_p2_no_shortcuts_roc_auc",
+      "source": "results/mouse/evaluation_splits.csv",
+      "expected": 0.9785,
+      "formatted": "0.9785",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "mouse_cross_phase_p2_to_p1_no_shortcuts_roc_auc",
+      "source": "results/mouse/evaluation_splits.csv",
+      "expected": 0.997,
+      "formatted": "0.9970",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "mouse_cross_dataset_ieee_no_shortcuts_roc_auc",
+      "source": "results/mouse/evaluation_splits.csv",
+      "expected": 0.9305,
+      "formatted": "0.9305",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "mouse_lobo_gan_roc_auc",
+      "source": "results/mouse/lobo_evaluation.csv",
+      "expected": 0.4872,
+      "formatted": "0.4872",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "keyboard_lr_k3_roc_auc",
+      "source": "results/keyboard/per_generator.csv",
+      "expected": 0.8415,
+      "formatted": "0.8415",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "keyboard_lgbm_k3_roc_auc",
+      "source": "results/keyboard/per_generator.csv",
+      "expected": 0.9951,
+      "formatted": "0.9951",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "fusion_stacker_brier",
+      "source": "results/fusion/fusion_comparison.csv",
+      "expected": 0.0001,
+      "formatted": "0.0001",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "system_scoring_latency_p50_ms",
+      "source": "results/system/scoring_latency.json",
+      "expected": 1.6498,
+      "formatted": "1.65",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "system_scoring_latency_p95_ms",
+      "source": "results/system/scoring_latency.json",
+      "expected": 15.1606,
+      "formatted": "15.16",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "system_scoring_throughput_rps",
+      "source": "results/system/scoring_latency.json",
+      "expected": 325.58,
+      "formatted": "325.58",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "system_sdk_esm_gzip_kb",
+      "source": "results/system/sdk_size.json",
+      "expected": 16.23,
+      "formatted": "16.23",
+      "found_in": [
+        "README.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "system_loadtest_throughput_rps",
+      "source": "results/system/loadtest_summary.json",
+      "expected": 1155.42,
+      "formatted": "1,155.42",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "system_security_tests_passed",
+      "source": "results/system/security_checks.json",
+      "expected": 72.0,
+      "formatted": "72",
+      "found_in": [
+        "README.md",
+        "docs/model_card.md"
+      ],
+      "passed": true,
+      "detail": "ok"
+    }
+  ]
+}

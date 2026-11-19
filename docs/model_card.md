@@ -90,10 +90,10 @@ partitions (`0` overlapping groups). Full tables with 200-iteration
 group-bootstrap 95% confidence intervals are saved under `results/mouse/`:
 
 1. **In-Distribution Baselines & Tuned Models (`results/mouse/baselines.csv`, `evaluation_splits.csv`, 814 test groups / 5,252 windows)**:
-   - `majority`: ROC-AUC `0.5000`, PR-AUC `0.6340`, Balanced Accuracy `0.5000`
-   - `logistic_regression` (scaled): ROC-AUC `0.9902`, PR-AUC `0.9942`, Balanced Accuracy `0.9554`
-   - `random_forest`: ROC-AUC `0.9997`, PR-AUC `0.9998`, Balanced Accuracy `0.9938`
-   - `lightgbm` (default): ROC-AUC `0.9997`, PR-AUC `0.9998`, Balanced Accuracy `0.9932`
+   - `majority`: ROC-AUC `0.5000`, Accuracy `0.6340`, Balanced Accuracy `0.5000`
+   - `logistic_regression` (scaled): ROC-AUC `0.9902`, Accuracy `0.9596`, Balanced Accuracy `0.9554`
+   - `random_forest`: ROC-AUC `0.9997`, Accuracy `0.9939`, Balanced Accuracy `0.9938`
+   - `lightgbm` (default): ROC-AUC `0.9997`, Accuracy `0.9930`, Balanced Accuracy `0.9932`
    - `lightgbm_tuned` (all 120 features): **ROC-AUC `0.9999` `[0.9999, 1.0000]`**, PR-AUC `1.0000`, Recall@1%FPR `0.9994`, Balanced Accuracy `0.9956`
    - `lightgbm_no_shortcuts` (100 non-shortcut features): **ROC-AUC `0.9990` `[0.9982, 0.9996]`**, PR-AUC `0.9991`, Recall@1%FPR `0.9904`, Balanced Accuracy `0.9866`
 
@@ -136,8 +136,8 @@ group-bootstrap 95% confidence intervals are saved under `results/mouse/`:
 - Dataset, phase, browser, screen-size, sampling, and task differences can
   create spurious signal (`dataset_fingerprint_accuracy = 0.9985` across raw
   sources). Excluding shortcut features (`n_points`, `duration_ms`, `dt_mean`,
-  `dt_mode_fraction`) is essential when transferring across phases (`+0.1488`
-  ROC-AUC on `P1 -> P2`).
+  `dt_mode_fraction`) is essential when transferring across phases (lifting
+  `P1 -> P2` ROC-AUC from `0.8297` to `0.9785`).
 - Mouse trajectories can be missing, noisy, or affected by accessibility
   devices and assistive technology. Missing data must follow the documented
   failure policy rather than silently becoming a bot decision.
@@ -181,14 +181,14 @@ events, `0` prohibited columns).
 Two keyboard models are trained and exported to ONNX:
 
 1. **Primary reference (`backend/models/keyboard-v1/model.onnx`)**: Scaled
-   Logistic Regression (`C = 1.0`, selected via 5-fold `StratifiedGroupKFold`
+   Logistic Regression (`C = 0.1`, selected via 5-fold `StratifiedGroupKFold`
    on training groups, `CV ROC-AUC = 1.0000`) with median imputation and
    standard scaling over 31 timing/rhythm features (`max_abs_diff = 8.04e-08 < 1e-4`
    native-vs-ONNX parity across 500 held-out test windows).
 2. **Non-linear comparison (`backend/models/keyboard-lgbm-v1/model.onnx`)**:
-   Tuned LightGBM (`n_estimators = 113`, `learning_rate = 0.0884`,
-   `num_leaves = 29`, `min_child_samples = 19`, `subsample = 0.8759`,
-   `colsample_bytree = 0.6774`).
+   Tuned LightGBM (`n_estimators = 242`, `learning_rate = 0.0806`,
+   `num_leaves = 21`, `min_child_samples = 33`, `subsample = 0.8219`,
+   `colsample_bytree = 0.8716`).
 
 ### Dataset, generators & evaluation results
 

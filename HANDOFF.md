@@ -3,24 +3,14 @@
 - **Last updated:** 2026-11-19
 - **Branch:** `phase-10-final-eval-release`
 - **Current phase:** Phase 10 — Final evaluation, documentation, and release (`docs/plan/phase_10.md`)
-- **Last completed tasks:** `P10-06` (Final model card), `P10-07` (Final technical documentation), `P10-08` (Final README)
-- **Next task:** `P10-09` — Claims checker (`scripts/check_claims.py`)
+- **Last completed task:** `P10-09` (Claims checker)
+- **Next task:** `P10-11` (Release metadata: `CITATION.cff`, `LICENSE`, tag `v1.0.0` — awaiting human licence choice) / `P10-10` (Demo-video script `[HUMAN]`)
 
 ## What was just done
-- **P10-06 (`docs/model_card.md`):** Finalised model card with Executive Summary, Intended/Prohibited Uses, Dataset Availability disclosure (including unavailable `BeCAPTCHA-Mouse`/`CMU` and skipped Phase 8 `touch: null`), Mouse/Keyboard/Fusion metrics with 95% CIs, prevalence reweighting, threshold trade-offs, system serving performance, fairness & accessibility (`MISSING_MOUSE_VALID_KB_MAX_SCORE=0.50`, `axe-core` `0` violations across `11` states), Appendix E.7 honesty checklist, and no-auto-training update/governance policy.
-- **P10-07 (`docs/architecture.md`, `docs/api.md`, `docs/signals.md`, `docs/threat_model.md`):** Updated architecture, API, and signals docs to match final Phase 9–10 implementation (`120` mouse / `31` keyboard features, `R01`–`R13`, `policy.yaml` fail-safe, `sendRawTrace=false`, rotating `X-Session-Id`, `retention.py` 7d/30d TTL, `/portal-api/*`, `/admin/*`, `touch: null`), and created `docs/threat_model.md`.
-- **P10-08 (`README.md`):** Finalised `README.md` with updated Mermaid diagram, 7-component layout, dataset acquisition & disclosures, verified ML & end-to-end system/load/security tables, quickstart (`setup`, `demo`, `eval-all`, `loadtest`), Appendix E.7 honesty checklist, docs index, and dataset citations/licences.
-- **Bonus evaluation fixes:** Replaced hardcoded rule-layer ablation in `scripts/eval_all.py` with measured replay (`scripts/rule_layer_ablation.py`), fixed `latency_ms` key in `scripts/system_results.py`, and regenerated `results/` and `docs/report_assets/` via `python scripts/tasks.py eval-all`.
+- **P10-09 (`scripts/check_claims.py`):** Implemented stdlib-only claims checker extracting 400 empirical numeric claims from `README.md` and `docs/model_card.md` and verifying them against 3,195 measured values across `results/` CSV/JSON files (plus 14/14 canonical headline checks).
+- **Remediated doc mismatches caught by the checker:** Updated stale keyboard hyperparameters in `docs/model_card.md` (`C = 0.1`, `n_estimators = 242`, `learning_rate = 0.0806`, `num_leaves = 21`, `min_child_samples = 33`, `subsample = 0.8219`, `colsample_bytree = 0.8716` from `results/keyboard/hparams.json`), aligned `README.md` baseline/ablation rows strictly to `results/mouse/baselines.csv` and `results/mouse/ablations.csv`, and exact-matched CaptchaSolve30k FPR range (`31.71%`–`57.25%`).
+- **CI & tests:** Wired `python scripts/check_claims.py` into `.github/workflows/ci.yml`, generated `results/system/claims_check.json`, and added 3 tests in `ml/tests/test_check_claims.py`.
 
 ## Exact next step
-1. Set `P10-09` to `IN_PROGRESS` in `PROGRESS.md` and `HANDOFF.md`.
-2. Implement `scripts/check_claims.py` (per `docs/plan/phase_10.md` P10-09) to extract numeric claims from `README.md` and `docs/model_card.md` (and report docs) and verify them against `results/` CSV/JSON files, outputting a report and failing on mismatches.
-3. Add unit tests for `scripts/check_claims.py`, run it on the repo, fix any discrepancies found, run `python scripts/tasks.py lint` and `python scripts/tasks.py test-fast`, update `PROGRESS.md` + `HANDOFF.md`, and commit as `P10-09: ...`.
-
-## Key commands
-```powershell
-python scripts/status.py
-python scripts/tasks.py lint
-python scripts/tasks.py test-fast
-python scripts/tasks.py eval-all
-```
+1. Confirm licence choice from human (e.g., MIT, Apache-2.0, GPL-3.0) and whether to tag `v1.0.0` now on `phase-10-final-eval-release`.
+2. Create `LICENSE`, `CITATION.cff`, verify `python scripts/tasks.py lint` & `python scripts/tasks.py test-fast`, update `PROGRESS.md` + `HANDOFF.md`, commit `P10-11`, and create annotated git tag `v1.0.0`.

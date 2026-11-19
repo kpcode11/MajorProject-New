@@ -187,7 +187,7 @@ Raw datasets remain read-only outside the repository (paths configured in `confi
 | **IEEE Blog Bots (`ieee_blog_bots`)** | Mouse | Cross-dataset & LOBO generalization (`human`, `fallible`, `humanish`, `mimic`) | **126 sessions / 1,114 windows** | IEEE DataPort — DOI `10.21227/z1tf-1v33` |
 | **DELBOT-Mouse (`delbot_mouse`)** | Mouse | Multi-generator bot & human trajectories (`human`, `gan`, `naturalmousemotion`, `pyhm`, `pynput`) | **3,493 sessions / 4,432 windows** | DELBOT-Mouse public repository (circle-task human & multi-generator bot trajectories) |
 | **CaptchaSolve30k (`captchasolve30k`)** | Mouse | **Human-only FPR stress test** across 3 high-speed 240 Hz game tasks (`polygon-stacking`, `sheep-herding`, `thread-the-needle`) | **300 sessions / 662 windows** (held out from training) | CaptchaSolve30k public dataset (non-biometric, non-re-identification terms strictly observed) |
-| **Aalto 136M Keystrokes (`aalto_keystrokes`)** | Keyboard | Human typing dynamics paired with synthetic bot generators `K1`–`K4` (`K3` held out) | **997 participants / 14,941 human windows / 725,436 key events** (`+ 19,921` synthetic bot windows) | Dhakal et al., CHI 2018 — DOI `10.1145/3173574.3174220` |
+| **Aalto 136M Keystrokes (`aalto_keystrokes`)** | Keyboard | Human typing dynamics paired with synthetic bot generators `K1`–`K4` (`K3` held out) | **997 participants / 14,941 human windows / 725,436 key events** (`+ 14,941` `K1`/`K2`/`K4` + `4,980` held-out `K3` synthetic bot windows) | Dhakal et al., CHI 2018 — DOI `10.1145/3173574.3174220` |
 
 ### Unavailable / Out-of-Scope Datasets (Explicit Disclosure)
 - **BeCAPTCHA-Mouse** and **CMU Keystroke**: Not publicly downloadable during data acquisition (see [`docs/decision_log.md`](docs/decision_log.md)); omitted cleanly rather than fabricated.
@@ -225,10 +225,10 @@ From [`results/mouse/baselines.csv`](results/mouse/baselines.csv) and [`results/
 
 | Model | Features | ROC-AUC (95% Group-Bootstrap CI) | PR-AUC | Recall @ 1% FPR | Recall @ 5% FPR | Balanced Acc | Brier Score |
 | :--- | ---: | :--- | ---: | ---: | ---: | ---: | ---: |
-| `majority` | 120 | `0.5000` | `0.6340` | — | — | `0.5000` | `0.3660` |
-| `logistic_regression` (scaled) | 120 | `0.9902` | `0.9942` | — | — | `0.9554` | `0.0366` |
-| `random_forest` | 120 | `0.9997` | `0.9998` | — | — | `0.9938` | `0.0091` |
-| `lightgbm` (default) | 120 | `0.9997` | `0.9998` | — | — | `0.9932` | `0.0046` |
+| `majority` | 120 | `0.5000` | — | — | — | `0.5000` | — |
+| `logistic_regression` (scaled) | 120 | `0.9902` | — | — | — | `0.9554` | — |
+| `random_forest` | 120 | `0.9997` | — | — | — | `0.9938` | — |
+| `lightgbm` (default) | 120 | `0.9997` | — | — | — | `0.9932` | — |
 | **`lightgbm_tuned` (`all_features`)** | **120** | **`0.9999` `[0.9999, 1.0000]`** | **`1.0000`** | **`0.9994`** | **`1.0000`** | **`0.9956`** | **`0.0027`** |
 | **`lightgbm_tuned` (`no_shortcuts`)** | **100** | **`0.9990` `[0.9982, 0.9996]`** | **`0.9991`** | **`0.9904`** | **`0.9991`** | **`0.9866`** | **`0.0093`** |
 
@@ -285,12 +285,12 @@ Each row in [`results/mouse/lobo_evaluation.csv`](results/mouse/lobo_evaluation.
 ### 5.5 Feature-Group Ablations, Calibration & ONNX Parity
 
 - **Feature-Group Ablations** ([`results/mouse/ablations.csv`](results/mouse/ablations.csv), Scaled Logistic Regression reference):
-  - `all_with_shortcuts` (120 features): **ROC-AUC `0.9902`**, PR-AUC `0.9942`
-  - `all_without_shortcuts` (108 features): **ROC-AUC `0.9862`**, PR-AUC `0.9912`
-  - `group_timing` (38 features): **ROC-AUC `0.9687`**, PR-AUC `0.9781`
-  - `group_kinematics` (54 features): **ROC-AUC `0.9648`**, PR-AUC `0.9760`
-  - `group_geometry` (21 features): **ROC-AUC `0.8890`**, PR-AUC `0.9277`
-  - `group_click` (9 features): **ROC-AUC `0.5330`**, PR-AUC `0.6929`
+  - `all_with_shortcuts` (120 features): **ROC-AUC `0.9902`**
+  - `all_without_shortcuts` (108 features): **ROC-AUC `0.9862`**
+  - `group_timing` (38 features): **ROC-AUC `0.9687`**
+  - `group_kinematics` (54 features): **ROC-AUC `0.9648`**
+  - `group_geometry` (21 features): **ROC-AUC `0.8890`**
+  - `group_click` (9 features): **ROC-AUC `0.5330`**
 - **Session Aggregation & Probability Calibration** ([`results/mouse/aggregation.csv`](results/mouse/aggregation.csv), [`results/mouse/calibration.json`](results/mouse/calibration.json)):
   - Aggregating window probabilities across a session via `mean` achieves a session-level test ROC-AUC of **`1.0000`** (`Brier = 0.0020`).
   - Isotonic regression calibration on held-out validation groups reduces test Brier loss from `0.0023` (uncalibrated) to **`0.0018`**.
@@ -436,7 +436,7 @@ Following the project's scientific-honesty checklist (see [`docs/model_card.md`]
 - **High in-distribution AUC (`0.9999`) is NOT generalisation:** Dataset fingerprinting achieves `0.9985` accuracy due to collection-rate differences. Always cite the non-shortcut cross-phase (`0.9785` / `0.9970`), cross-dataset (`0.9305`), and LOBO (`0.4872`–`0.9950`) results alongside in-distribution scores.
 - **Zero-shot GAN mimicry blind spot:** On `delbot_mouse:gan` (a GAN trained directly on human trajectories), the mouse-only model drops to `0.4872` ROC-AUC when no GAN samples are in training. Defence relies on fusing mouse kinematics with environment rules (`R01`–`R13`) and keyboard timing.
 - **Synthetic keyboard bots & simulated fusion:** Public real-world bot keystroke datasets were unavailable; keyboard bots (`K1`–`K4`) are synthetic, and desktop fusion (`2,462` sessions) is a **pseudo-session** experiment pairing independent human/bot mouse and keyboard windows.
-- **CaptchaSolve30k domain shift:** Fast 240 Hz game trajectories yield `31.7%`–`57.3%` FPR at a 5% browsing-human threshold (even without shortcut features), demonstrating that thresholds must be recalibrated for non-form interactive canvases.
+- **CaptchaSolve30k domain shift:** Fast 240 Hz game trajectories yield `31.71%`–`57.25%` FPR at a 5% browsing-human threshold (even without shortcut features), demonstrating that thresholds must be recalibrated for non-form interactive canvases.
 - **Mobile touch skipped:** Phase 8 was intentionally skipped; `touch` remains `null` in all API payloads and policy weights.
 - **Prototype-only deployment:** `/admin/*` endpoints have no production SSO/RBAC layer, and human-token signing uses a local HS256 secret (`BOTGUARD_SECRET_KEY`). Do not deploy directly to the public internet without adding authentication, TLS, and external secret management.
 

@@ -19,6 +19,8 @@ jobs:
         run: python scripts/tasks.py lint
       - name: Fast tests
         run: python scripts/tasks.py test-fast
+      - name: Claims check
+        run: python scripts/check_claims.py
 
   sdk:
     name: SDK lint, typecheck, tests and build
