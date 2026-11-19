@@ -282,66 +282,18 @@ def compute_threshold_tradeoff_table(
     return pd.DataFrame(rows)
 
 
-def compute_rule_layer_ablation(sim_runs_path: Path) -> pd.DataFrame:
-    """Compare model_only, rules_only, and combined_max_model_and_rules across simulator tiers."""
-    rows: list[dict[str, Any]] = []
-    if sim_runs_path.exists():
-        records = [
-            json.loads(line)
-            for line in sim_runs_path.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
-        passive = [r for r in records if r.get("protection_mode") == "passive"]
-    else:
-        passive = []
+def load_rule_layer_ablation(ablation_csv_path: Path) -> pd.DataFrame:
+    """Load the measured rule-layer ablation produced by ``scripts/rule_layer_ablation.py``.
 
-    tier_specs = [
-        ("tier1_http", "No token / plain HTTP", 0.0, 1.0, 1.0),
-        (
-            "tier2_playwright",
-            "Headless WebDriver + software WebGL + 0 moves",
-            0.50,
-            0.726,
-            0.726,
-        ),
-        (
-            "tier3_stealth",
-            "Stealth init-script + linear mechanical mouse",
-            0.962,
-            0.30,
-            0.962,
-        ),
-        (
-            "tier4_humanlike",
-            "Cubic Bezier + smoothstep + Gaussian jitter",
-            0.784,
-            0.0,
-            0.784,
-        ),
-    ]
-    for tier_id, desc, mean_model, mean_rule, mean_combined in tier_specs:
-        tier_key = tier_id.split("_")[0]
-        tier_runs = [r for r in passive if r.get("tier") == tier_key]
-        n_runs = len(tier_runs) if tier_runs else 25
-        observed_caught = (
-            float(np.mean([r.get("outcome") != "allowed" for r in tier_runs]))
-            if tier_runs
-            else 1.0
+    The table is computed by replaying the seeded simulator against the real scorer; this
+    function never fabricates values. Run ``scripts/rule_layer_ablation.py`` first.
+    """
+    if not ablation_csv_path.exists():
+        raise FileNotFoundError(
+            f"{ablation_csv_path} is missing; run "
+            "backend\\.venv\\Scripts\\python.exe scripts/rule_layer_ablation.py first"
         )
-        rows.append(
-            {
-                "bot_tier": tier_id,
-                "description": desc,
-                "n_sessions": n_runs,
-                "rules_only_caught_rate": round(1.0 if mean_rule >= 0.15 else 0.0, 4),
-                "model_only_caught_rate": round(1.0 if mean_model >= 0.15 else 0.0, 4),
-                "combined_max_caught_rate": round(observed_caught, 4),
-                "mean_rule_score": round(mean_rule, 4),
-                "mean_model_score": round(mean_model, 4),
-                "mean_combined_score": round(mean_combined, 4),
-            }
-        )
-    return pd.DataFrame(rows)
+    return pd.read_csv(ablation_csv_path)
 
 
 def _plot_roc_pr_curves(
@@ -495,7 +447,7 @@ def _plot_ablation_bar_chart(
         )
         ax2.bar(
             x + w,
-            rule_abl_df["combined_max_caught_rate"],
+            rule_abl_df["combined_caught_rate"],
             width=w,
             label="Combined (Rules + ML)",
             color="#157347",
@@ -815,13 +767,15 @@ def run_eval_all(
             )
 
     # New P10-02 tables: Rule-layer ablation, Prevalence evaluation, Threshold trade-off
-    rule_abl_df = compute_rule_layer_ablation(sys_dir / "sim_runs.jsonl")
+    rule_abl_df = load_rule_layer_ablation(sys_dir / "rule_layer_ablation.csv")
     generated_files.extend(
         save_csv_and_md(
             rule_abl_df,
             sys_dir / "rule_layer_ablation.csv",
             "Table 5b — Rule-Layer vs ML-Model Ablation Across Simulator Bot Tiers",
-            note="Compares deterministic environment rules only, ML models only, and combined max(model, rule).",
+            note=(
+                "Measured by replaying the seed-42 simulator against the real scorer; a session is caught when the policy verdict on its first /v1/assess score is not allow (before any step-up). Sessions rejected before /v1/assess are excluded from the rates and counted in n_blocked_before_assess."
+            ),
             report_assets_dir=report_assets_dir,
             asset_stem="table5b_rule_layer_ablation",
         )

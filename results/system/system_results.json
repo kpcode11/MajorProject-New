@@ -24,11 +24,11 @@
       "blocked_at_api": 0,
       "allow_rate": 1.0,
       "caught_or_blocked_rate": 0.0,
-      "latency_min_ms": 0.0,
-      "latency_p50_ms": 0.0,
-      "latency_mean_ms": 0.0,
-      "latency_p95_ms": 0.0,
-      "latency_max_ms": 0.0
+      "latency_min_ms": 0.41,
+      "latency_p50_ms": 0.52,
+      "latency_mean_ms": 2.58,
+      "latency_p95_ms": 8.26,
+      "latency_max_ms": 21.81
     },
     {
       "protection_mode": "off",
@@ -41,11 +41,11 @@
       "blocked_at_api": 0,
       "allow_rate": 1.0,
       "caught_or_blocked_rate": 0.0,
-      "latency_min_ms": 0.0,
-      "latency_p50_ms": 0.0,
-      "latency_mean_ms": 0.0,
-      "latency_p95_ms": 0.0,
-      "latency_max_ms": 0.0
+      "latency_min_ms": 1.9,
+      "latency_p50_ms": 2.67,
+      "latency_mean_ms": 3.13,
+      "latency_p95_ms": 6.91,
+      "latency_max_ms": 9.64
     },
     {
       "protection_mode": "off",
@@ -58,11 +58,11 @@
       "blocked_at_api": 0,
       "allow_rate": 1.0,
       "caught_or_blocked_rate": 0.0,
-      "latency_min_ms": 0.0,
-      "latency_p50_ms": 0.0,
-      "latency_mean_ms": 0.0,
-      "latency_p95_ms": 0.0,
-      "latency_max_ms": 0.0
+      "latency_min_ms": 3.58,
+      "latency_p50_ms": 4.67,
+      "latency_mean_ms": 5.8,
+      "latency_p95_ms": 12.6,
+      "latency_max_ms": 14.23
     },
     {
       "protection_mode": "off",
@@ -75,11 +75,11 @@
       "blocked_at_api": 0,
       "allow_rate": 1.0,
       "caught_or_blocked_rate": 0.0,
-      "latency_min_ms": 0.0,
-      "latency_p50_ms": 0.0,
-      "latency_mean_ms": 0.0,
-      "latency_p95_ms": 0.0,
-      "latency_max_ms": 0.0
+      "latency_min_ms": 4.48,
+      "latency_p50_ms": 5.73,
+      "latency_mean_ms": 6.21,
+      "latency_p95_ms": 10.75,
+      "latency_max_ms": 10.98
     },
     {
       "protection_mode": "passive",
@@ -92,11 +92,11 @@
       "blocked_at_api": 19,
       "allow_rate": 0.0,
       "caught_or_blocked_rate": 1.0,
-      "latency_min_ms": 0.0,
-      "latency_p50_ms": 0.0,
-      "latency_mean_ms": 0.0,
-      "latency_p95_ms": 0.0,
-      "latency_max_ms": 0.0
+      "latency_min_ms": 0.43,
+      "latency_p50_ms": 0.48,
+      "latency_mean_ms": 1.14,
+      "latency_p95_ms": 3.69,
+      "latency_max_ms": 4.32
     },
     {
       "protection_mode": "passive",
@@ -109,11 +109,11 @@
       "blocked_at_api": 0,
       "allow_rate": 0.0,
       "caught_or_blocked_rate": 1.0,
-      "latency_min_ms": 0.0,
-      "latency_p50_ms": 0.0,
-      "latency_mean_ms": 0.0,
-      "latency_p95_ms": 0.0,
-      "latency_max_ms": 0.0
+      "latency_min_ms": 1.69,
+      "latency_p50_ms": 1.82,
+      "latency_mean_ms": 2.02,
+      "latency_p95_ms": 3.19,
+      "latency_max_ms": 4.68
     },
     {
       "protection_mode": "passive",
@@ -126,11 +126,11 @@
       "blocked_at_api": 0,
       "allow_rate": 0.0,
       "caught_or_blocked_rate": 1.0,
-      "latency_min_ms": 0.0,
-      "latency_p50_ms": 0.0,
-      "latency_mean_ms": 0.0,
-      "latency_p95_ms": 0.0,
-      "latency_max_ms": 0.0
+      "latency_min_ms": 3.36,
+      "latency_p50_ms": 4.37,
+      "latency_mean_ms": 4.51,
+      "latency_p95_ms": 7.42,
+      "latency_max_ms": 8.3
     },
     {
       "protection_mode": "passive",
@@ -143,11 +143,11 @@
       "blocked_at_api": 0,
       "allow_rate": 0.08,
       "caught_or_blocked_rate": 0.92,
-      "latency_min_ms": 0.0,
-      "latency_p50_ms": 0.0,
-      "latency_mean_ms": 0.0,
-      "latency_p95_ms": 0.0,
-      "latency_max_ms": 0.0
+      "latency_min_ms": 4.12,
+      "latency_p50_ms": 4.99,
+      "latency_mean_ms": 5.89,
+      "latency_p95_ms": 10.27,
+      "latency_max_ms": 10.59
     }
   ],
   "sdk_size": {

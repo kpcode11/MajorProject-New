@@ -89,6 +89,23 @@ request correlation information only when that correlation is required by the
 approved local workflow. This document does not authorize production
 deployment or re-identification.
 
+## Rotating session identifiers & optional local feature extraction (Phase 9)
+
+- **Ephemeral session IDs (`P9-05`):** The SDK generates a random in-memory
+  `X-Session-Id` per page load that rotates every 15 minutes (`SESSION_ROTATION_MS`)
+  and is never persisted in cookies, `localStorage`, or `sessionStorage`. The
+  backend combines it with a daily-rotated salt (`daily_session_salt`) and coarse
+  `/24` IPv4 or `/48` IPv6 bucket so sessions cannot be linked across days.
+- **Local feature extraction (`P9-08`, `sendRawTrace: false`):** Callers may
+  enable in-browser feature extraction in `sdk/src/features.ts`, sending only
+  the derived mouse (`120` features) and keyboard (`31` features) maps instead of
+  raw coordinate/timing arrays, with verified `< 1e-9` numerical parity against
+  Python (`results/system/local_features_parity.json`).
+- **Automated TTL retention (`P9-04`):** Optional derived feature JSON is purged
+  after 7 days (`FEATURE_TTL_SECONDS`) and assessment rows after 30 days
+  (`ASSESSMENT_TTL_SECONDS`) by `backend/app/retention.py`. See
+  `docs/privacy_impact.md` for the full signal-by-signal PIA.
+
 ## Fixture coverage
 
 The rule tests cover:

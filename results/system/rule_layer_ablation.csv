@@ -1,5 +1,5 @@
-bot_tier,description,n_sessions,rules_only_caught_rate,model_only_caught_rate,combined_max_caught_rate,mean_rule_score,mean_model_score,mean_combined_score
-tier1_http,No token / plain HTTP,25,1.0,0.0,1.0,1.0,0.0,1.0
-tier2_playwright,Headless WebDriver + software WebGL + 0 moves,25,1.0,1.0,1.0,0.726,0.5,0.726
-tier3_stealth,Stealth init-script + linear mechanical mouse,25,1.0,1.0,1.0,0.3,0.962,0.962
-tier4_humanlike,Cubic Bezier + smoothstep + Gaussian jitter,25,0.0,1.0,0.92,0.0,0.784,0.784
+bot_tier,description,n_sessions_total,n_reached_assess,n_blocked_before_assess,rules_only_caught_rate,model_only_caught_rate,combined_caught_rate,mean_rule_score,mean_model_score,mean_combined_score
+tier1,Plain HTTP client (no browser),25,6,19,1.0,0.0,1.0,0.8,0.0,0.8
+tier2,"Default headless Playwright, direct fill/click",25,25,0,1.0,0.0,1.0,0.7858,0.0,0.7858
+tier3,Playwright with automation-hiding adjustments,25,25,0,0.56,1.0,1.0,0.3981,0.8744,0.8918
+tier4,Playwright with Bezier mouse paths + randomised typing,25,25,0,0.28,1.0,1.0,0.06,0.9023,0.9023

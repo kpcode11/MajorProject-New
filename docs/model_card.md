@@ -1,4 +1,27 @@
-# BotGuard model card
+# BotGuard Model Card (`v1.0.0`)
+
+**Project:** Passive Behaviour-Based Bot Detection to Replace CAPTCHA (SIH1672)
+**Models covered:** `mouse-v1` (Tuned LightGBM ONNX), `keyboard-v1` (Calibrated Scaled Logistic Regression ONNX, plus `keyboard-lgbm-v1` comparison), `fusion-v1` (Score-Level Combiner), and `R01`–`R13` Deterministic Environment Rules.
+**Mobile touch status (Phase 8):** **Skipped (`touch: null`)** per human decision (`docs/decision_log.md`, 2026-11-14). Desktop (mouse + keyboard + environment rules) is the sole trained scope of `v1.0.0`.
+
+## Executive Summary & Intended Use
+
+### Intended Use
+- Provide passive, low-friction bot-risk scoring for a **local mock resident portal** (`DEMO — not a government portal`) so low-risk human sessions proceed without visual or audio CAPTCHA puzzles.
+- Map calibrated risk probabilities combined with deterministic environment rules (`max(model_score, rule_score)`) into action-specific policy verdicts (`allow`, `challenge`, `deny`), returning only coarse bands (`low`, `medium`, `high`) to untrusted clients.
+- Support optional client-side local feature extraction (`sendRawTrace=false`, verified to `< 1e-9` parity in `results/system/local_features_parity.json`) so raw coordinates never leave the browser when privacy-maximising mode is enabled.
+
+### Out-of-Scope & Prohibited Uses
+- **Not a biometric authentication or user-identification system:** Models must never be used to identify, track, or profile individuals (explicitly forbidden by `CaptchaSolve30k` terms and project privacy invariants).
+- **Not a production government portal or WAF replacement:** The target is a mock local portal only; volumetric L3/L4 DDoS mitigation and defeating human-operated CAPTCHA farms are explicit non-goals.
+- **Not a sole automated denial authority for assistive-technology users:** Missing mouse telemetry must never be treated as evidence of automation.
+
+### Dataset Availability & Scope Disclosure
+- **Used public datasets:** Bournemouth `web_bot_detection` (mouse, Phase 1 & Phase 2), IEEE DataPort `ieee_blog_bots` (mouse external test domain), `delbot_mouse` (mouse supplemental/LOBO), `CaptchaSolve30k` (human-only mouse FPR stress test, never trained on), and Aalto 136M `aalto_keystrokes` (human keyboard data, sampled `997` participants, paired with synthetic keyboard bot generators `K1`–`K4`).
+- **Unavailable datasets (no workarounds attempted):** `BeCAPTCHA-Mouse` (unavailable), `CMU Keystroke` (unavailable), `UL-Keystroke` (`repo_only`, no usable dataset).
+- **Omitted modality:** Mobile touch (`Phase 8`) was skipped per human decision (`P8-*` marked `SKIPPED`); `touch: null` is reported in all health and metadata payloads.
+
+---
 
 ## Mouse behaviour model
 
@@ -219,3 +242,43 @@ All four modality-availability regimes (`both_available`, `mouse_only_available`
 `results/fusion/modality_availability.csv`: missing modalities are omitted from
 the fusion calculation, and absence is never treated as evidence of bot
 activity (`treated_as_bot_on_missing = False`).
+
+---
+
+## Prevalence, Threshold Trade-Offs & System Serving Performance
+
+- **Prevalence reweighting (`results/mouse/prevalence_evaluation.csv`, `results/keyboard/prevalence_evaluation.csv`):** Reweighted PR-AUC and precision at 1% and 5% human FPR operating points are reported under `1%`, `5%`, and `20%` bot prevalence per Appendix E.4. At low bot prevalence (`1%`), even a `1%` human FPR bounds raw precision around `~0.50` unless a medium-band step-up challenge absorbs borderline sessions.
+- **Threshold trade-off curves (`results/fusion/threshold_tradeoff.csv`, `docs/report_assets/fig6_threshold_tradeoff_curve.png`):** Sweeping challenge-band width (`deny_at_or_above - allow_below` from `0.00` to `0.90`) on held-out cross-phase (`P1 -> P2`), cross-dataset (`Bournemouth -> IEEE`), and keyboard+`K3` splits confirms that widening the challenge band reduces bot pass-through FNR while keeping direct human deny FPR near zero at the cost of a higher step-up challenge rate.
+- **Serving latency & throughput (`results/system/scoring_latency.json`, `results/system/system_results.md`):** Over `1,000` alternating multimodal ONNX + rule scoring calls on local Windows CPU hardware, server scoring achieves `p50 = 1.65 ms`, `mean = 3.07 ms`, **`p95 = 15.16 ms`** (well under the `200 ms` target), `p99 = 22.07 ms`, and single-worker throughput of **`325.58 req/s`**.
+- **Local feature extraction parity (`results/system/local_features_parity.json`):** TypeScript in-browser extraction (`sendRawTrace=false`) matches Python feature extraction within `1e-9` tolerance across golden mouse and keyboard fixtures, producing identical ONNX risk scores and decisions.
+- **End-to-end simulator & load-test verification (`results/system/sim_summary.csv`, `results/system/rule_layer_ablation.csv`, `results/system/loadtest_summary.md`):** Under `protection_mode=passive` (frozen models, never tuned on the simulator), Tiers 1–3 achieve `100.0%` caught/blocked rate (`25/25` each) and Tier 4 (Bezier + randomised typing) achieves `92.0%` (`23/25`). Across `630` load-test requests (`1,155.42 req/s` overall), `0 / 460` malicious requests reached protected `/portal-api/*` routes with `0` `5xx` errors.
+
+---
+
+## Fairness & Accessibility
+
+- **Missing-modality fairness (`P9-12`, `backend/app/scoring.py`):** Sessions with `0` mouse movement events and valid keyboard navigation (including short `<10`-key `Tab`+`Enter`/PIN flows and slow assistive typing with natural variance) are never auto-denied (`MISSING_MOUSE_VALID_KB_MAX_SCORE = 0.50`, capped in the `medium` challenge band), while synthetic constant-interval keyboard bots (`K1`, `identical_interval_fraction >= 0.80`) remain denied.
+- **Accessible step-up & WCAG audit (`P9-09`–`P9-13`, `docs/accessibility.md`):** `axe-core` (`4.13.0`) and WCAG 2.1 AA contrast checks report `0` violations across `11` portal and step-up modal states (`results/system/axe_audit.json`), and keyboard-only E2E tests pass for both physical `Space` hold and single-press keyboard verification (`portal/test/keyboard_e2e.test.tsx`).
+- **Known accessibility limitations:** Public training datasets contain no documented assistive-technology cohort (head-tracking pointers, switch scanning, or voice dictation), so atypical assistive input may trigger the step-up challenge more frequently; see `docs/accessibility.md` Section 4 for all six documented limitations.
+
+---
+
+## Honesty Checklist (Appendix E.7)
+
+- All model metrics are measured on **public benchmarks**; no live human validation study was performed.
+- Keyboard bot classes (`K1`–`K4`) are **synthetic**; no public labelled human-vs-bot web keystroke dataset was available.
+- Multimodal fusion is evaluated on **simulated pseudo-sessions** (same-class window pairing), not naturally co-occurring mouse+keyboard sessions.
+- Mobile touch modelling (`Phase 8`) was **skipped**; `touch` is `null` in serving metadata.
+- Cross-domain performance degrades under domain/sampling shifts (e.g., `CaptchaSolve30k` 240 Hz game tasks and held-out `delbot_mouse:gan`).
+- Client-side signals can be spoofed by determined adversaries; passive behavioural scoring **raises attacker cost** and does not guarantee prevention.
+
+---
+
+## Model Update, Monitoring & Governance Policy
+
+1. **No automated online retraining / feedback poisoning guard:** Analyst `fp` / `fn` markings submitted via `POST /admin/feedback` are stored strictly for offline review (`training_policy = "stored_only_never_auto_trained"`) and are **never** automatically ingested into model training.
+2. **Retraining gate:** Any model update must:
+   - Maintain participant-grouped (human) and generator/run-grouped (bot) splits with `0` group leakage (`ml/tests/test_splits.py`).
+   - Report all Appendix E splits (in-distribution, cross-phase, cross-dataset, LOBO / held-out `K3`, and `CaptchaSolve30k` human-FPR stress test) with group-bootstrap 95% CIs via `python scripts/tasks.py eval-all`.
+   - Pass ONNX-vs-native parity (`max_abs_diff < 1e-4`), latency (`p95 < 200 ms`), privacy scan (`backend/tests/test_privacy_scan.py`), and claims consistency (`scripts/check_claims.py`) before human sign-off.
+3. **Retention & auditability:** Derived feature blobs in SQLite/PostgreSQL expire automatically via `backend/app/retention.py` (default `7` days; assessments `30` days), and model versions are recorded on every assessment row and exposed in `/v1/health` and `/admin/overview`.
