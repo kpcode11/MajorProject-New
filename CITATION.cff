@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software or evaluation pipeline, please cite it as below."
+title: "Passive Bot Guard (SIH1672): Privacy-Preserving Passive Behavioural Bot Detection"
+type: software
+version: "1.0.0"
+date-released: "2026-11-19"
+license: MIT
+repository-code: "https://github.com/kpcode11/MajorProject-New"
+authors:
+  - family-names: "Prajapati"
+    given-names: "Keshav"
+abstract: >-
+  A privacy-preserving passive behavioural bot detection prototype developed for
+  Smart India Hackathon Problem Statement SIH1672. Combines leakage-free mouse
+  kinematics (120 features, LightGBM + ONNX) and text-agnostic keystroke timing
+  (31 features, key-class only) with 13 deterministic browser-environment rules
+  (R01-R13), client-side feature extraction, WCAG 2.1 AA accessible step-up
+  verification, and missing-modality fairness.
+keywords:
+  - bot-detection
+  - passive-captcha
+  - behavioral-biometrics-alternative
+  - mouse-dynamics
+  - keystroke-dynamics
+  - privacy-preserving
+  - accessibility
+  - onnx
+  - fastapi
+  - sih1672

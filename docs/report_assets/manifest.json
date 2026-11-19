@@ -11,7 +11,7 @@
     "pseudo_session_fusion_simulated_pairing": true,
     "client_signals_raise_cost_not_guaranteed_prevention": true
   },
-  "generated_count": 78,
+  "generated_count": 85,
   "generated_files": [
     "docs/report_assets/fig1_roc_pr_curves.png",
     "docs/report_assets/fig2_reliability_diagram.png",
@@ -52,7 +52,10 @@
     "docs/report_assets/table7b_keyboard_prevalence.md",
     "docs/report_assets/table7c_threshold_tradeoff.csv",
     "docs/report_assets/table7c_threshold_tradeoff.md",
+    "docs/report_assets/table8_simulator_summary.csv",
     "docs/report_assets/table8_simulator_summary.md",
+    "docs/report_assets/table8_system_results.csv",
+    "docs/report_assets/table8_system_results.md",
     "results/fusion/fusion_comparison.csv",
     "results/fusion/fusion_comparison.md",
     "results/fusion/modality_availability.csv",
@@ -90,6 +93,10 @@
     "results/mouse/shap_summary.png",
     "results/system/latency_histogram.png",
     "results/system/rule_layer_ablation.csv",
-    "results/system/rule_layer_ablation.md"
+    "results/system/rule_layer_ablation.md",
+    "results/system/sim_summary.csv",
+    "results/system/system_results.csv",
+    "results/system/system_results.json",
+    "results/system/system_results.md"
   ]
 }

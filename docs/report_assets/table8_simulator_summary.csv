@@ -1,9 +1,9 @@
 protection_mode,tier,description,total_sessions,allowed,challenged,denied,blocked_at_api,allow_rate,caught_or_blocked_rate,latency_min_ms,latency_p50_ms,latency_mean_ms,latency_p95_ms,latency_max_ms
-off,tier1,Plain HTTP client posting directly to /portal-api/* (no browser),25,25,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
-off,tier2,Playwright (default headless settings) performing direct fills and clicks,25,25,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
-off,tier3,Playwright with basic automation-hiding context adjustments (webdriver=false),25,25,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
-off,tier4,Playwright with Appendix D.3 Bezier mouse paths + randomised typing delays,25,25,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
-passive,tier1,Plain HTTP client posting directly to /portal-api/* (no browser),25,0,0,6,19,0.0,1.0,0.0,0.0,0.0,0.0,0.0
-passive,tier2,Playwright (default headless settings) performing direct fills and clicks,25,0,2,23,0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
-passive,tier3,Playwright with basic automation-hiding context adjustments (webdriver=false),25,0,2,23,0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
-passive,tier4,Playwright with Appendix D.3 Bezier mouse paths + randomised typing delays,25,2,3,20,0,0.08,0.92,0.0,0.0,0.0,0.0,0.0
+off,tier1,Plain HTTP client posting directly to /portal-api/* (no browser),25,25,0,0,0,1.0,0.0,0.41,0.52,2.58,8.26,21.81
+off,tier2,Playwright (default headless settings) performing direct fills and clicks,25,25,0,0,0,1.0,0.0,1.9,2.67,3.13,6.91,9.64
+off,tier3,Playwright with basic automation-hiding context adjustments (webdriver=false),25,25,0,0,0,1.0,0.0,3.58,4.67,5.8,12.6,14.23
+off,tier4,Playwright with Appendix D.3 Bezier mouse paths + randomised typing delays,25,25,0,0,0,1.0,0.0,4.48,5.73,6.21,10.75,10.98
+passive,tier1,Plain HTTP client posting directly to /portal-api/* (no browser),25,0,0,6,19,0.0,1.0,0.43,0.48,1.14,3.69,4.32
+passive,tier2,Playwright (default headless settings) performing direct fills and clicks,25,0,2,23,0,0.0,1.0,1.69,1.82,2.02,3.19,4.68
+passive,tier3,Playwright with basic automation-hiding context adjustments (webdriver=false),25,0,2,23,0,0.0,1.0,3.36,4.37,4.51,7.42,8.3
+passive,tier4,Playwright with Appendix D.3 Bezier mouse paths + randomised typing delays,25,2,3,20,0,0.08,0.92,4.12,4.99,5.89,10.27,10.59

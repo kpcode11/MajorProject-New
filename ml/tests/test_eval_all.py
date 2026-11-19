@@ -97,14 +97,20 @@ def test_prevalence_threshold_tradeoff_and_rule_ablation_calculations() -> None:
     assert float(wide_row["human_challenge_rate"]) > float(zero_row["human_challenge_rate"])
     assert float(wide_row["bot_passthrough_fnr"]) <= float(zero_row["bot_passthrough_fnr"])
 
-    rule_df = mod.compute_rule_layer_ablation(ROOT / "results" / "system" / "sim_runs.jsonl")
-    assert len(rule_df) == 4
-    assert set(rule_df["bot_tier"]) == {
-        "tier1_http",
-        "tier2_playwright",
-        "tier3_stealth",
-        "tier4_humanlike",
-    }
+    rule_df = mod.load_rule_layer_ablation(ROOT / "results" / "system" / "rule_layer_ablation.csv")
+    assert list(rule_df["bot_tier"]) == ["tier1", "tier2", "tier3", "tier4"]
+    # Measured table must be internally consistent: counts add up and rates are valid.
+    assert (
+        rule_df["n_reached_assess"] + rule_df["n_blocked_before_assess"]
+        == rule_df["n_sessions_total"]
+    ).all()
+    for col in ("rules_only_caught_rate", "model_only_caught_rate", "combined_caught_rate"):
+        assert rule_df[col].between(0.0, 1.0).all()
+    # The deployed score is max(model, rules), so combined can never catch less than either.
+    assert (
+        rule_df["combined_caught_rate"]
+        >= rule_df[["rules_only_caught_rate", "model_only_caught_rate"]].max(axis=1) - 1e-9
+    ).all()
 
     md = mod.df_to_markdown(pd.DataFrame([{"a": 1, "b": 0.12345}]), "Test Table", note="Note")
     assert "# Test Table" in md

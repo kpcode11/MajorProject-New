@@ -72,7 +72,7 @@ def build_sim_summary_rows(sim_runs_path: Path) -> list[dict[str, Any]]:
             caught = challenged + denied + blocked_api
 
             lats = np.asarray(
-                [float(r.get("elapsed_ms", 0.0)) for r in subset],
+                [float(r.get("latency_ms", 0.0)) for r in subset],
                 dtype=float,
             )
             rows.append(

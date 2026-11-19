@@ -2,55 +2,75 @@
 
 ## 1. Overview
 
-BotGuard is a passive behavioural bot-detection and adaptive risk-scoring system designed to protect high-traffic public portals (such as UIDAI Aadhaar services) without requiring traditional visual or audio CAPTCHAs for legitimate human users.
+BotGuard is a passive behavioural bot-detection and adaptive risk-scoring prototype designed to replace visual/audio CAPTCHA puzzles for legitimate desktop users on a **local mock resident portal** (`DEMO — not a government portal`).
 
-The system consists of three primary layers:
-1. **Browser SDK (`sdk/`)**: Passively captures mouse trajectories, privacy-safe keystroke timing (`key_class` + dwell/flight timestamps only, never character identities), touch gestures, and browser environment integrity signals, then submits compact JSON payloads bound to a single-use server nonce.
-2. **Risk Scoring & Token Backend (`backend/app/`)**: Validates nonces, enforces sliding-window rate limits, extracts 44 mouse features + 20 keyboard features via `botguard_ml`, runs calibrated ONNX Runtime inference (`mouse-v1` LightGBM + `keyboard-v1` Logistic Regression) and deterministic rule checks (`R01..R14`), maps fused risk scores to action-specific decision bands (`allow`, `challenge`, `deny`), and issues short-lived single-use JWT `X-Human-Token` passes.
-3. **Protected Portal & Invisible Step-Up Challenge (`portal/`)**: Verifies `X-Human-Token` headers on sensitive endpoints (`/portal-api/otp/request`, `/portal-api/status/check`, `/portal-api/appointment/book`, etc.) via the `require_human_token(expected_action)` FastAPI dependency, and triggers an accessible press-and-hold or tap-target step-up challenge only for medium-risk (`challenge` band) requests.
+The system consists of four decoupled layers:
+1. **Browser SDK (`sdk/`, `@botguard/sdk`):** Zero-dependency TypeScript library (~16.2 KB gzipped ESM, ~14.9 KB gzipped UMD) with React bindings (`@botguard/sdk/react`). Passively collects bounded mouse trajectories (`<= 600` points), privacy-safe keystroke timings (`key_class` + `down_ms`/`up_ms` only, `<= 300` events, never character identities), timing/scroll/focus signals, and coarse environment integrity checks. Supports both raw-window transport (`sendRawTrace: true`) and optional in-browser feature extraction (`sendRawTrace: false`, verified to `< 1e-9` parity with Python).
+2. **Risk Scoring, Policy & Token Backend (`backend/app/`):** FastAPI + ONNX Runtime service that issues single-use context-bound nonces (`/v1/nonce`), enforces sliding-window rate limits (`R13`) and body-size caps (`64 KB`), extracts `120` mouse features and `31` keyboard features via the shared `botguard_ml.features` package (or consumes client-extracted feature maps), runs calibrated ONNX inference (`mouse-v1` LightGBM + `keyboard-v1` Logistic Regression; `touch: null` because Phase 8 was skipped), evaluates `R01`–`R13` deterministic rules, fuses active modalities via `fusion-v1` without penalising missing modalities, maps `max(model_score, rule_score)` through `backend/config/policy.yaml` to `allow | challenge | deny`, and issues short-lived single-use `X-Human-Token` JWTs (`HS256` / `RS256` / `ES256`).
+3. **Mock Protected Portal & Accessible Step-Up UI (`portal/`, `sdk/src/challenge.ts`):** React + Vite mock resident portal (`Landing`, `Resident login`, `Update details`, `Centre search`) calling `/portal-api/otp/request`, `/portal-api/details/update`, and `/portal-api/centres/search` protected by `require_human_token(expected_action)`. Medium-risk (`challenge`) responses open a WCAG 2.1 AA press-and-hold modal (`800–1500 ms` server-chosen hold) with an explicit single-press keyboard accessibility alternative (`Use Keyboard Single-Press Verify`) and zero visual puzzles.
+4. **Operational Admin Dashboard & Retention Enforcement (`portal/src/pages/AdminDashboardPage.tsx`, `dashboard/`, `backend/app/admin.py`, `backend/app/retention.py`):** API-key-protected (`/admin/*`) operational observability (RPM, allow/challenge/deny split, latency percentiles, score histogram with threshold lines, derived-feature session inspector, simulator tier results, FP/FN feedback queue, and automated/manual TTL retention purge).
 
 ---
 
 ## 2. End-to-End Request Flow
 
-```
-Browser (SDK)                              BotGuard Backend (/v1/*)                  Protected Portal (/portal-api/*)
-     |                                                |                                             |
-     |--- 1. GET /v1/nonce -------------------------->|                                             |
-     |<-- { nonce, ttl_seconds: 120 } ----------------| (stores HMAC(UA + IP_bucket) in Store)      |
-     |                                                |                                             |
-     | (Collects passive mouse/keyboard/env signals)  |                                             |
-     |--- 2. POST /v1/assess { nonce, action, ... } ->|                                             |
-     |                                                |-- Atomically consumes single-use nonce      |
-     |                                                |-- Extracts features + runs ONNX models      |
-     |                                                |-- Evaluates R01..R14 environment/trace rules|
-     |                                                |-- Fuses scores + applies action thresholds  |
-     |<-- { decision: "allow", band: "low", token } --| (or decision: "challenge" / "deny")         |
-     |                                                |                                             |
-     |--- 3. POST /portal-api/otp/request ----------->|-------------------------------------------->|
-     |       Header: X-Human-Token: <jwt>             |<-- require_human_token("otp_request") ------|
-     |                                                |    Verifies signature, exp, act, single JTI |
-     |<-- 200 OK { status: "otp_sent" } --------------|---------------------------------------------|
+```text
+Browser (@botguard/sdk)                  BotGuard Backend (/v1/*)                 Protected Portal (/portal-api/*)
+     |                                              |                                           |
+     |--- 1. GET /v1/nonce ------------------------>|                                           |
+     |    Header: X-Session-Id (rotating, in-mem)   | (stores context hash: /24 IP + UA)        |
+     |<-- { nonce, expires_in: 300 } ---------------|                                           |
+     |                                              |                                           |
+     | (Collects passive mouse/keyboard/env signals |                                           |
+     |  or extracts features locally if configured) |                                           |
+     |--- 2. POST /v1/assess { nonce, action, ... }>|                                           |
+     |                                              |-- Enforces 64 KB cap + rate limits (R13)  |
+     |                                              |-- Atomically consumes single-use nonce    |
+     |                                              |-- Runs ONNX models + R01..R13 rules       |
+     |                                              |-- Applies missing-modality & policy bands |
+     |<-- { decision, band, token | challenge } ----| (raw numeric score never returned)        |
+     |                                              |                                           |
+     | [If decision == "challenge"]                 |                                           |
+     | (Press-and-hold OR Keyboard single-press UI) |                                           |
+     |--- 2b. POST /v1/assess/challenge ----------->|                                           |
+     |<-- { decision: "allow", token } -------------|                                           |
+     |                                              |                                           |
+     |--- 3. POST /portal-api/otp/request --------->|------------------------------------------>|
+     |       Header: X-Human-Token: <jwt>           |<-- require_human_token("otp_request") ----|
+     |                                              |    Verifies sig, exp, act, single-use jti |
+     |<-- 200 OK { status: "otp_sent" } ------------|-------------------------------------------|
 ```
 
 ---
 
-## 3. Fail-Safe & Degraded-Mode Policy (`P5-11`)
+## 3. Infrastructure & Storage Abstraction
 
-Public-facing identity portals must degrade gracefully during partial infrastructure outages without exposing high-sensitivity endpoints (such as OTP dispatch or appointment booking) to automated abuse. BotGuard implements a configurable fail-safe policy controlled by `backend/config/rules.yaml` under `fail_safe:` and surfaced in every `/v1/assess` response via `"degraded": true | false`.
+BotGuard defaults to zero-external-dependency local operation while supporting production-like stores via environment variables:
 
-| Failure Mode | Configuration Key (`rules.yaml`) | Default Policy | Runtime Behaviour |
+| Component | Default (Dev / Tests) | Optional Production-Like Profile (`deploy/docker-compose.yml`) |
+|---|---|---|
+| Ephemeral state (nonces, challenges, single-use `jti`, sliding-window rate limits) | `STORE_BACKEND=memory` (`InMemoryStore`) | `STORE_BACKEND=redis` (`RedisStore`) |
+| Audit & feedback database (`assessments`, `challenges`) | `DATABASE_URL=sqlite:///./botguard.db` | `DATABASE_URL=postgresql+psycopg://...` |
+| Scheduled retention purge | `RetentionScheduler` background thread (`RETENTION_PURGE_INTERVAL_SECONDS`) or CLI `python -m app.retention --once` | Same scheduler or external cron calling `python -m app.retention --once` |
+
+---
+
+## 4. Fail-Safe & Degraded-Mode Policy (`P5-11`)
+
+Configured in `backend/config/policy.yaml` under `fail_safe:` and surfaced in every `/v1/assess` response via `"degraded": true | false`:
+
+| Failure Mode | Config Key (`policy.yaml`) | Default Policy | Runtime Behaviour |
 |---|---|---|---|
-| **Redis / Store Outage** (nonce & rate-limit state unavailable) | `fail_safe.redis_down` | `deny_high_allow_low` | High-sensitivity actions (`otp_request`, `appointment_book`, `login`, `status_check`, `Form_submit`) return `decision="deny"`, `band="high"`, `degraded=true`. Low-sensitivity actions (`page_view`, `centre_search`) return `decision="allow"`, `band="low"`, `degraded=true` with a stateless fallback token so browsing remains functional. |
-| **ONNX Model Unavailable or Inference Error** | `fail_safe.model_error` | `rules_only` | Scoring falls back automatically to the deterministic rule engine (`R01..R14`), sets `degraded=true` in the response and audit record, and applies the action's policy thresholds to the rule score. |
-| **Database Unavailable** (PostgreSQL / SQLite write failure) | `fail_safe.db_down` | `continue_and_buffer` | Assessment and token issuance proceed with zero user-facing disruption. Audit rows are buffered in an in-memory ring buffer (`DatabaseManager._buffer`, up to 1,000 entries) and flushed via `flush_buffer()` when database connectivity recovers. |
+| **Redis / Store Outage** | `fail_safe.redis_down` | `deny_high_allow_low` | High-sensitivity actions (`otp_request`, `details_update`) return `decision="deny"`, `band="high"`, `degraded=true`. Medium actions (`login`, `centre_search`) return `challenge`. Low actions (`page_view`) return `allow` with a stateless fallback token. |
+| **ONNX Model Error** | `fail_safe.model_error` | `rules_only` | Scoring falls back automatically to deterministic rules (`R01`–`R13`), sets `degraded=true`, and applies the action's policy thresholds to `rule_score`. |
+| **Database Outage** | `fail_safe.db_down` | `continue_and_buffer` | Assessment and token issuance proceed uninterrupted; audit records buffer in `DatabaseManager._buffer` (up to `1,000` entries) and flush via `flush_buffer()` when connectivity returns. |
 
 ---
 
-## 4. Privacy & Security Guarantees
+## 5. Missing-Modality Fairness, Privacy & Security Boundaries
 
-1. **Zero Keystroke Content Capture**: Keyboard telemetry contains only `["letter" | "digit" | "backspace" | "space" | "enter" | "modifier" | "other", t_down_ms, t_up_ms]`. Raw characters, key codes, and input values are rejected at both the SDK and Pydantic schema validation boundary (`KeyBehaviour`).
-2. **No Raw Behavioural Trace Persistence (`P5-08`)**: Only aggregate scores, decisions, top-3 contributing feature names, and optional TTL-limited derived feature vectors (`STORE_DERIVED_FEATURES=true`) are stored in `assessments`. Raw mouse coordinate arrays (`points`) and key timing lists (`events`) are stripped by `sanitize_derived_features()`.
-3. **Coarse IP Bucketing (`P5-12`)**: Full client IP addresses are never written to logs or database rows. IPv4 addresses are truncated to `/24` (`203.0.113.0/24`) and IPv6 addresses to `/48` before rate-limiting, nonce context hashing, or structured JSON logging (`format_safe_log_record`).
-4. **No Raw Score Leakage (`P5-02`, `P5-09`)**: `/v1/assess` and `/v1/assess/challenge` return only `decision` (`allow` | `challenge` | `deny`) and `band` (`low` | `medium` | `high`) to untrusted callers, preventing adversarial gradient estimation.
-
+1. **Missing-Modality Fairness (`P3-10`, `P9-12`):** Only available modalities are fused (`mouse_score = None` is never treated as bot). Sessions with `0` mouse movement points and valid human keyboard navigation (short `<10`-key `Tab`/`Enter`/PIN flows or non-constant assistive typing with `untrusted_count == 0`) are capped at `MISSING_MOUSE_VALID_KB_MAX_SCORE = 0.50` (`medium` challenge band) so keyboard-only users are never auto-denied.
+2. **Zero Keystroke Content Capture (`P3-01`, `P6-04`, `P9-06`):** Typed characters, raw keycodes, and form field values are dropped in the SDK (`keyClass()`), rejected by Pydantic schemas (`KeyBehaviour`), and verified absent from all DB tables and structured logs by `backend/tests/test_privacy_scan.py`.
+3. **Ephemeral Session Rotation & Coarse IP Bucketing (`P9-05`):** The SDK generates an in-memory random `X-Session-Id` per page load (rotating every 15 minutes; never stored in cookies or `localStorage`). The backend hashes it with a daily-rotated server salt (`daily_session_salt`) and truncates IPs to `/24` (IPv4) or `/48` (IPv6).
+4. **No Raw Trace Persistence & TTL Enforcement (`P5-08`, `P9-04`):** Raw `points` and `events` are never persisted. Optional derived feature summaries (`STORE_FEATURES_IN_DB=true`) are purged automatically after `FEATURE_TTL_SECONDS` (default 7 days), and assessment records after `ASSESSMENT_TTL_SECONDS` (default 30 days).
+5. **No Raw Score Leakage (`P5-05`):** Untrusted clients receive only `decision` and `band`; numeric risk scores and derived feature contributors are restricted to structured audit logs and `/admin/*`.
