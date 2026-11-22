@@ -431,6 +431,16 @@ def demo(*, protection_mode: str = "passive", dry_run: bool = False) -> None:
         "--port",
         "5173",
     ]
+    admin_cmd = [
+        npm,
+        "run",
+        "dev",
+        "--",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "5174",
+    ]
 
     print(
         f"BotGuard Demo (PROTECTION_MODE={mode}, "
@@ -438,25 +448,32 @@ def demo(*, protection_mode: str = "passive", dry_run: bool = False) -> None:
         f"DATABASE_URL={backend_env['DATABASE_URL']})"
     )
     print(
-        "  Backend API : http://127.0.0.1:8000 (stats: http://127.0.0.1:8000/portal-api/stats)"
+        "  Backend API     : http://127.0.0.1:8000 (stats: http://127.0.0.1:8000/portal-api/stats)"
     )
-    print("  Mock Portal : http://127.0.0.1:5173")
+    print("  Mock Portal     : http://127.0.0.1:5173")
+    print("  Admin Dashboard : http://127.0.0.1:5174")
     if dry_run:
         print(f"  [dry-run] backend_cmd: {' '.join(backend_cmd)}")
         print(f"  [dry-run] portal_cmd : {' '.join(portal_cmd)}")
+        print(f"  [dry-run] admin_cmd  : {' '.join(admin_cmd)}")
         return
 
     backend_proc = subprocess.Popen(backend_cmd, cwd=PACKAGES[1], env=backend_env)
     portal_proc = subprocess.Popen(portal_cmd, cwd=PORTAL)
+    admin_proc = subprocess.Popen(admin_cmd, cwd=PORTAL)
     try:
         while True:
-            if backend_proc.poll() is not None or portal_proc.poll() is not None:
+            if (
+                backend_proc.poll() is not None
+                or portal_proc.poll() is not None
+                or admin_proc.poll() is not None
+            ):
                 break
             time.sleep(0.5)
     except KeyboardInterrupt:
         print("\nStopping BotGuard demo servers...")
     finally:
-        for proc in (portal_proc, backend_proc):
+        for proc in (admin_proc, portal_proc, backend_proc):
             if proc.poll() is None:
                 proc.terminate()
                 try:

@@ -33,9 +33,14 @@ const NAV_ITEMS: ReadonlyArray<{ id: PortalPageId; label: string; testId: string
   { id: 'admin', label: 'Admin dashboard', testId: 'nav-admin' },
 ];
 
+function isStandaloneAdminPort(): boolean {
+  return typeof window !== 'undefined' && window.location?.port === '5174';
+}
+
 function resolveInitialPage(explicitPage?: PortalPageId): PortalPageId {
   if (explicitPage) return explicitPage;
   if (typeof window === 'undefined') return 'landing';
+  if (isStandaloneAdminPort()) return 'admin';
   const params = new URLSearchParams(window.location.search);
   const queryPage = params.get('page');
   if (
@@ -206,53 +211,85 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
             flexWrap: 'wrap',
           }}
         >
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {NAV_ITEMS.filter((item) => item.id !== 'admin').map((item) => {
-              const isActive = activePage === item.id;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  data-testid={item.testId}
-                  aria-current={isActive ? 'page' : undefined}
-                  onClick={() => setActivePage(item.id)}
-                  style={
-                    isActive
-                      ? SUPABASE_COMPONENTS.buttonPrimaryGreen
-                      : activePage === 'admin'
-                        ? {
-                            ...SUPABASE_COMPONENTS.buttonSecondaryOutline,
-                            backgroundColor: '#1e293b',
-                            color: '#f8fafc',
-                            border: '1px solid #475569',
-                          }
-                        : SUPABASE_COMPONENTS.buttonSecondaryOutline
-                  }
-                >
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-          <button
-            type="button"
-            data-testid="nav-admin"
-            aria-current={activePage === 'admin' ? 'page' : undefined}
-            onClick={() => setActivePage('admin')}
-            style={
-              activePage === 'admin'
-                ? SUPABASE_COMPONENTS.buttonPrimaryGreen
-                : {
-                    ...SUPABASE_COMPONENTS.buttonSecondaryOutline,
-                    backgroundColor: '#0f172a',
-                    color: '#ffffff',
-                    border: '1px solid #0f172a',
-                    fontWeight: 600,
-                  }
-            }
-          >
-            Admin dashboard
-          </button>
+          {isStandaloneAdminPort() ? (
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                data-testid="nav-admin"
+                aria-current="page"
+                onClick={() => setActivePage('admin')}
+                style={SUPABASE_COMPONENTS.buttonPrimaryGreen}
+              >
+                Admin Security Console (:5174)
+              </button>
+              <a
+                href="http://127.0.0.1:5173"
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  ...SUPABASE_COMPONENTS.buttonSecondaryOutline,
+                  backgroundColor: '#1e293b',
+                  color: '#f8fafc',
+                  border: '1px solid #475569',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                }}
+              >
+                Open Mock Citizen Portal (:5173) ↗
+              </a>
+            </div>
+          ) : (
+            <>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {NAV_ITEMS.filter((item) => item.id !== 'admin').map((item) => {
+                  const isActive = activePage === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      data-testid={item.testId}
+                      aria-current={isActive ? 'page' : undefined}
+                      onClick={() => setActivePage(item.id)}
+                      style={
+                        isActive
+                          ? SUPABASE_COMPONENTS.buttonPrimaryGreen
+                          : activePage === 'admin'
+                            ? {
+                                ...SUPABASE_COMPONENTS.buttonSecondaryOutline,
+                                backgroundColor: '#1e293b',
+                                color: '#f8fafc',
+                                border: '1px solid #475569',
+                              }
+                            : SUPABASE_COMPONENTS.buttonSecondaryOutline
+                      }
+                    >
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <button
+                type="button"
+                data-testid="nav-admin"
+                aria-current={activePage === 'admin' ? 'page' : undefined}
+                onClick={() => setActivePage('admin')}
+                style={
+                  activePage === 'admin'
+                    ? SUPABASE_COMPONENTS.buttonPrimaryGreen
+                    : {
+                        ...SUPABASE_COMPONENTS.buttonSecondaryOutline,
+                        backgroundColor: '#0f172a',
+                        color: '#ffffff',
+                        border: '1px solid #0f172a',
+                        fontWeight: 600,
+                      }
+                }
+              >
+                Admin dashboard
+              </button>
+            </>
+          )}
         </nav>
       </header>
 
