@@ -444,7 +444,6 @@ export class BotGuardClient {
       try {
         const nonceRes = await fetchNonce(this.config, depsWithSession);
         nonce = nonceRes.nonce;
-        this.timing?.markNonce(this.nowFn());
       } catch (err) {
         const code = err instanceof BotGuardTransportError ? err.code : 'transport_error';
         return degradedFallbackResponse(code);

@@ -63,8 +63,8 @@ _DEFAULTS: dict[str, object] = {
     "CHALLENGE_TTL_SECONDS": "60",
     # Max request body size in bytes (64 KB)
     "MAX_BODY_BYTES": "65536",
-    # Enable optional feature storage in the DB (TTL-limited)
-    "STORE_FEATURES_IN_DB": "false",
+    # Enable derived feature storage in the DB (7-day TTL; used by Admin Kinematics tab)
+    "STORE_FEATURES_IN_DB": "true",
     # Feature storage TTL in seconds (7 days)
     "FEATURE_TTL_SECONDS": str(7 * 24 * 3600),
     # Assessment long-term TTL in seconds (30 days)

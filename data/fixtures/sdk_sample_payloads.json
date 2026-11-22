@@ -221,8 +221,7 @@
         "ms_since_load": 2400,
         "scroll_events": 1,
         "focus_changes": 0,
-        "ms_to_first_interaction": 100,
-        "ms_since_nonce": 0
+        "ms_to_first_interaction": 100
       }
     }
   },
@@ -449,8 +448,7 @@
         "ms_since_load": 3800,
         "scroll_events": 1,
         "focus_changes": 0,
-        "ms_to_first_interaction": 100,
-        "ms_since_nonce": 1400
+        "ms_to_first_interaction": 100
       }
     }
   }

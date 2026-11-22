@@ -18,4 +18,3 @@ def upgrade(engine: Engine) -> None:
 def downgrade(engine: Engine) -> None:
     """Drop challenges and assessments tables."""
     Base.metadata.drop_all(bind=engine)
-

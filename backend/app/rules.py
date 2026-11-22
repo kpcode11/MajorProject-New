@@ -127,6 +127,22 @@ DEFAULT_RULE_WEIGHTS: dict[str, float] = {
     "R13_RATE_LIMIT": 1.00,
 }
 
+RULE_DESCRIPTIONS: dict[str, str] = {
+    "R01_NO_PAYLOAD": "Missing environment & behavioural telemetry payload",
+    "R02_WEBDRIVER": "Automation flag navigator.webdriver === true",
+    "R03_UA_PLATFORM_MISMATCH": "User-Agent OS inconsistent with navigator.platform",
+    "R04_UA_HINTS_MISMATCH": "Headless brand token or UA-CH platform mismatch",
+    "R05_TZ_LANG_MISMATCH": "Timezone offset implausible for regional locale",
+    "R06_SOFTWARE_RENDERER": "Software/virtual WebGL renderer (SwiftShader/llvmpipe)",
+    "R07_ZERO_PLUGINS_DESKTOP": "Desktop browser reporting 0 installed plugins",
+    "R08_VIEWPORT_ANOMALY": "Zero or impossible viewport/window dimensions",
+    "R09_TOUCH_INCONSISTENT": "Touch capabilities contradict claimed device class",
+    "R10_NATIVE_FUNCTION_TAMPER": "Native browser function prototype tampering detected",
+    "R11_UNTRUSTED_EVENTS": "Synthesized/scripted input events (isTrusted === false)",
+    "R12_TOO_FAST": "Superhuman interaction or form-submission speed",
+    "R13_RATE_LIMIT": "Hard server-side sliding-window rate limit exceeded",
+}
+
 
 def _coerce_env(env: EnvSignals | dict[str, Any] | None) -> EnvSignals | None:
     """Coerce input into an EnvSignals instance if a dictionary is provided."""
@@ -345,7 +361,9 @@ def check_r05_tz_lang_mismatch(
             parts = lang.replace("_", "-").split("-")
             country = parts[-1].upper() if len(parts) > 1 and len(parts[-1]) == 2 else None
 
-            # Standard regional bounds (min_offset_min, max_offset_min)
+            # Standard regional bounds (min_offset_min, max_offset_min).
+            # Note: en-US and en-GB are global default browser UI locales worldwide
+            # (including in India, UTC+5:30 = -330) and are intentionally excluded.
             regional_bounds: dict[str, tuple[int, int]] = {
                 "IN": (-390, -270),  # India: UTC+5:30 = -330
                 "JP": (-600, -480),  # Japan: UTC+9 = -540
@@ -354,8 +372,6 @@ def check_r05_tz_lang_mismatch(
                 "TW": (-540, -420),  # Taiwan: UTC+8 = -480
                 "AU": (-660, -480),  # Australia: -480 to -660
                 "NZ": (-780, -660),  # New Zealand: -660 to -780
-                "GB": (-60, 0),  # UK: 0 to -60
-                "US": (240, 600),  # US: +240 to +600
                 "CA": (210, 510),  # Canada: +210 to +510
             }
 

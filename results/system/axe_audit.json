@@ -13,7 +13,7 @@
       "critical_violations": 0,
       "serious_violations": 0,
       "contrast_elements_checked": 28,
-      "min_contrast_ratio": 4.95
+      "min_contrast_ratio": 5.17
     },
     {
       "target": "login:initial",
@@ -22,7 +22,7 @@
       "critical_violations": 0,
       "serious_violations": 0,
       "contrast_elements_checked": 17,
-      "min_contrast_ratio": 4.95
+      "min_contrast_ratio": 5.17
     },
     {
       "target": "login:validation_error",
@@ -31,7 +31,7 @@
       "critical_violations": 0,
       "serious_violations": 0,
       "contrast_elements_checked": 18,
-      "min_contrast_ratio": 4.95
+      "min_contrast_ratio": 5.17
     },
     {
       "target": "login:result",
@@ -40,7 +40,7 @@
       "critical_violations": 0,
       "serious_violations": 0,
       "contrast_elements_checked": 23,
-      "min_contrast_ratio": 4.95
+      "min_contrast_ratio": 5.17
     },
     {
       "target": "update-details:initial",
@@ -49,7 +49,7 @@
       "critical_violations": 0,
       "serious_violations": 0,
       "contrast_elements_checked": 29,
-      "min_contrast_ratio": 4.95
+      "min_contrast_ratio": 5.17
     },
     {
       "target": "update-details:validation_error",
@@ -58,7 +58,7 @@
       "critical_violations": 0,
       "serious_violations": 0,
       "contrast_elements_checked": 30,
-      "min_contrast_ratio": 4.95
+      "min_contrast_ratio": 5.17
     },
     {
       "target": "centre-search:initial",
@@ -67,7 +67,7 @@
       "critical_violations": 0,
       "serious_violations": 0,
       "contrast_elements_checked": 20,
-      "min_contrast_ratio": 4.95
+      "min_contrast_ratio": 5.17
     },
     {
       "target": "centre-search:validation_error",
@@ -76,7 +76,7 @@
       "critical_violations": 0,
       "serious_violations": 0,
       "contrast_elements_checked": 21,
-      "min_contrast_ratio": 4.95
+      "min_contrast_ratio": 5.17
     },
     {
       "target": "centre-search:results",
@@ -85,7 +85,7 @@
       "critical_violations": 0,
       "serious_violations": 0,
       "contrast_elements_checked": 35,
-      "min_contrast_ratio": 4.95
+      "min_contrast_ratio": 5.17
     },
     {
       "target": "admin-dashboard",
@@ -93,8 +93,8 @@
       "violations_count": 0,
       "critical_violations": 0,
       "serious_violations": 0,
-      "contrast_elements_checked": 195,
-      "min_contrast_ratio": 4.74
+      "contrast_elements_checked": 248,
+      "min_contrast_ratio": 5.17
     },
     {
       "target": "stepup-challenge-dialog",
@@ -103,7 +103,7 @@
       "critical_violations": 0,
       "serious_violations": 0,
       "contrast_elements_checked": 23,
-      "min_contrast_ratio": 4.95
+      "min_contrast_ratio": 5.17
     }
   ]
 }

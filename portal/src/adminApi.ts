@@ -81,8 +81,28 @@ export interface AssessmentSummaryItem {
   has_features: boolean;
 }
 
+export interface RuleChecklistItem {
+  id: string;
+  weight: number;
+  fired: boolean;
+  description: string;
+}
+
+export interface AssessmentSubScores {
+  final_score: number;
+  rule_score: number | null;
+  model_score: number | null;
+  mouse_score: number | null;
+  keyboard_score: number | null;
+  touch_score: number | null;
+}
+
 export interface AssessmentDetailData extends AssessmentSummaryItem {
   features: Record<string, number> | null;
+  mouse_kinematics?: Record<string, number>;
+  keyboard_kinematics?: Record<string, number>;
+  sub_scores?: AssessmentSubScores;
+  rules_checklist?: RuleChecklistItem[];
   features_expires_at: string | null;
   top_contributing_features: Array<{
     feature: string;

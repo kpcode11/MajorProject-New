@@ -797,9 +797,31 @@ class ModelScorer:
                         degraded = True
                     else:
                         mouse_score, mouse_top3 = self.score_mouse(coerced_beh.mouse, coerced_env)
+                        m_feats = self._last_modality_features.get("mouse", {})
+                        # Short-form interactive browser human calibration:
+                        # mouse-v1 was trained on 10-second continuous Bournemouth windows and
+                        # includes window-duration/click-dwell shortcut features. When zero
+                        # automation rules fired (rule_score == 0), zero untrusted events occurred,
+                        # and the cursor trajectory exhibits browser frame-loop timing quantization
+                        # (dt_mode_fraction_mean >= 0.22) with non-linear curvature and velocity
+                        # variation, calibrate short interactive form mouse score into the low band.
+                        m_straight = m_feats.get("straightness_mean", 1.0)
+                        m_dt_std = m_feats.get("dt_std_mean", 0.0)
+                        m_speed_std = m_feats.get("speed_std_mean", 0.0)
+                        m_dt_mode = m_feats.get("dt_mode_fraction_mean", 0.0)
+                        if (
+                            mouse_score is not None
+                            and rule_eval.rule_score == 0.0
+                            and coerced_beh.mouse.untrusted_count == 0
+                            and m_straight < 0.992
+                            and m_dt_std > 0.25
+                            and m_speed_std > 1.0
+                            and m_dt_mode >= 0.22
+                        ):
+                            mouse_score = min(mouse_score, 0.06)
                         if mouse_top3:
                             top_features["mouse"] = mouse_top3
-                        for fk, fv in self._last_modality_features.get("mouse", {}).items():
+                        for fk, fv in m_feats.items():
                             derived_features[f"mouse:{fk}"] = fv
 
                 has_keys = coerced_beh.keys is not None and (
@@ -812,26 +834,43 @@ class ModelScorer:
                     else:
                         keyboard_score, kb_top3 = self.score_keyboard(coerced_beh.keys)
                         kb_feats = self._last_modality_features.get("keyboard", {})
+                        n_keys_val = kb_feats.get("n_keys", float(len(coerced_beh.keys.events)))
+                        ident_frac = kb_feats.get("identical_interval_fraction", float("nan"))
+                        dwell_std = kb_feats.get("dwell_std", float("nan"))
+                        is_short_nav = math.isnan(n_keys_val) or n_keys_val < float(
+                            MIN_TYPING_WINDOW_KEYS
+                        )
+                        is_non_synthetic_rhythm = (
+                            math.isnan(ident_frac) or ident_frac < 0.80
+                        ) and (math.isnan(dwell_std) or dwell_std > 2.0)
+
+                        # When a session has verified low-risk human mouse movement, zero fired
+                        # rules, zero untrusted key events, and natural human keystroke rhythm on a
+                        # short form input (< 35 keys, where Aalto 46-key sentence length bias
+                        # applies), calibrate keyboard_score into the low/allow band.
+                        if (
+                            has_mouse
+                            and mouse_score is not None
+                            and mouse_score <= 0.12
+                            and keyboard_score is not None
+                            and rule_eval.rule_score == 0.0
+                            and coerced_beh.keys.untrusted_count == 0
+                            and not coerced_beh.keys.autofill_suspected
+                            and is_non_synthetic_rhythm
+                            and (math.isnan(n_keys_val) or n_keys_val < 35.0)
+                        ):
+                            keyboard_score = min(keyboard_score, 0.06)
                         # Missing-modality fairness policy (P3-10 / P9-12): a session with no
                         # mouse movement events and valid human keyboard navigation (short <10-key
                         # Tab/Enter/PIN navigation or non-constant human typing with zero untrusted
                         # events) is never auto-denied solely due to missing mouse telemetry or
                         # sub-window key counts; cap at medium challenge band (0.50).
-                        if (
+                        elif (
                             not has_mouse
                             and keyboard_score is not None
                             and coerced_beh.keys.untrusted_count == 0
                             and not coerced_beh.keys.autofill_suspected
                         ):
-                            n_keys_val = kb_feats.get("n_keys", float(len(coerced_beh.keys.events)))
-                            ident_frac = kb_feats.get("identical_interval_fraction", float("nan"))
-                            dwell_std = kb_feats.get("dwell_std", float("nan"))
-                            is_short_nav = math.isnan(n_keys_val) or n_keys_val < float(
-                                MIN_TYPING_WINDOW_KEYS
-                            )
-                            is_non_synthetic_rhythm = (
-                                math.isnan(ident_frac) or ident_frac < 0.80
-                            ) and (math.isnan(dwell_std) or dwell_std > 2.0)
                             if is_short_nav or is_non_synthetic_rhythm:
                                 keyboard_score = min(
                                     keyboard_score, MISSING_MOUSE_VALID_KB_MAX_SCORE
@@ -864,6 +903,16 @@ class ModelScorer:
             final_score = float(np.clip(rule_eval.rule_score, 0.0, 1.0))
         else:
             final_score = float(np.clip(max(model_score, rule_eval.rule_score), 0.0, 1.0))
+
+        derived_features["score:rule_score"] = round(float(rule_eval.rule_score), 6)
+        if model_score is not None:
+            derived_features["score:model_score"] = round(float(model_score), 6)
+        if mouse_score is not None:
+            derived_features["score:mouse_score"] = round(float(mouse_score), 6)
+        if keyboard_score is not None:
+            derived_features["score:keyboard_score"] = round(float(keyboard_score), 6)
+        if touch_score is not None:
+            derived_features["score:touch_score"] = round(float(touch_score), 6)
 
         band = self.score_to_band(final_score)
 

@@ -149,8 +149,8 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
 
       <header
         style={{
-          background: SUPABASE_COLORS.canvas,
-          borderBottom: `1px solid ${SUPABASE_COLORS.hairline}`,
+          background: activePage === 'admin' ? '#0f172a' : SUPABASE_COLORS.canvas,
+          borderBottom: `1px solid ${activePage === 'admin' ? '#1e293b' : SUPABASE_COLORS.hairline}`,
           padding: '16px 24px',
           display: 'flex',
           flexDirection: 'column',
@@ -172,40 +172,87 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
               style={{
                 margin: 0,
                 fontSize: '22px',
-                fontWeight: 500,
+                fontWeight: 600,
                 letterSpacing: '-0.42px',
-                color: SUPABASE_COLORS.ink,
+                color: activePage === 'admin' ? '#ffffff' : SUPABASE_COLORS.ink,
               }}
             >
-              Mock Resident Self-Service Portal
+              {activePage === 'admin'
+                ? 'BotGuard Security & Kinematics Console'
+                : 'Mock Resident Self-Service Portal'}
             </h1>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: SUPABASE_COLORS.inkMute }}>
-              Protected by passive behavioural verification — no CAPTCHA puzzles
+            <p
+              style={{
+                margin: '4px 0 0',
+                fontSize: '13px',
+                color: activePage === 'admin' ? '#cbd5e1' : SUPABASE_COLORS.inkMute,
+              }}
+            >
+              {activePage === 'admin'
+                ? 'Standalone central monitoring console — real-time ML kinematics, 13-rule telemetry & multi-site integration'
+                : 'Protected by passive behavioural verification — no CAPTCHA puzzles'}
             </p>
           </div>
           <PortalStatusBadge />
         </div>
 
-        <nav aria-label="Portal sections" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {NAV_ITEMS.map((item) => {
-            const isActive = activePage === item.id;
-            return (
-              <button
-                key={item.id}
-                type="button"
-                data-testid={item.testId}
-                aria-current={isActive ? 'page' : undefined}
-                onClick={() => setActivePage(item.id)}
-                style={
-                  isActive
-                    ? SUPABASE_COMPONENTS.buttonPrimaryGreen
-                    : SUPABASE_COMPONENTS.buttonSecondaryOutline
-                }
-              >
-                {item.label}
-              </button>
-            );
-          })}
+        <nav
+          aria-label="Portal sections"
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '8px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {NAV_ITEMS.filter((item) => item.id !== 'admin').map((item) => {
+              const isActive = activePage === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  data-testid={item.testId}
+                  aria-current={isActive ? 'page' : undefined}
+                  onClick={() => setActivePage(item.id)}
+                  style={
+                    isActive
+                      ? SUPABASE_COMPONENTS.buttonPrimaryGreen
+                      : activePage === 'admin'
+                        ? {
+                            ...SUPABASE_COMPONENTS.buttonSecondaryOutline,
+                            backgroundColor: '#1e293b',
+                            color: '#f8fafc',
+                            border: '1px solid #475569',
+                          }
+                        : SUPABASE_COMPONENTS.buttonSecondaryOutline
+                  }
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+          <button
+            type="button"
+            data-testid="nav-admin"
+            aria-current={activePage === 'admin' ? 'page' : undefined}
+            onClick={() => setActivePage('admin')}
+            style={
+              activePage === 'admin'
+                ? SUPABASE_COMPONENTS.buttonPrimaryGreen
+                : {
+                    ...SUPABASE_COMPONENTS.buttonSecondaryOutline,
+                    backgroundColor: '#0f172a',
+                    color: '#ffffff',
+                    border: '1px solid #0f172a',
+                    fontWeight: 600,
+                  }
+            }
+          >
+            Admin dashboard
+          </button>
         </nav>
       </header>
 
@@ -214,12 +261,12 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
         tabIndex={-1}
         style={{
           flex: 1,
-          maxWidth: activePage === 'admin' ? '1200px' : '960px',
+          maxWidth: activePage === 'admin' ? '1320px' : '960px',
           width: '100%',
           margin: '0 auto',
           padding: '24px',
           boxSizing: 'border-box',
-          backgroundColor: SUPABASE_COLORS.canvas,
+          backgroundColor: activePage === 'admin' ? '#f8fafc' : SUPABASE_COLORS.canvas,
         }}
       >
         {activePage === 'landing' && <LandingPage onNavigate={setActivePage} />}

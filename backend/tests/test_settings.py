@@ -66,9 +66,9 @@ class TestDefaultSettings:
         settings = load_settings()
         assert isinstance(settings.models_dir, Path)
 
-    def test_store_features_in_db_default_false(self) -> None:
+    def test_store_features_in_db_default_true(self) -> None:
         settings = load_settings()
-        assert settings.store_features_in_db is False
+        assert settings.store_features_in_db is True
 
 
 # ---------------------------------------------------------------------------

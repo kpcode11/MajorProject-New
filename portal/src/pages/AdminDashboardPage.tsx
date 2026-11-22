@@ -114,6 +114,9 @@ export function AdminDashboardPage({
   const [overview, setOverview] = useState<AdminOverviewData>(FALLBACK_OVERVIEW);
   const [scores, setScores] = useState<AdminScoresData>(FALLBACK_SCORES);
   const [selectedSensitivity, setSelectedSensitivity] = useState<'high' | 'medium' | 'low'>('high');
+  const [activeAdminTab, setActiveAdminTab] = useState<
+    'all' | 'kinematics' | 'analytics' | 'integration'
+  >('all');
   const [assessments, setAssessments] = useState<AdminAssessmentsListData>({
     total: 0,
     limit: 25,
@@ -370,13 +373,70 @@ export function AdminDashboardPage({
             {statusNotice}
           </div>
         )}
+
+        {/* Admin Console Sub-Navigation Tabs */}
+        <div
+          role="group"
+          aria-label="Admin console views"
+          data-testid="admin-subnav-tabs"
+          style={{
+            display: 'flex',
+            gap: '8px',
+            flexWrap: 'wrap',
+            paddingTop: '12px',
+            borderTop: `1px solid ${SUPABASE_COLORS.hairlineCool}`,
+          }}
+        >
+          {(
+            [
+              { id: 'all', label: 'All Operational Views', testId: 'admin-tab-all' },
+              {
+                id: 'kinematics',
+                label: 'User Kinematics & 13-Rule Inspector',
+                testId: 'admin-tab-kinematics',
+              },
+              {
+                id: 'analytics',
+                label: 'Traffic & Bot Simulator Analytics',
+                testId: 'admin-tab-analytics',
+              },
+              {
+                id: 'integration',
+                label: 'Website Integration Guide',
+                testId: 'admin-tab-integration',
+              },
+            ] as const
+          ).map((tab) => {
+            const isTabActive = activeAdminTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                data-testid={tab.testId}
+                aria-pressed={isTabActive}
+                onClick={() => setActiveAdminTab(tab.id)}
+                style={
+                  isTabActive
+                    ? SUPABASE_COMPONENTS.buttonPrimaryGreen
+                    : SUPABASE_COMPONENTS.buttonSecondaryOutline
+                }
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
       </section>
 
       {/* 1. OVERVIEW VIEW */}
       <section
         aria-labelledby="view-overview-heading"
         data-testid="dashboard-overview"
-        style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+        style={{
+          display: activeAdminTab === 'all' || activeAdminTab === 'analytics' ? 'flex' : 'none',
+          flexDirection: 'column',
+          gap: '16px',
+        }}
       >
         <h3 id="view-overview-heading" style={{ ...SUPABASE_TYPOGRAPHY.headingLg, margin: 0 }}>
           1. System Overview & Active Models
@@ -509,7 +569,10 @@ export function AdminDashboardPage({
       <section
         aria-labelledby="view-scores-heading"
         data-testid="dashboard-scores"
-        style={SUPABASE_COMPONENTS.cardFeatureLight}
+        style={{
+          ...SUPABASE_COMPONENTS.cardFeatureLight,
+          display: activeAdminTab === 'all' || activeAdminTab === 'analytics' ? 'block' : 'none',
+        }}
       >
         <div
           style={{
@@ -592,7 +655,10 @@ export function AdminDashboardPage({
       <section
         aria-labelledby="view-session-detail-heading"
         data-testid="dashboard-session-detail"
-        style={SUPABASE_COMPONENTS.cardFeatureLight}
+        style={{
+          ...SUPABASE_COMPONENTS.cardFeatureLight,
+          display: activeAdminTab === 'all' || activeAdminTab === 'kinematics' ? 'block' : 'none',
+        }}
       >
         <div
           style={{
@@ -861,6 +927,62 @@ export function AdminDashboardPage({
                   </div>
                 )}
 
+                {/* Per-Modality Score Breakdown */}
+                <div
+                  data-testid="detail-sub-scores"
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(115px, 1fr))',
+                    gap: '8px',
+                    paddingTop: '8px',
+                    borderTop: `1px solid ${SUPABASE_COLORS.inkSecondary}`,
+                  }}
+                >
+                  {[
+                    {
+                      label: 'Final Verdict Score',
+                      val: selectedDetail.score,
+                    },
+                    {
+                      label: 'Mouse ML Score',
+                      val: selectedDetail.sub_scores?.mouse_score ?? null,
+                    },
+                    {
+                      label: 'Keyboard ML Score',
+                      val: selectedDetail.sub_scores?.keyboard_score ?? null,
+                    },
+                    {
+                      label: '13-Rule Env Score',
+                      val: selectedDetail.sub_scores?.rule_score ?? null,
+                    },
+                  ].map((sc) => (
+                    <div
+                      key={sc.label}
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: SUPABASE_RADII.sm,
+                        backgroundColor: SUPABASE_COLORS.canvasNightSoft,
+                        border: `1px solid ${SUPABASE_COLORS.inkSecondary}`,
+                      }}
+                    >
+                      <div style={{ fontSize: '11px', color: SUPABASE_COLORS.inkMute2 }}>
+                        {sc.label}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: SUPABASE_FONTS.mono,
+                          fontSize: '15px',
+                          fontWeight: 600,
+                          color: SUPABASE_COLORS.onDark,
+                          marginTop: '2px',
+                        }}
+                      >
+                        {sc.val !== null && sc.val !== undefined ? Number(sc.val).toFixed(3) : '—'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
                 <div
                   style={{
                     display: 'flex',
@@ -905,13 +1027,389 @@ export function AdminDashboardPage({
             )}
           </div>
         </div>
+
+        {/* DETAILED USER MOUSE & KEYBOARD KINEMATICS + 13-RULE INSPECTOR */}
+        {selectedDetail && (
+          <div
+            data-testid="kinematics-deep-inspector"
+            style={{
+              marginTop: '20px',
+              paddingTop: '20px',
+              borderTop: `1px solid ${SUPABASE_COLORS.hairline}`,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
+            <div>
+              <h4 style={{ ...SUPABASE_TYPOGRAPHY.headingMd, margin: 0 }}>
+                Detailed Per-User Mouse & Keyboard Kinematics + 13-Rule Checklist
+              </h4>
+              <p style={{ ...SUPABASE_TYPOGRAPHY.caption, margin: '4px 0 0' }}>
+                Real-time biomechanical and timing telemetry extracted for session{' '}
+                <code>{selectedDetail.id.slice(0, 8)}</code>. Only mathematical kinematics and key
+                classes are computed — typed characters are never collected.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+                gap: '16px',
+              }}
+            >
+              {/* Mouse Kinematics Card */}
+              <div
+                data-testid="detail-mouse-kinematics"
+                style={{
+                  padding: '16px',
+                  borderRadius: SUPABASE_RADII.md,
+                  backgroundColor: SUPABASE_COLORS.canvasSoft,
+                  border: `1px solid ${SUPABASE_COLORS.hairline}`,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '10px',
+                  }}
+                >
+                  <strong style={{ fontSize: '15px', color: SUPABASE_COLORS.ink }}>
+                    Mouse Trajectory Kinematics (120 features)
+                  </strong>
+                  <span style={SUPABASE_COMPONENTS.pillTagSoft}>
+                    score:{' '}
+                    {selectedDetail.sub_scores?.mouse_score !== null &&
+                    selectedDetail.sub_scores?.mouse_score !== undefined
+                      ? Number(selectedDetail.sub_scores.mouse_score).toFixed(3)
+                      : 'N/A'}
+                  </span>
+                </div>
+                {(() => {
+                  const mk: Record<string, number> = {
+                    ...(selectedDetail.mouse_kinematics ?? {}),
+                  };
+                  if (selectedDetail.features) {
+                    for (const [fk, fv] of Object.entries(selectedDetail.features)) {
+                      if (fk.startsWith('mouse:') && typeof fv === 'number') {
+                        mk[fk.slice(6)] = fv;
+                      }
+                    }
+                  }
+                  const entries = Object.entries(mk);
+                  if (entries.length === 0) {
+                    return (
+                      <div style={{ fontSize: '13px', color: SUPABASE_COLORS.inkMute }}>
+                        No mouse movement recorded in this session (keyboard-only or direct API
+                        request).
+                      </div>
+                    );
+                  }
+                  const fmt = (key: string, unit = ''): string =>
+                    mk[key] !== undefined ? `${Number(mk[key]).toFixed(3)}${unit}` : '—';
+                  const highlights = [
+                    { label: 'Path Straightness (0-1)', value: fmt('straightness_mean') },
+                    { label: 'Mean Speed', value: fmt('speed_mean_mean', ' px/s') },
+                    { label: 'Peak Speed', value: fmt('speed_max_max', ' px/s') },
+                    { label: 'Speed Std Dev', value: fmt('speed_std_mean', ' px/s') },
+                    { label: 'Mean Acceleration', value: fmt('acc_mean_mean', ' px/s²') },
+                    { label: 'Jerk Smoothness', value: fmt('jerk_mean_abs_mean') },
+                    { label: 'Path Curvature', value: fmt('curvature_mean_abs_mean') },
+                    { label: 'Direction Changes', value: fmt('n_direction_changes_mean') },
+                    { label: 'Click Hold Dwell', value: fmt('click_dwell_mean_mean', ' ms') },
+                    { label: 'Sampling dt Mean', value: fmt('dt_mean_mean', ' ms') },
+                    { label: 'Sampling dt Std', value: fmt('dt_std_mean', ' ms') },
+                    { label: 'Window Points', value: fmt('window_n_points') },
+                  ];
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                          gap: '8px',
+                        }}
+                      >
+                        {highlights.map((h) => (
+                          <div
+                            key={h.label}
+                            style={{
+                              padding: '8px',
+                              borderRadius: SUPABASE_RADII.xs,
+                              backgroundColor: SUPABASE_COLORS.canvas,
+                              border: `1px solid ${SUPABASE_COLORS.hairlineCool}`,
+                            }}
+                          >
+                            <div style={{ fontSize: '11px', color: SUPABASE_COLORS.inkMute }}>
+                              {h.label}
+                            </div>
+                            <div
+                              style={{
+                                fontFamily: SUPABASE_FONTS.mono,
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                color: SUPABASE_COLORS.ink,
+                                marginTop: '2px',
+                              }}
+                            >
+                              {h.value}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div
+                        style={{
+                          maxHeight: '160px',
+                          overflowY: 'auto',
+                          border: `1px solid ${SUPABASE_COLORS.hairlineCool}`,
+                          borderRadius: SUPABASE_RADII.xs,
+                          backgroundColor: SUPABASE_COLORS.canvas,
+                          padding: '8px',
+                          fontFamily: SUPABASE_FONTS.mono,
+                          fontSize: '12px',
+                        }}
+                      >
+                        {entries.map(([k, v]) => (
+                          <div
+                            key={k}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              padding: '2px 0',
+                              borderBottom: `1px solid ${SUPABASE_COLORS.hairlineCool2}`,
+                            }}
+                          >
+                            <span>{k}</span>
+                            <strong>{Number(v).toFixed(4)}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* Keyboard Kinematics Card */}
+              <div
+                data-testid="detail-keyboard-kinematics"
+                style={{
+                  padding: '16px',
+                  borderRadius: SUPABASE_RADII.md,
+                  backgroundColor: SUPABASE_COLORS.canvasSoft,
+                  border: `1px solid ${SUPABASE_COLORS.hairline}`,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '10px',
+                  }}
+                >
+                  <strong style={{ fontSize: '15px', color: SUPABASE_COLORS.ink }}>
+                    Keyboard Timing Kinematics (31 features)
+                  </strong>
+                  <span style={SUPABASE_COMPONENTS.pillTagSoft}>
+                    score:{' '}
+                    {selectedDetail.sub_scores?.keyboard_score !== null &&
+                    selectedDetail.sub_scores?.keyboard_score !== undefined
+                      ? Number(selectedDetail.sub_scores.keyboard_score).toFixed(3)
+                      : 'N/A'}
+                  </span>
+                </div>
+                {(() => {
+                  const kk: Record<string, number> = {
+                    ...(selectedDetail.keyboard_kinematics ?? {}),
+                  };
+                  if (selectedDetail.features) {
+                    for (const [fk, fv] of Object.entries(selectedDetail.features)) {
+                      if (fk.startsWith('keyboard:') && typeof fv === 'number') {
+                        kk[fk.slice(9)] = fv;
+                      }
+                    }
+                  }
+                  const entries = Object.entries(kk);
+                  if (entries.length === 0) {
+                    return (
+                      <div style={{ fontSize: '13px', color: SUPABASE_COLORS.inkMute }}>
+                        No keystroke timing recorded in this session (mouse-only or empty payload).
+                      </div>
+                    );
+                  }
+                  const fmt = (key: string, unit = ''): string =>
+                    kk[key] !== undefined ? `${Number(kk[key]).toFixed(3)}${unit}` : '—';
+                  const highlights = [
+                    { label: 'Key Count (n_keys)', value: fmt('n_keys') },
+                    { label: 'Typing Speed', value: fmt('typing_speed_cps', ' keys/s') },
+                    { label: 'Key Hold Dwell Mean', value: fmt('dwell_mean', ' ms') },
+                    { label: 'Key Hold Dwell Std', value: fmt('dwell_std', ' ms') },
+                    { label: 'Flight Time Mean', value: fmt('flight_mean', ' ms') },
+                    { label: 'Flight Time Std', value: fmt('flight_std', ' ms') },
+                    { label: 'Rollover Ratio', value: fmt('rollover_ratio') },
+                    { label: 'Constant-Interval Ratio', value: fmt('identical_interval_fraction') },
+                    { label: 'Burst Count', value: fmt('burst_count') },
+                    { label: 'Pause Count (>500ms)', value: fmt('pause_count') },
+                    { label: 'Backspace Ratio', value: fmt('backspace_ratio') },
+                    { label: 'Paste Events', value: fmt('paste_events') },
+                  ];
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                          gap: '8px',
+                        }}
+                      >
+                        {highlights.map((h) => (
+                          <div
+                            key={h.label}
+                            style={{
+                              padding: '8px',
+                              borderRadius: SUPABASE_RADII.xs,
+                              backgroundColor: SUPABASE_COLORS.canvas,
+                              border: `1px solid ${SUPABASE_COLORS.hairlineCool}`,
+                            }}
+                          >
+                            <div style={{ fontSize: '11px', color: SUPABASE_COLORS.inkMute }}>
+                              {h.label}
+                            </div>
+                            <div
+                              style={{
+                                fontFamily: SUPABASE_FONTS.mono,
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                color: SUPABASE_COLORS.ink,
+                                marginTop: '2px',
+                              }}
+                            >
+                              {h.value}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div
+                        style={{
+                          maxHeight: '160px',
+                          overflowY: 'auto',
+                          border: `1px solid ${SUPABASE_COLORS.hairlineCool}`,
+                          borderRadius: SUPABASE_RADII.xs,
+                          backgroundColor: SUPABASE_COLORS.canvas,
+                          padding: '8px',
+                          fontFamily: SUPABASE_FONTS.mono,
+                          fontSize: '12px',
+                        }}
+                      >
+                        {entries.map(([k, v]) => (
+                          <div
+                            key={k}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              padding: '2px 0',
+                              borderBottom: `1px solid ${SUPABASE_COLORS.hairlineCool2}`,
+                            }}
+                          >
+                            <span>{k}</span>
+                            <strong>{Number(v).toFixed(4)}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+
+            {/* 13-Rule Deterministic Checklist */}
+            {selectedDetail.rules_checklist && selectedDetail.rules_checklist.length > 0 && (
+              <div
+                data-testid="detail-rules-checklist"
+                style={{
+                  padding: '16px',
+                  borderRadius: SUPABASE_RADII.md,
+                  backgroundColor: SUPABASE_COLORS.canvasSoft,
+                  border: `1px solid ${SUPABASE_COLORS.hairline}`,
+                }}
+              >
+                <strong
+                  style={{
+                    display: 'block',
+                    fontSize: '15px',
+                    color: SUPABASE_COLORS.ink,
+                    marginBottom: '10px',
+                  }}
+                >
+                  13 Deterministic Browser-Environment Rules (R01–R13)
+                </strong>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '8px',
+                  }}
+                >
+                  {selectedDetail.rules_checklist.map((r) => (
+                    <div
+                      key={r.id}
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: SUPABASE_RADII.xs,
+                        backgroundColor: SUPABASE_COLORS.canvas,
+                        border: `1px solid ${
+                          r.fired ? SUPABASE_COLORS.accentCrimson : SUPABASE_COLORS.hairlineCool
+                        }`,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '12px',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontFamily: SUPABASE_FONTS.mono, fontWeight: 600 }}>
+                          {r.id} (w={r.weight.toFixed(2)})
+                        </div>
+                        <div style={{ color: SUPABASE_COLORS.inkMute, fontSize: '11px' }}>
+                          {r.description}
+                        </div>
+                      </div>
+                      <span
+                        style={
+                          r.fired
+                            ? {
+                                ...SUPABASE_COMPONENTS.pillTagSoft,
+                                backgroundColor: '#fef2f2',
+                                color: '#b91c1c',
+                                border: '1px solid #ef4444',
+                                fontWeight: 700,
+                              }
+                            : SUPABASE_COMPONENTS.pillTagGreen
+                        }
+                      >
+                        {r.fired ? 'FIRED' : 'PASS'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
       {/* 4. SIMULATOR RESULTS PER TIER */}
       <section
         aria-labelledby="view-sim-results-heading"
         data-testid="dashboard-sim-results"
-        style={SUPABASE_COMPONENTS.cardFeatureLight}
+        style={{
+          ...SUPABASE_COMPONENTS.cardFeatureLight,
+          display: activeAdminTab === 'all' || activeAdminTab === 'analytics' ? 'block' : 'none',
+        }}
       >
         <h3 id="view-sim-results-heading" style={{ ...SUPABASE_TYPOGRAPHY.headingLg, margin: 0 }}>
           4. Bot Simulator Results per Tier (<code>sim_runs.jsonl</code>)
@@ -1027,7 +1525,7 @@ export function AdminDashboardPage({
       {/* 5. FEEDBACK QUEUE & 6. PRIVACY PANEL (2-column grid) */}
       <div
         style={{
-          display: 'grid',
+          display: activeAdminTab === 'integration' ? 'none' : 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
           gap: '20px',
         }}
@@ -1219,6 +1717,93 @@ export function AdminDashboardPage({
           </ul>
         </section>
       </div>
+
+      {/* 7. PLUG-AND-PLAY WEBSITE INTEGRATION GUIDE */}
+      <section
+        aria-labelledby="view-integration-heading"
+        data-testid="dashboard-integration-guide"
+        style={{
+          ...SUPABASE_COMPONENTS.cardFeatureLight,
+          display: activeAdminTab === 'all' || activeAdminTab === 'integration' ? 'block' : 'none',
+        }}
+      >
+        <h3 id="view-integration-heading" style={{ ...SUPABASE_TYPOGRAPHY.headingLg, margin: 0 }}>
+          7. Plug-and-Play Website Integration Guide (Any Website in 3 Steps)
+        </h3>
+        <p style={{ ...SUPABASE_TYPOGRAPHY.caption, margin: '6px 0 12px' }}>
+          Passive BotGuard is completely decoupled from the mock portal. Any website owner can
+          protect their own login, registration, or checkout forms in 3 steps and monitor all
+          traffic in this central console. Full guide: <code>docs/integration_guide.md</code>.
+        </p>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '16px',
+          }}
+        >
+          <div
+            style={{
+              padding: '14px',
+              borderRadius: SUPABASE_RADII.sm,
+              backgroundColor: SUPABASE_COLORS.canvasSoft,
+              border: `1px solid ${SUPABASE_COLORS.hairlineCool}`,
+            }}
+          >
+            <strong style={{ fontSize: '14px' }}>Step 1 & 2 — Frontend Browser SDK</strong>
+            <pre
+              style={{
+                margin: '8px 0 0',
+                padding: '10px',
+                borderRadius: SUPABASE_RADII.xs,
+                backgroundColor: SUPABASE_COLORS.canvasNight,
+                color: SUPABASE_COLORS.onDark,
+                fontFamily: SUPABASE_FONTS.mono,
+                fontSize: '12px',
+                overflowX: 'auto',
+              }}
+            >{`import { BotGuard } from '@botguard/sdk';
+
+// 1. Start passive collection on page load
+BotGuard.start({ endpoint: 'http://127.0.0.1:8000' });
+
+// 2. Assess before submitting any protected form
+const res = await BotGuard.assess('login');
+if (res.decision === 'allow') {
+  // Send res.token in X-Human-Token header
+}`}</pre>
+          </div>
+          <div
+            style={{
+              padding: '14px',
+              borderRadius: SUPABASE_RADII.sm,
+              backgroundColor: SUPABASE_COLORS.canvasSoft,
+              border: `1px solid ${SUPABASE_COLORS.hairlineCool}`,
+            }}
+          >
+            <strong style={{ fontSize: '14px' }}>Step 3 — Your Backend Token Verification</strong>
+            <pre
+              style={{
+                margin: '8px 0 0',
+                padding: '10px',
+                borderRadius: SUPABASE_RADII.xs,
+                backgroundColor: SUPABASE_COLORS.canvasNight,
+                color: SUPABASE_COLORS.onDark,
+                fontFamily: SUPABASE_FONTS.mono,
+                fontSize: '12px',
+                overflowX: 'auto',
+              }}
+            >{`POST http://127.0.0.1:8000/v1/token/verify
+Content-Type: application/json
+
+{
+  "token": "<X-Human-Token from browser>",
+  "expected_action": "login"
+}
+// Returns: { "valid": true, "band": "low" }`}</pre>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

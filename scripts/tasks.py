@@ -29,6 +29,7 @@ IMPLEMENTED = (
     "loadtest",
     "serve",
     "demo",
+    "demo-bot",
 )
 PLANNED = ("train-touch",)
 
@@ -407,6 +408,7 @@ def demo(*, protection_mode: str = "passive", dry_run: bool = False) -> None:
     backend_env = dict(os.environ)
     backend_env.setdefault("STORE_BACKEND", "memory")
     backend_env.setdefault("DATABASE_URL", "sqlite:///./botguard.db")
+    backend_env.setdefault("STORE_FEATURES_IN_DB", "true")
     backend_env["PROTECTION_MODE"] = mode
 
     backend_cmd = [
@@ -503,6 +505,9 @@ def main() -> int:
             serve()
         elif command == "demo":
             demo(protection_mode=args.protection_mode, dry_run=args.dry_run)
+        elif command == "demo-bot":
+            interpreter = require_environment(PACKAGES[1])
+            run([str(interpreter), str(ROOT / "scripts" / "demo_playwright_bot.py")])
         else:
             print(f"{command}: not implemented yet")
     except (RuntimeError, subprocess.CalledProcessError, ValueError) as error:

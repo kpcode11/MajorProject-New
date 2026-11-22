@@ -47,6 +47,7 @@ from app.db import AssessmentRecord, ChallengeRecord, DatabaseManager
 from app.main import ApiError
 from app.policy import PolicyEngine
 from app.retention import run_retention_purge
+from app.rules import DEFAULT_RULE_WEIGHTS, RULE_DESCRIPTIONS
 
 ROOT_DIR: Path = Path(__file__).resolve().parents[2]
 DEFAULT_SIM_RUNS_PATH: Path = ROOT_DIR / "results" / "system" / "sim_runs.jsonl"
@@ -171,10 +172,23 @@ def _serialize_assessment_detail(
 ) -> dict[str, Any]:
     base = _serialize_assessment_summary(row)
     features_dict: dict[str, float] = {}
+    mouse_kinematics: dict[str, float] = {}
+    keyboard_kinematics: dict[str, float] = {}
+    score_meta: dict[str, float] = {}
+
     if isinstance(row.features, dict):
         for k, v in row.features.items():
             if isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(float(v)):
-                features_dict[str(k)] = round(float(v), 6)
+                val_f = round(float(v), 6)
+                key_s = str(k)
+                if key_s.startswith("score:"):
+                    score_meta[key_s.split(":", 1)[1]] = val_f
+                else:
+                    features_dict[key_s] = val_f
+                    if key_s.startswith("mouse:"):
+                        mouse_kinematics[key_s.split(":", 1)[1]] = val_f
+                    elif key_s.startswith("keyboard:"):
+                        keyboard_kinematics[key_s.split(":", 1)[1]] = val_f
 
     top_contributing: list[dict[str, Any]] = []
     for factor in row.top_factors or []:
@@ -190,7 +204,29 @@ def _serialize_assessment_detail(
             }
         )
 
+    fired_set = set(row.rules_fired or [])
+    rules_checklist = [
+        {
+            "id": rule_id,
+            "weight": weight,
+            "fired": rule_id in fired_set,
+            "description": RULE_DESCRIPTIONS.get(rule_id, rule_id),
+        }
+        for rule_id, weight in DEFAULT_RULE_WEIGHTS.items()
+    ]
+
     base["features"] = features_dict if features_dict else None
+    base["mouse_kinematics"] = mouse_kinematics
+    base["keyboard_kinematics"] = keyboard_kinematics
+    base["sub_scores"] = {
+        "final_score": round(float(row.score), 4),
+        "rule_score": score_meta.get("rule_score"),
+        "model_score": score_meta.get("model_score"),
+        "mouse_score": score_meta.get("mouse_score"),
+        "keyboard_score": score_meta.get("keyboard_score"),
+        "touch_score": score_meta.get("touch_score"),
+    }
+    base["rules_checklist"] = rules_checklist
     base["features_expires_at"] = _iso_utc(row.features_expires_at)
     base["top_contributing_features"] = top_contributing
     base["challenges"] = [
