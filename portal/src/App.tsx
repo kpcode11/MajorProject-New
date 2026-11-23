@@ -126,7 +126,19 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
               </span>
             </div>
           </div>
-          <PortalStatusBadge />
+          <div className="portal-header-actions">
+            <PortalStatusBadge />
+            <button
+              type="button"
+              className="portal-theme-toggle"
+              data-testid="theme-toggle"
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+              aria-pressed={theme === 'dark'}
+              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            >
+              {theme === 'light' ? 'Dark' : 'Light'}
+            </button>
+          </div>
         </div>
 
         <nav aria-label="Portal sections" className="portal-nav">
@@ -201,19 +213,7 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
       </main>
 
       <footer className="portal-footer">
-        <div className="portal-footer-inner">
-          <span>{DEMO_DISCLAIMER_TEXT} · Local-only test target</span>
-          <button
-            type="button"
-            className="portal-theme-toggle"
-            data-testid="theme-toggle"
-            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-            aria-pressed={theme === 'dark'}
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          >
-            <span>{theme === 'light' ? 'Dark theme' : 'Light theme'}</span>
-          </button>
-        </div>
+        <div className="portal-footer-inner">{DEMO_DISCLAIMER_TEXT} · Local-only test target</div>
       </footer>
     </div>
   );

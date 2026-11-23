@@ -69,6 +69,7 @@ describe('Mock portal scaffold and pages (P7-01, P7-02)', () => {
       document.documentElement.dataset.theme,
     );
     expect(container?.querySelector('[data-testid="theme-toggle"]')).not.toBeNull();
+    expect(container?.querySelector('.portal-header [data-testid="theme-toggle"]')).not.toBeNull();
   });
 
   it('navigates between Landing, Resident login, Update details, and Centre search pages', () => {
