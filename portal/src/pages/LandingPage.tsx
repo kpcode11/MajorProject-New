@@ -48,95 +48,37 @@ const SERVICE_CARDS: ReadonlyArray<{
 
 export function LandingPage({ onNavigate }: LandingPageProps): ReactNode {
   return (
-    <div
-      data-testid="page-landing"
-      style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
-    >
-      <section
-        aria-labelledby="portal-welcome-heading"
-        style={{
-          background: '#ffffff',
-          border: '1px solid #e2e8f0',
-          borderRadius: '12px',
-          padding: '24px',
-          boxShadow: '0 1px 3px rgba(15,23,42,0.05)',
-        }}
-      >
-        <h2
-          id="portal-welcome-heading"
-          style={{ marginTop: 0, fontSize: '20px', color: '#0f172a' }}
-        >
-          Welcome to the Mock Citizen Portal
-        </h2>
-        <p style={{ color: '#334155', lineHeight: 1.6, marginBottom: '12px' }}>
+    <div data-testid="page-landing">
+      <section className="portal-hero" aria-labelledby="portal-welcome-heading">
+        <div className="portal-eyebrow">Passive verification enabled</div>
+        <h2 id="portal-welcome-heading">Resident services, without the puzzle.</h2>
+        <p>
           This local demonstration portal evaluates passive behavioural bot detection (SIH1672) as a
           drop-in replacement for visual CAPTCHA puzzles. Every protected action requests a
           short-lived <code>X-Human-Token</code> from the passive BotGuard SDK before calling{' '}
           <code>/portal-api/*</code>.
         </p>
-        <p style={{ color: '#475569', fontSize: '14px', margin: 0 }}>
+        <p className="portal-privacy-note">
           Privacy guarantee: raw typed characters and field values are never collected by the
           telemetry SDK or stored by the backend.
         </p>
       </section>
 
       <section aria-label="Available self-service flows">
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: '16px',
-          }}
-        >
+        <p className="portal-section-label">Available self-service flows</p>
+        <div className="portal-service-grid">
           {SERVICE_CARDS.map((card) => (
-            <article
-              key={card.id}
-              data-testid={card.testId}
-              style={{
-                background: '#ffffff',
-                border: '1px solid #cbd5e1',
-                borderRadius: '12px',
-                padding: '20px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: '16px',
-              }}
-            >
+            <article key={card.id} data-testid={card.testId} className="portal-service-card">
               <div>
-                <div
-                  style={{
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    color: '#0369a1',
-                    marginBottom: '6px',
-                    fontFamily: 'monospace',
-                  }}
-                >
-                  {card.actionCode}
-                </div>
-                <h3 style={{ margin: '0 0 8px', fontSize: '18px', color: '#0f172a' }}>
-                  {card.title}
-                </h3>
-                <p style={{ margin: 0, fontSize: '14px', color: '#475569', lineHeight: 1.5 }}>
-                  {card.description}
-                </p>
+                <div className="portal-service-code">{card.actionCode}</div>
+                <h3>{card.title}</h3>
+                <p>{card.description}</p>
               </div>
               <button
                 type="button"
                 data-testid={`goto-${card.id}`}
                 onClick={() => onNavigate(card.id)}
-                style={{
-                  padding: '10px 16px',
-                  borderRadius: '8px',
-                  border: '1px solid #0369a1',
-                  background: '#0369a1',
-                  color: '#ffffff',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                }}
+                className="portal-primary-action"
               >
                 {card.actionLabel}
               </button>

@@ -11,12 +11,6 @@
  */
 import { BotGuardProvider, useBotGuard } from '@botguard/sdk/react';
 import { useState, type ReactNode } from 'react';
-import {
-  SUPABASE_COLORS,
-  SUPABASE_COMPONENTS,
-  SUPABASE_FONTS,
-  SUPABASE_RADII,
-} from './designTokens.js';
 import { AdminDashboardPage } from './pages/AdminDashboardPage.js';
 import { CentreSearchPage } from './pages/CentreSearchPage.js';
 import { LandingPage, type PortalPageId } from './pages/LandingPage.js';
@@ -68,21 +62,8 @@ function resolveInitialPage(explicitPage?: PortalPageId): PortalPageId {
 export function PortalStatusBadge(): ReactNode {
   const { running, assessing, lastResponse } = useBotGuard();
   return (
-    <div
-      data-testid="botguard-status"
-      aria-live="polite"
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '6px 12px',
-        borderRadius: '999px',
-        fontSize: '13px',
-        background: '#e0f2fe',
-        color: '#0369a1',
-        fontWeight: 500,
-      }}
-    >
+    <div data-testid="botguard-status" aria-live="polite" className="portal-status">
+      <span className="portal-status-dot" aria-hidden="true" />
       <span>Passive BotGuard: {running ? 'Active' : 'Idle'}</span>
       {assessing && <span>(Assessing…)</span>}
       {lastResponse && (
@@ -102,34 +83,7 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
   const [activePage, setActivePage] = useState<PortalPageId>(() => resolveInitialPage(initialPage));
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <style>{`
-        .portal-skip-link {
-          position: absolute;
-          left: -9999px;
-          top: 8px;
-          z-index: 1000;
-          padding: 8px 14px;
-          background: #0f172a;
-          color: #ffffff;
-          border-radius: 6px;
-          font-size: 14px;
-          font-weight: 600;
-          text-decoration: none;
-        }
-        .portal-skip-link:focus {
-          left: 16px;
-          outline: 3px solid #0369a1;
-          outline-offset: 2px;
-        }
-        button:focus-visible,
-        input:focus-visible,
-        select:focus-visible,
-        [tabindex="0"]:focus-visible {
-          outline: 2px solid #0369a1;
-          outline-offset: 2px;
-        }
-      `}</style>
+    <div className="portal-app">
       <a href="#portal-main-content" className="portal-skip-link" data-testid="skip-to-main">
         Skip to main content
       </a>
@@ -137,111 +91,58 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
         role="region"
         aria-label="Demonstration disclaimer"
         data-testid="demo-disclaimer-banner"
-        style={{
-          background: '#fef3c7',
-          color: '#92400e',
-          borderBottom: '1px solid #f59e0b',
-          padding: '10px 16px',
-          textAlign: 'center',
-          fontSize: '14px',
-          fontWeight: 700,
-          letterSpacing: '0.02em',
-        }}
+        className="portal-disclaimer"
       >
         {DEMO_DISCLAIMER_TEXT} — Academic research prototype for passive bot detection (SIH1672). Do
         not enter real personal identifiers.
       </div>
 
-      <header
-        style={{
-          background: activePage === 'admin' ? '#0f172a' : SUPABASE_COLORS.canvas,
-          borderBottom: `1px solid ${activePage === 'admin' ? '#1e293b' : SUPABASE_COLORS.hairline}`,
-          padding: '16px 24px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '14px',
-          fontFamily: SUPABASE_FONTS.sans,
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '12px',
-          }}
-        >
-          <div>
-            <h1
-              style={{
-                margin: 0,
-                fontSize: '22px',
-                fontWeight: 600,
-                letterSpacing: '-0.42px',
-                color: activePage === 'admin' ? '#ffffff' : SUPABASE_COLORS.ink,
-              }}
-            >
-              {activePage === 'admin'
-                ? 'BotGuard Security & Kinematics Console'
-                : 'Mock Resident Self-Service Portal'}
-            </h1>
-            <p
-              style={{
-                margin: '4px 0 0',
-                fontSize: '13px',
-                color: activePage === 'admin' ? '#cbd5e1' : SUPABASE_COLORS.inkMute,
-              }}
-            >
-              {activePage === 'admin'
-                ? 'Standalone central monitoring console — real-time ML kinematics, 13-rule telemetry & multi-site integration'
-                : 'Protected by passive behavioural verification — no CAPTCHA puzzles'}
-            </p>
+      <header className="portal-header">
+        <div className="portal-header-inner">
+          <div className="portal-brand">
+            <div className="portal-mark" aria-hidden="true">
+              BG
+            </div>
+            <div className="portal-brand-copy">
+              <span className="portal-brand-title">
+                {activePage === 'admin' ? 'BotGuard security console' : 'Resident services portal'}
+              </span>
+              <span className="portal-brand-subtitle">
+                {activePage === 'admin'
+                  ? 'Operational monitoring for passive bot detection'
+                  : 'Protected by passive behavioural verification'}
+              </span>
+            </div>
           </div>
           <PortalStatusBadge />
         </div>
 
-        <nav
-          aria-label="Portal sections"
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '8px',
-            flexWrap: 'wrap',
-          }}
-        >
-          {isStandaloneAdminPort() ? (
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                data-testid="nav-admin"
-                aria-current="page"
-                onClick={() => setActivePage('admin')}
-                style={SUPABASE_COMPONENTS.buttonPrimaryGreen}
-              >
-                Admin Security Console (:5174)
-              </button>
-              <a
-                href="http://127.0.0.1:5173"
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  ...SUPABASE_COMPONENTS.buttonSecondaryOutline,
-                  backgroundColor: '#1e293b',
-                  color: '#f8fafc',
-                  border: '1px solid #475569',
-                  textDecoration: 'none',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                }}
-              >
-                Open Mock Citizen Portal (:5173) ↗
-              </a>
-            </div>
-          ) : (
-            <>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <nav aria-label="Portal sections" className="portal-nav">
+          <div className="portal-nav-inner">
+            {isStandaloneAdminPort() ? (
+              <>
+                <button
+                  type="button"
+                  data-testid="nav-admin"
+                  aria-current="page"
+                  onClick={() => setActivePage('admin')}
+                  className="portal-nav-button"
+                  data-active="true"
+                >
+                  Security console
+                </button>
+                <a
+                  href="http://127.0.0.1:5173"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="portal-nav-button"
+                  style={{ textDecoration: 'none' }}
+                >
+                  Open resident portal ↗
+                </a>
+              </>
+            ) : (
+              <>
                 {NAV_ITEMS.filter((item) => item.id !== 'admin').map((item) => {
                   const isActive = activePage === item.id;
                   return (
@@ -251,60 +152,34 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
                       data-testid={item.testId}
                       aria-current={isActive ? 'page' : undefined}
                       onClick={() => setActivePage(item.id)}
-                      style={
-                        isActive
-                          ? SUPABASE_COMPONENTS.buttonPrimaryGreen
-                          : activePage === 'admin'
-                            ? {
-                                ...SUPABASE_COMPONENTS.buttonSecondaryOutline,
-                                backgroundColor: '#1e293b',
-                                color: '#f8fafc',
-                                border: '1px solid #475569',
-                              }
-                            : SUPABASE_COMPONENTS.buttonSecondaryOutline
-                      }
+                      className="portal-nav-button"
+                      data-active={isActive}
                     >
                       {item.label}
                     </button>
                   );
                 })}
-              </div>
-              <button
-                type="button"
-                data-testid="nav-admin"
-                aria-current={activePage === 'admin' ? 'page' : undefined}
-                onClick={() => setActivePage('admin')}
-                style={
-                  activePage === 'admin'
-                    ? SUPABASE_COMPONENTS.buttonPrimaryGreen
-                    : {
-                        ...SUPABASE_COMPONENTS.buttonSecondaryOutline,
-                        backgroundColor: '#0f172a',
-                        color: '#ffffff',
-                        border: '1px solid #0f172a',
-                        fontWeight: 600,
-                      }
-                }
-              >
-                Admin dashboard
-              </button>
-            </>
-          )}
+                <button
+                  type="button"
+                  data-testid="nav-admin"
+                  aria-current={activePage === 'admin' ? 'page' : undefined}
+                  onClick={() => setActivePage('admin')}
+                  className="portal-nav-button admin"
+                  data-active={activePage === 'admin'}
+                >
+                  Security console
+                </button>
+              </>
+            )}
+          </div>
         </nav>
       </header>
 
       <main
         id="portal-main-content"
         tabIndex={-1}
-        style={{
-          flex: 1,
-          maxWidth: activePage === 'admin' ? '1320px' : '960px',
-          width: '100%',
-          margin: '0 auto',
-          padding: '24px',
-          boxSizing: 'border-box',
-          backgroundColor: activePage === 'admin' ? '#f8fafc' : SUPABASE_COLORS.canvas,
-        }}
+        className="portal-main"
+        style={{ maxWidth: activePage === 'admin' ? '1320px' : undefined }}
       >
         {activePage === 'landing' && <LandingPage onNavigate={setActivePage} />}
         {activePage === 'login' && <ResidentLoginPage />}
@@ -313,18 +188,8 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
         {activePage === 'admin' && <AdminDashboardPage />}
       </main>
 
-      <footer
-        style={{
-          borderTop: `1px solid ${SUPABASE_COLORS.hairline}`,
-          padding: '14px 24px',
-          textAlign: 'center',
-          fontSize: '12px',
-          color: SUPABASE_COLORS.inkMute,
-          background: SUPABASE_COLORS.canvas,
-          borderRadius: SUPABASE_RADII.xs,
-        }}
-      >
-        {DEMO_DISCLAIMER_TEXT} · Local-only test target
+      <footer className="portal-footer">
+        <div className="portal-footer-inner">{DEMO_DISCLAIMER_TEXT} · Local-only test target</div>
       </footer>
     </div>
   );
