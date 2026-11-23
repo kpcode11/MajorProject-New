@@ -43,37 +43,17 @@ export function ResidentLoginPage(): ReactNode {
     <section
       data-testid="page-login"
       aria-labelledby="login-page-heading"
-      style={{
-        background: '#ffffff',
-        border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        padding: '24px',
-        boxShadow: '0 1px 3px rgba(15,23,42,0.05)',
-      }}
+      className="portal-page-card"
     >
-      <h2 id="login-page-heading" style={{ marginTop: 0, fontSize: '20px', color: '#0f172a' }}>
-        Resident login
-      </h2>
-      <p
-        id="resident-identifier-hint"
-        style={{ color: '#475569', fontSize: '14px', marginBottom: '20px' }}
-      >
+      <h2 id="login-page-heading">Resident login</h2>
+      <p id="resident-identifier-hint" className="portal-page-lead">
         Enter a synthetic mock identifier (for example, <code>9999-0000-1234</code>) and click{' '}
         <strong>Send OTP</strong>. Do not enter any real Aadhaar or government ID number.
       </p>
 
-      <form onSubmit={(e) => void handleSubmit(e)} noValidate>
-        <div style={{ marginBottom: '16px' }}>
-          <label
-            htmlFor="resident-identifier"
-            style={{
-              display: 'block',
-              fontWeight: 600,
-              fontSize: '14px',
-              marginBottom: '6px',
-              color: '#1e293b',
-            }}
-          >
+      <form onSubmit={(e) => void handleSubmit(e)} noValidate className="portal-form">
+        <div className="portal-field">
+          <label htmlFor="resident-identifier" className="portal-label">
             Mock Resident Identifier
           </label>
           <input
@@ -92,22 +72,14 @@ export function ResidentLoginPage(): ReactNode {
             }
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
-            style={{
-              width: '100%',
-              maxWidth: '360px',
-              padding: '10px 12px',
-              fontSize: '15px',
-              borderRadius: '8px',
-              border: '1px solid #94a3b8',
-              boxSizing: 'border-box',
-            }}
+            className="portal-input"
           />
           {validationError && (
             <p
               id="login-validation-error"
               role="alert"
               data-testid="login-validation-error"
-              style={{ color: '#b91c1c', fontSize: '13px', marginTop: '6px', marginBottom: 0 }}
+              className="portal-validation"
             >
               {validationError}
             </p>
@@ -118,16 +90,8 @@ export function ResidentLoginPage(): ReactNode {
           type="submit"
           data-testid="send-otp-btn"
           disabled={submitting}
-          style={{
-            padding: '10px 20px',
-            fontSize: '15px',
-            fontWeight: 600,
-            borderRadius: '8px',
-            border: 'none',
-            background: submitting ? '#475569' : '#0369a1',
-            color: '#ffffff',
-            cursor: submitting ? 'wait' : 'pointer',
-          }}
+          className="portal-button"
+          style={{ alignSelf: 'flex-start' }}
         >
           {submitting ? 'Verifying & Sending…' : 'Send OTP'}
         </button>
@@ -138,15 +102,7 @@ export function ResidentLoginPage(): ReactNode {
           role="status"
           data-testid="otp-result"
           data-outcome={result.ok ? 'accepted' : 'rejected'}
-          style={{
-            marginTop: '20px',
-            padding: '14px 16px',
-            borderRadius: '8px',
-            border: `1px solid ${result.ok ? '#22c55e' : '#ef4444'}`,
-            background: result.ok ? '#f0fdf4' : '#fef2f2',
-            color: result.ok ? '#166534' : '#991b1b',
-            fontSize: '14px',
-          }}
+          className="portal-result"
         >
           <strong>{result.ok ? 'OTP Dispatched (Demo): ' : 'OTP Request Rejected: '}</strong>
           <span>{result.message}</span>

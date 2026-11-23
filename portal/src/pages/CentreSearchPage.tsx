@@ -76,43 +76,16 @@ export function CentreSearchPage(): ReactNode {
     <section
       data-testid="page-centre-search"
       aria-labelledby="centre-search-heading"
-      style={{
-        background: '#ffffff',
-        border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        padding: '24px',
-        boxShadow: '0 1px 3px rgba(15,23,42,0.05)',
-      }}
+      className="portal-page-card"
     >
-      <h2 id="centre-search-heading" style={{ marginTop: 0, fontSize: '20px', color: '#0f172a' }}>
-        Centre search
-      </h2>
-      <p style={{ color: '#475569', fontSize: '14px', marginBottom: '20px' }}>
+      <h2 id="centre-search-heading">Centre search</h2>
+      <p className="portal-page-lead">
         Search mock enrolment and update centres by PIN code or district name.
       </p>
 
-      <form
-        onSubmit={(e) => void handleSubmit(e)}
-        noValidate
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '12px',
-          alignItems: 'flex-end',
-          marginBottom: '16px',
-        }}
-      >
-        <div style={{ flex: '1 1 240px' }}>
-          <label
-            htmlFor="centre-query"
-            style={{
-              display: 'block',
-              fontWeight: 600,
-              fontSize: '14px',
-              marginBottom: '6px',
-              color: '#1e293b',
-            }}
-          >
+      <form onSubmit={(e) => void handleSubmit(e)} noValidate className="portal-form-inline">
+        <div className="portal-field portal-field-flex">
+          <label htmlFor="centre-query" className="portal-label">
             PIN Code or District
           </label>
           <input
@@ -126,28 +99,12 @@ export function CentreSearchPage(): ReactNode {
             aria-describedby={validationError ? 'centre-validation-error' : undefined}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              fontSize: '14px',
-              borderRadius: '8px',
-              border: '1px solid #94a3b8',
-              boxSizing: 'border-box',
-            }}
+            className="portal-input"
           />
         </div>
 
-        <div style={{ flex: '0 1 220px' }}>
-          <label
-            htmlFor="centre-service"
-            style={{
-              display: 'block',
-              fontWeight: 600,
-              fontSize: '14px',
-              marginBottom: '6px',
-              color: '#1e293b',
-            }}
-          >
+        <div className="portal-field portal-field-select">
+          <label htmlFor="centre-service" className="portal-label">
             Service Type
           </label>
           <select
@@ -156,16 +113,7 @@ export function CentreSearchPage(): ReactNode {
             data-testid="centre-service-select"
             value={serviceType}
             onChange={(e) => setServiceType(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              fontSize: '14px',
-              borderRadius: '8px',
-              border: '1px solid #94a3b8',
-              background: '#ffffff',
-              color: '#0f172a',
-              boxSizing: 'border-box',
-            }}
+            className="portal-select"
           >
             <option value="ALL">All Services</option>
             <option value="ENROLMENT">New Enrolment</option>
@@ -178,16 +126,7 @@ export function CentreSearchPage(): ReactNode {
           type="submit"
           data-testid="search-centres-btn"
           disabled={searching}
-          style={{
-            padding: '10px 20px',
-            fontSize: '15px',
-            fontWeight: 600,
-            borderRadius: '8px',
-            border: 'none',
-            background: searching ? '#475569' : '#0369a1',
-            color: '#ffffff',
-            cursor: searching ? 'wait' : 'pointer',
-          }}
+          className="portal-button"
         >
           {searching ? 'Searching…' : 'Search Centres'}
         </button>
@@ -198,7 +137,7 @@ export function CentreSearchPage(): ReactNode {
           id="centre-validation-error"
           role="alert"
           data-testid="centre-validation-error"
-          style={{ color: '#b91c1c', fontSize: '13px', marginTop: 0, marginBottom: '16px' }}
+          className="portal-validation"
         >
           {validationError}
         </p>
@@ -209,15 +148,7 @@ export function CentreSearchPage(): ReactNode {
           role="status"
           data-testid="centre-search-status"
           data-outcome={result.ok ? 'accepted' : 'rejected'}
-          style={{
-            marginBottom: '16px',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            border: `1px solid ${result.ok ? '#22c55e' : '#ef4444'}`,
-            background: result.ok ? '#f0fdf4' : '#fef2f2',
-            color: result.ok ? '#166534' : '#991b1b',
-            fontSize: '14px',
-          }}
+          className="portal-result"
         >
           <strong>{result.ok ? 'Search Verified: ' : 'Search Blocked: '}</strong>
           <span>{result.message}</span>
@@ -228,36 +159,21 @@ export function CentreSearchPage(): ReactNode {
         <ul
           data-testid="centre-results"
           aria-label="Enrolment and update centres"
-          style={{
-            listStyle: 'none',
-            padding: 0,
-            margin: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-          }}
+          className="portal-centres"
         >
           {centres.map((centre) => (
             <li
               key={centre.code}
               data-testid={`centre-item-${centre.code}`}
-              style={{
-                border: '1px solid #cbd5e1',
-                borderRadius: '8px',
-                padding: '14px 16px',
-                background: '#f8fafc',
-              }}
+              className="portal-centre"
             >
-              <div style={{ fontWeight: 700, fontSize: '15px', color: '#0f172a' }}>
-                {centre.name}{' '}
-                <span style={{ color: '#475569', fontWeight: 500 }}>({centre.code})</span>
+              <div className="portal-centre-name">
+                {centre.name} <span>({centre.code})</span>
               </div>
-              <div style={{ fontSize: '13px', color: '#334155', marginTop: '4px' }}>
+              <div className="portal-centre-meta">
                 District: {centre.district} · Hours: {centre.hours}
               </div>
-              <div style={{ fontSize: '12px', color: '#0369a1', marginTop: '4px' }}>
-                Services: {centre.services.join(', ')}
-              </div>
+              <div className="portal-centre-services">Services: {centre.services.join(', ')}</div>
             </li>
           ))}
         </ul>

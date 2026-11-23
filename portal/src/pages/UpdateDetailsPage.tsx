@@ -60,38 +60,17 @@ export function UpdateDetailsPage(): ReactNode {
     <section
       data-testid="page-update-details"
       aria-labelledby="update-details-heading"
-      style={{
-        background: '#ffffff',
-        border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        padding: '24px',
-        boxShadow: '0 1px 3px rgba(15,23,42,0.05)',
-      }}
+      className="portal-page-card"
     >
-      <h2 id="update-details-heading" style={{ marginTop: 0, fontSize: '20px', color: '#0f172a' }}>
-        Update details
-      </h2>
-      <p style={{ color: '#475569', fontSize: '14px', marginBottom: '20px' }}>
+      <h2 id="update-details-heading">Update details</h2>
+      <p className="portal-page-lead">
         Update synthetic demographic details. Only field names and coarse selections are sent to the
         demo API; typed text stays in browser memory.
       </p>
 
-      <form
-        onSubmit={(e) => void handleSubmit(e)}
-        noValidate
-        style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '520px' }}
-      >
-        <div>
-          <label
-            htmlFor="detail-name"
-            style={{
-              display: 'block',
-              fontWeight: 600,
-              fontSize: '14px',
-              marginBottom: '6px',
-              color: '#1e293b',
-            }}
-          >
+      <form onSubmit={(e) => void handleSubmit(e)} noValidate className="portal-form">
+        <div className="portal-field">
+          <label htmlFor="detail-name" className="portal-label">
             Synthetic Resident Full Name
           </label>
           <input
@@ -104,28 +83,12 @@ export function UpdateDetailsPage(): ReactNode {
             aria-describedby={validationError ? 'details-validation-error' : undefined}
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              fontSize: '14px',
-              borderRadius: '8px',
-              border: '1px solid #94a3b8',
-              boxSizing: 'border-box',
-            }}
+            className="portal-input"
           />
         </div>
 
-        <div>
-          <label
-            htmlFor="detail-address"
-            style={{
-              display: 'block',
-              fontWeight: 600,
-              fontSize: '14px',
-              marginBottom: '6px',
-              color: '#1e293b',
-            }}
-          >
+        <div className="portal-field">
+          <label htmlFor="detail-address" className="portal-label">
             Synthetic Address Line
           </label>
           <input
@@ -138,29 +101,13 @@ export function UpdateDetailsPage(): ReactNode {
             aria-describedby={validationError ? 'details-validation-error' : undefined}
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              fontSize: '14px',
-              borderRadius: '8px',
-              border: '1px solid #94a3b8',
-              boxSizing: 'border-box',
-            }}
+            className="portal-input"
           />
         </div>
 
-        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-          <div style={{ flex: '1 1 180px' }}>
-            <label
-              htmlFor="detail-pincode"
-              style={{
-                display: 'block',
-                fontWeight: 600,
-                fontSize: '14px',
-                marginBottom: '6px',
-                color: '#1e293b',
-              }}
-            >
+        <div className="portal-form-inline">
+          <div className="portal-field portal-field-flex">
+            <label htmlFor="detail-pincode" className="portal-label">
               PIN Code
             </label>
             <input
@@ -174,28 +121,12 @@ export function UpdateDetailsPage(): ReactNode {
               aria-describedby={validationError ? 'details-validation-error' : undefined}
               value={pincode}
               onChange={(e) => setPincode(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px 12px',
-                fontSize: '14px',
-                borderRadius: '8px',
-                border: '1px solid #94a3b8',
-                boxSizing: 'border-box',
-              }}
+              className="portal-input"
             />
           </div>
 
-          <div style={{ flex: '1 1 200px' }}>
-            <label
-              htmlFor="detail-city"
-              style={{
-                display: 'block',
-                fontWeight: 600,
-                fontSize: '14px',
-                marginBottom: '6px',
-                color: '#1e293b',
-              }}
-            >
+          <div className="portal-field portal-field-select">
+            <label htmlFor="detail-city" className="portal-label">
               District / City
             </label>
             <select
@@ -204,16 +135,7 @@ export function UpdateDetailsPage(): ReactNode {
               data-testid="detail-city-select"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px 12px',
-                fontSize: '14px',
-                borderRadius: '8px',
-                border: '1px solid #94a3b8',
-                background: '#ffffff',
-                color: '#0f172a',
-                boxSizing: 'border-box',
-              }}
+              className="portal-select"
             >
               <option value="BENGALURU">Bengaluru Urban</option>
               <option value="DELHI">New Delhi</option>
@@ -224,17 +146,8 @@ export function UpdateDetailsPage(): ReactNode {
           </div>
         </div>
 
-        <div>
-          <label
-            htmlFor="detail-language"
-            style={{
-              display: 'block',
-              fontWeight: 600,
-              fontSize: '14px',
-              marginBottom: '6px',
-              color: '#1e293b',
-            }}
-          >
+        <div className="portal-field">
+          <label htmlFor="detail-language" className="portal-label">
             Preferred Notification Language
           </label>
           <select
@@ -243,16 +156,7 @@ export function UpdateDetailsPage(): ReactNode {
             data-testid="detail-language-select"
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              fontSize: '14px',
-              borderRadius: '8px',
-              border: '1px solid #94a3b8',
-              background: '#ffffff',
-              color: '#0f172a',
-              boxSizing: 'border-box',
-            }}
+            className="portal-select"
           >
             <option value="EN">English</option>
             <option value="HI">Hindi</option>
@@ -261,7 +165,7 @@ export function UpdateDetailsPage(): ReactNode {
           </select>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
           <input
             id="detail-confirm"
             name="confirmed"
@@ -271,7 +175,7 @@ export function UpdateDetailsPage(): ReactNode {
             checked={confirmed}
             onChange={(e) => setConfirmed(e.target.checked)}
           />
-          <label htmlFor="detail-confirm" style={{ fontSize: '14px', color: '#334155' }}>
+          <label htmlFor="detail-confirm" className="portal-label">
             I confirm these entries are synthetic demonstration values only.
           </label>
         </div>
@@ -281,7 +185,7 @@ export function UpdateDetailsPage(): ReactNode {
             id="details-validation-error"
             role="alert"
             data-testid="details-validation-error"
-            style={{ color: '#b91c1c', fontSize: '13px', margin: 0 }}
+            className="portal-validation"
           >
             {validationError}
           </p>
@@ -292,16 +196,7 @@ export function UpdateDetailsPage(): ReactNode {
             type="submit"
             data-testid="submit-details-btn"
             disabled={submitting}
-            style={{
-              padding: '10px 20px',
-              fontSize: '15px',
-              fontWeight: 600,
-              borderRadius: '8px',
-              border: 'none',
-              background: submitting ? '#475569' : '#0369a1',
-              color: '#ffffff',
-              cursor: submitting ? 'wait' : 'pointer',
-            }}
+            className="portal-button"
           >
             {submitting ? 'Submitting Update…' : 'Submit Update Request'}
           </button>
@@ -313,15 +208,7 @@ export function UpdateDetailsPage(): ReactNode {
           role="status"
           data-testid="details-result"
           data-outcome={result.ok ? 'accepted' : 'rejected'}
-          style={{
-            marginTop: '20px',
-            padding: '14px 16px',
-            borderRadius: '8px',
-            border: `1px solid ${result.ok ? '#22c55e' : '#ef4444'}`,
-            background: result.ok ? '#f0fdf4' : '#fef2f2',
-            color: result.ok ? '#166534' : '#991b1b',
-            fontSize: '14px',
-          }}
+          className="portal-result"
         >
           <strong>{result.ok ? 'Update Request Accepted: ' : 'Update Request Rejected: '}</strong>
           <span>{result.message}</span>
