@@ -11,7 +11,7 @@
 - **P10-11:** Added MIT `LICENSE`, CFF 1.2.0 `CITATION.cff` (`v1.0.0`), updated `README.md` licence/citation links, verified `check_claims.py` + `lint` + `test-fast`, committed, and created annotated git tag `v1.0.0`.
 - **P10-12 (`e3a70c4`):** Applied the shared portal design contract in `portal/Design.md` to the resident portal shell and landing page. Added semantic CSS variables, responsive service cards, accessible focus treatment, reduced-motion support, and kept all existing navigation/test contracts intact. Verified portal tests, typecheck, lint, and production build.
 - **Impeccable polish (`03eae57`):** Removed the overused Inter font finding and unified Resident login, Update details, and Centre search with the portal token and component styles. Verified desktop/mobile renders at 1440×900 and 390×844, then ran the Impeccable detector (0 findings), portal tests/lint/build, and the repository fast suite.
-- **Theme polish:** Added persisted light/dark theme switching, normalized portal typography and line-height, and replaced the security console's black card treatment with warmer neutral surfaces. Verified 24 portal tests, accessibility contrast, lint, build, detector, and fast-suite checks.
+- **Theme polish (`ebfcba2`):** Added persisted light/dark theme switching, normalized portal typography and line-height, and replaced the security console's black card treatment with warmer neutral surfaces. Verified 24 portal tests, accessibility contrast, lint, build, detector, and fast-suite checks.
 
 ## Exact next step
 1. Complete `P10-10` (`docs/demo_script.md`) if desired, and obtain `[HUMAN]` sign-off on final results text and demo recording.
