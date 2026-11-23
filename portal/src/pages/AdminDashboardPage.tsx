@@ -261,6 +261,7 @@ export function AdminDashboardPage({
   return (
     <div
       data-testid="page-admin-dashboard"
+      className="admin-dashboard"
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -522,10 +523,12 @@ export function AdminDashboardPage({
           </div>
 
           {/* Dark Featured Card: Model Versions (`card-feature-dark` from supabase/DESIGN.md) */}
-          <div style={SUPABASE_COMPONENTS.cardFeatureDark} data-testid="metric-models">
-            <div style={{ ...SUPABASE_TYPOGRAPHY.caption, color: SUPABASE_COLORS.inkFaint }}>
-              Loaded ONNX Models
-            </div>
+          <div
+            className="admin-model-card"
+            style={SUPABASE_COMPONENTS.cardFeatureLight}
+            data-testid="metric-models"
+          >
+            <div className="admin-muted-label">Loaded ONNX Models</div>
             <div
               style={{
                 marginTop: '10px',
@@ -537,26 +540,24 @@ export function AdminDashboardPage({
               }}
             >
               <div>
-                <span style={{ color: SUPABASE_COLORS.inkMute2 }}>mouse: </span>
-                <span style={{ color: SUPABASE_COLORS.primary }}>
+                <span className="admin-muted-label">mouse: </span>
+                <span className="admin-accent-value">
                   {overview.model_versions.mouse ?? 'none'}
                 </span>
               </div>
               <div>
-                <span style={{ color: SUPABASE_COLORS.inkMute2 }}>keyboard: </span>
-                <span style={{ color: SUPABASE_COLORS.primary }}>
+                <span className="admin-muted-label">keyboard: </span>
+                <span className="admin-accent-value">
                   {overview.model_versions.keyboard ?? 'none'}
                 </span>
               </div>
               <div>
-                <span style={{ color: SUPABASE_COLORS.inkMute2 }}>fusion: </span>
-                <span style={{ color: SUPABASE_COLORS.onDark }}>
-                  {overview.model_versions.fusion ?? 'none'}
-                </span>
+                <span className="admin-muted-label">fusion: </span>
+                <span>{overview.model_versions.fusion ?? 'none'}</span>
               </div>
               <div>
-                <span style={{ color: SUPABASE_COLORS.inkMute2 }}>touch: </span>
-                <span style={{ color: SUPABASE_COLORS.inkMute2 }}>
+                <span className="admin-muted-label">touch: </span>
+                <span className="admin-muted-label">
                   {overview.model_versions.touch ?? 'skipped (P8)'}
                 </span>
               </div>
@@ -824,7 +825,11 @@ export function AdminDashboardPage({
           </div>
 
           {/* Right: Composited Dark Inspector (`canvas-night` from supabase/DESIGN.md) */}
-          <div data-testid="session-inspector-pane" style={SUPABASE_COMPONENTS.cardFeatureDark}>
+          <div
+            data-testid="session-inspector-pane"
+            className="admin-inspector"
+            style={SUPABASE_COMPONENTS.cardFeatureLight}
+          >
             {selectedDetail ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div
@@ -837,9 +842,7 @@ export function AdminDashboardPage({
                   }}
                 >
                   <div>
-                    <div style={{ fontSize: '12px', color: SUPABASE_COLORS.inkMute2 }}>
-                      Session Assessment ID
-                    </div>
+                    <div className="admin-muted-label">Session Assessment ID</div>
                     <div
                       data-testid="detail-assessment-id"
                       style={{ fontFamily: SUPABASE_FONTS.mono, fontSize: '14px' }}
@@ -853,7 +856,7 @@ export function AdminDashboardPage({
                   </span>
                 </div>
 
-                <div style={{ fontSize: '13px', color: SUPABASE_COLORS.inkFaint }}>
+                <div className="admin-inspector-line">
                   Action: <code>{selectedDetail.action}</code> · Device:{' '}
                   <code>{selectedDetail.device_class ?? 'desktop'}</code> · Latency:{' '}
                   <code>{selectedDetail.latency_ms?.toFixed(2) ?? '0.00'} ms</code>
@@ -863,7 +866,6 @@ export function AdminDashboardPage({
                   <div
                     style={{
                       fontSize: '12px',
-                      color: SUPABASE_COLORS.inkMute2,
                       marginBottom: '4px',
                     }}
                   >
@@ -874,10 +876,7 @@ export function AdminDashboardPage({
                     style={{
                       fontFamily: SUPABASE_FONTS.mono,
                       fontSize: '12px',
-                      color:
-                        selectedDetail.rules_fired.length > 0
-                          ? SUPABASE_COLORS.accentYellow
-                          : SUPABASE_COLORS.primary,
+                      color: 'var(--foreground)',
                     }}
                   >
                     {selectedDetail.rules_fired.length > 0
@@ -890,7 +889,6 @@ export function AdminDashboardPage({
                   <div
                     style={{
                       fontSize: '12px',
-                      color: SUPABASE_COLORS.inkMute2,
                       marginBottom: '4px',
                     }}
                   >
@@ -961,19 +959,16 @@ export function AdminDashboardPage({
                       style={{
                         padding: '8px 10px',
                         borderRadius: SUPABASE_RADII.sm,
-                        backgroundColor: SUPABASE_COLORS.canvasNightSoft,
-                        border: `1px solid ${SUPABASE_COLORS.inkSecondary}`,
+                        backgroundColor: 'var(--card)',
+                        border: '1px solid var(--border)',
                       }}
                     >
-                      <div style={{ fontSize: '11px', color: SUPABASE_COLORS.inkMute2 }}>
-                        {sc.label}
-                      </div>
+                      <div className="admin-muted-label">{sc.label}</div>
                       <div
                         style={{
                           fontFamily: SUPABASE_FONTS.mono,
                           fontSize: '15px',
                           fontWeight: 600,
-                          color: SUPABASE_COLORS.onDark,
                           marginTop: '2px',
                         }}
                       >
@@ -1013,7 +1008,7 @@ export function AdminDashboardPage({
                       type="button"
                       data-testid="clear-feedback-btn"
                       onClick={() => void handleMarkFeedback(selectedDetail.id, null)}
-                      style={SUPABASE_COMPONENTS.buttonOnDark}
+                      style={SUPABASE_COMPONENTS.buttonSecondaryOutline}
                     >
                       Clear Feedback
                     </button>
@@ -1021,7 +1016,7 @@ export function AdminDashboardPage({
                 </div>
               </div>
             ) : (
-              <div style={{ color: SUPABASE_COLORS.inkMute2, fontSize: '14px' }}>
+              <div className="admin-inspector-empty">
                 Select an assessment row to inspect derived features and rule evaluations.
               </div>
             )}
@@ -1752,12 +1747,11 @@ export function AdminDashboardPage({
           >
             <strong style={{ fontSize: '14px' }}>Step 1 & 2 — Frontend Browser SDK</strong>
             <pre
+              className="admin-code-block"
               style={{
                 margin: '8px 0 0',
                 padding: '10px',
                 borderRadius: SUPABASE_RADII.xs,
-                backgroundColor: SUPABASE_COLORS.canvasNight,
-                color: SUPABASE_COLORS.onDark,
                 fontFamily: SUPABASE_FONTS.mono,
                 fontSize: '12px',
                 overflowX: 'auto',
@@ -1783,12 +1777,11 @@ if (res.decision === 'allow') {
           >
             <strong style={{ fontSize: '14px' }}>Step 3 — Your Backend Token Verification</strong>
             <pre
+              className="admin-code-block"
               style={{
                 margin: '8px 0 0',
                 padding: '10px',
                 borderRadius: SUPABASE_RADII.xs,
-                backgroundColor: SUPABASE_COLORS.canvasNight,
-                color: SUPABASE_COLORS.onDark,
                 fontFamily: SUPABASE_FONTS.mono,
                 fontSize: '12px',
                 overflowX: 'auto',

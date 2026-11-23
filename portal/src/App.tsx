@@ -10,7 +10,7 @@
  *  - Centre search (`centre-search`)
  */
 import { BotGuardProvider, useBotGuard } from '@botguard/sdk/react';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { AdminDashboardPage } from './pages/AdminDashboardPage.js';
 import { CentreSearchPage } from './pages/CentreSearchPage.js';
 import { LandingPage, type PortalPageId } from './pages/LandingPage.js';
@@ -81,9 +81,21 @@ export interface PortalShellProps {
 
 export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
   const [activePage, setActivePage] = useState<PortalPageId>(() => resolveInitialPage(initialPage));
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window === 'undefined') return 'light';
+    const saved = window.localStorage.getItem('botguard-theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    window.localStorage.setItem('botguard-theme', theme);
+  }, [theme]);
 
   return (
-    <div className="portal-app">
+    <div className="portal-app" data-theme={theme}>
       <a href="#portal-main-content" className="portal-skip-link" data-testid="skip-to-main">
         Skip to main content
       </a>
@@ -189,7 +201,19 @@ export function PortalShell({ initialPage }: PortalShellProps = {}): ReactNode {
       </main>
 
       <footer className="portal-footer">
-        <div className="portal-footer-inner">{DEMO_DISCLAIMER_TEXT} · Local-only test target</div>
+        <div className="portal-footer-inner">
+          <span>{DEMO_DISCLAIMER_TEXT} · Local-only test target</span>
+          <button
+            type="button"
+            className="portal-theme-toggle"
+            data-testid="theme-toggle"
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+            aria-pressed={theme === 'dark'}
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          >
+            <span>{theme === 'light' ? 'Dark theme' : 'Light theme'}</span>
+          </button>
+        </div>
       </footer>
     </div>
   );

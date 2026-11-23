@@ -50,6 +50,27 @@ describe('Mock portal scaffold and pages (P7-01, P7-02)', () => {
     expect(status?.textContent).toContain('Passive BotGuard: Active');
   });
 
+  it('toggles and persists the light/dark portal theme', () => {
+    window.localStorage.removeItem('botguard-theme');
+    act(() => {
+      root?.render(<App />);
+    });
+
+    const toggle = container?.querySelector(
+      '[data-testid="theme-toggle"]',
+    ) as HTMLButtonElement | null;
+    expect(document.documentElement.dataset.theme).toMatch(/^(light|dark)$/);
+
+    act(() => {
+      toggle?.click();
+    });
+
+    expect(window.localStorage.getItem('botguard-theme')).toBe(
+      document.documentElement.dataset.theme,
+    );
+    expect(container?.querySelector('[data-testid="theme-toggle"]')).not.toBeNull();
+  });
+
   it('navigates between Landing, Resident login, Update details, and Centre search pages', () => {
     act(() => {
       root?.render(<App />);
