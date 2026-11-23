@@ -146,7 +146,7 @@
 | P10-09 | 10 | Claims checker | DONE | HEAD | Added scripts/check_claims.py verifying 400 extracted numeric claims across README.md and docs/model_card.md against 3,195 results/ values plus 14/14 canonical headline checks; remediated stale keyboard hparams in docs/model_card.md and unbacked PR-AUC/Brier cells in README.md; wired into .github/workflows/ci.yml; saved results/system/claims_check.json; 3 tests in ml/tests/test_check_claims.py. |
 | P10-10 | 10 | Demo-video script | TODO | | |
 | P10-11 | 10 | Release metadata | DONE | HEAD | Added MIT LICENSE, CFF 1.2.0 CITATION.cff (v1.0.0), linked both in README.md, and tagged release v1.0.0. |
-| P10-12 | 10 | Portal UI design system | DONE | pending | Applied portal/Design.md to the resident portal shell and landing flow with semantic CSS tokens, responsive layout, accessible focus states, reduced-motion support, and preserved navigation/test contracts. |
+| P10-12 | 10 | Portal UI design system | DONE | e3a70c4 | Applied portal/Design.md to the resident portal shell and landing flow with semantic CSS tokens, responsive layout, accessible focus states, reduced-motion support, and preserved navigation/test contracts. |
 
 Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 
