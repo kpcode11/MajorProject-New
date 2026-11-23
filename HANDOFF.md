@@ -13,6 +13,7 @@
 - **Impeccable polish (`03eae57`):** Removed the overused Inter font finding and unified Resident login, Update details, and Centre search with the portal token and component styles. Verified desktop/mobile renders at 1440×900 and 390×844, then ran the Impeccable detector (0 findings), portal tests/lint/build, and the repository fast suite.
 - **Theme polish (`ebfcba2`):** Added persisted light/dark theme switching, normalized portal typography and line-height, and replaced the security console's black card treatment with warmer neutral surfaces. Verified 24 portal tests, accessibility contrast, lint, build, detector, and fast-suite checks.
 - **Impeccable doctor and top-navbar theme (`d761be5`):** Ran `/impeccable doctor`, minimized the portal design source, repaired stale design paths and missing color guidance, moved the light/dark toggle into the top header, removed the landing eyebrow, and corrected dark-theme privacy text contrast. Verified 24 portal tests, lint, build, and the fast suite.
+- **Claims-check fix:** Hardened canonical headline validation against exact-string, comma, and rounding differences across Windows/Linux. Added explicit canonical-failure diagnostics to the real-repository test. Verified claims tests, full lint, and the complete fast suite.
 
 ## Exact next step
 1. Complete `P10-10` (`docs/demo_script.md`) if desired, and obtain `[HUMAN]` sign-off on final results text and demo recording.

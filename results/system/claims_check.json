@@ -4,7 +4,7 @@
     "README.md",
     "docs/model_card.md"
   ],
-  "corpus_size": 3195,
+  "corpus_size": 3197,
   "claims_extracted": 400,
   "claim_failures_count": 0,
   "canonical_checks_total": 14,
