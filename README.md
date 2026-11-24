@@ -35,7 +35,7 @@ Passive Bot Guard is a modular machine-learning and web-security system develope
 flowchart LR
     subgraph Browser["Client Browser (Mock Portal + TypeScript SDK)"]
         UI["Protected Portal Forms\n(OTP / Update / Search / Admin)"]
-        SDK["Passive Collector SDK (16.23 KB ESM gzip)\nLocal Feature Extraction (sendRawTrace=false)\nMouse (120) + Key Timing (31) + Env"]
+        SDK["Passive Collector SDK (16.22 KB ESM gzip)\nLocal Feature Extraction (sendRawTrace=false)\nMouse (120) + Key Timing (31) + Env"]
         CH["Accessible Step-Up Challenge\n(Keyboard & Screen-Reader Safe)"]
     end
 
@@ -73,7 +73,7 @@ The system is divided into seven decoupled components:
 | :--- | :--- | :--- |
 | **Offline ML Pipeline** | [`ml/`](ml/) | Streaming dataset loaders, $O(N)$ sliding-window segmentation, 120-feature mouse & 31-feature keyboard extraction, leakage-safe grouped splits, Optuna hyperparameter tuning, isotonic/Platt calibration, TreeSHAP explanations, and ONNX export with numerical parity verification. |
 | **Scoring Backend** | [`backend/`](backend/) | FastAPI service providing Pydantic v2 payload validation, single-use BLAKE2b nonces (`nonce.py`), pure environment rules `R01`–`R13` (`rules.py`), ONNX scoring (`scoring.py`), missing-modality-safe risk policy engine (`policy.py`), mock portal API (`/portal-api/*`), admin telemetry endpoints (`/admin/*`), and TTL retention scheduler (`retention.py`). |
-| **Browser SDK** | [`sdk/`](sdk/) | Zero-dependency TypeScript client collector (`16.23 KB` ESM / `14.87 KB` UMD gzip) capturing passive mouse kinematics, privacy-safe keystroke timing (`key_class` only), and browser integrity signals, with client-side feature extraction (`sendRawTrace=false`) and rotating ephemeral `X-Session-Id`. |
+| **Browser SDK** | [`sdk/`](sdk/) | Zero-dependency TypeScript client collector (`16.22 KB` ESM / `14.86 KB` UMD gzip) capturing passive mouse kinematics, privacy-safe keystroke timing (`key_class` only), and browser integrity signals, with client-side feature extraction (`sendRawTrace=false`) and rotating ephemeral `X-Session-Id`. |
 | **Mock Portal & Admin UI** | [`portal/`](portal/) | React/Vite local demonstration web application with protected citizen-portal workflows (`/portal-api/otp/request`, `/portal-api/details/update`, `/portal-api/centres/search`), accessible step-up verification, and an embedded Admin Dashboard (`AdminDashboardPage.tsx`). |
 | **Bot Simulator** | [`simulator/`](simulator/) | Localhost-only automated bot traffic generator (strictly refuses non-local hosts) implementing Tiers 1–4 adversaries for end-to-end passive detection evaluation. |
 | **Load Testing** | [`loadtest/`](loadtest/) | Locust-compatible and standalone async load-test harness (`scripts/run_loadtest.py`) measuring throughput, latency percentiles, and malicious block rates under mixed human/bot traffic. |
@@ -351,7 +351,7 @@ All system numbers below are measured and saved under [`results/system/`](result
 | **Bot Simulator (Passive Mode, 25 runs/tier)** | Tier 1: **`100.0%`**, Tier 2: **`100.0%`**, Tier 3: **`100.0%`**, Tier 4: **`92.0%`** caught | [`results/system/sim_summary.csv`](results/system/sim_summary.csv) |
 | **Rule-Layer Ablation (Measured Replay)** | Rules + ML combined catches `100%` Tiers 1–3 and `92%` Tier 4; rules catch `100%` Tier 1 & Tier 2 | [`results/system/rule_layer_ablation.csv`](results/system/rule_layer_ablation.csv) |
 | **Mixed Load Test** (`100` human + `460` malicious) | `630` total requests @ **`1,155.42 req/s`**, **`0/460`** malicious reached protected API, **`0`** `5xx` errors | [`results/system/loadtest_summary.md`](results/system/loadtest_summary.md) |
-| **Browser SDK Bundle Size** | ESM **`16.23 KB`** gzip / UMD **`14.87 KB`** gzip (target `< 25 KB`) | [`results/system/sdk_size.json`](results/system/sdk_size.json) |
+| **Browser SDK Bundle Size** | ESM **`16.22 KB`** gzip / UMD **`14.86 KB`** gzip (target `< 30 KB`) | [`results/system/sdk_size.json`](results/system/sdk_size.json) |
 | **Accessibility (`axe-core` WCAG 2.1 AA)** | **`0`** serious/critical violations across `11` UI states + keyboard-only E2E pass | [`results/system/axe_audit.json`](results/system/axe_audit.json) |
 | **Security & Static Analysis** | **`72/72`** security tests passed, **`0`** Bandit findings, **`0`** prod runtime npm vulns | [`results/system/security_checks.json`](results/system/security_checks.json) |
 

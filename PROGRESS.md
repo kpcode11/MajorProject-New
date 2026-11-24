@@ -149,7 +149,7 @@
 | P10-12 | 10 | Portal UI design system | DONE | 03eae57 | Applied portal/Design.md to the resident portal shell and landing flow with semantic CSS tokens, responsive layout, accessible focus states, reduced-motion support, and preserved navigation/test contracts. Polished resident login, update details, and centre search with the same visual system; Impeccable detector reports 0 findings. |
 | P10-13 | 10 | Portal theme and console polish | DONE | ebfcba2 | Added a persisted light/dark toggle, normalized typography and line-height, and replaced the security console's near-black card treatment with warmer semantic surfaces and contrast-safe inspector colors. |
 | P10-14 | 10 | Impeccable doctor and navbar toggle | DONE | d761be5 | Ran the Impeccable doctor, minimized stale design documentation, moved the theme toggle to the top navbar, removed the landing eyebrow, and fixed dark-theme privacy copy contrast. |
-| P10-15 | 10 | Reproducible claims check | DONE | c3ddca4 | Hardened canonical headline matching for exact text, comma formatting, and rounding across CI platforms; improved real-repository test diagnostics. |
+| P10-15 | 10 | Reproducible claims check | DONE | c3ddca4 | Hardened canonical headline matching for exact text, comma formatting, and rounding across CI platforms; improved real-repository test diagnostics. Rebuilt SDK size artifacts now show ESM 16.22 KB / UMD 14.86 KB and synchronized documentation. |
 
 Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 

@@ -14,6 +14,7 @@
 - **Theme polish (`ebfcba2`):** Added persisted light/dark theme switching, normalized portal typography and line-height, and replaced the security console's black card treatment with warmer neutral surfaces. Verified 24 portal tests, accessibility contrast, lint, build, detector, and fast-suite checks.
 - **Impeccable doctor and top-navbar theme (`d761be5`):** Ran `/impeccable doctor`, minimized the portal design source, repaired stale design paths and missing color guidance, moved the light/dark toggle into the top header, removed the landing eyebrow, and corrected dark-theme privacy text contrast. Verified 24 portal tests, lint, build, and the fast suite.
 - **Claims-check fix (`c3ddca4`):** Hardened canonical headline validation against exact-string, comma, and rounding differences across Windows/Linux. Added explicit canonical-failure diagnostics to the real-repository test. Verified claims tests, full lint, and the complete fast suite.
+- **SDK size claim repair:** Fresh CI setup rebuilt the SDK to ESM `16.22 KB` and UMD `14.86 KB` gzip. Synchronized README, status brief, system result artifacts, report assets, and claims report; claims check passes `14/14`, and lint/fast tests pass.
 
 ## Exact next step
 1. Complete `P10-10` (`docs/demo_script.md`) if desired, and obtain `[HUMAN]` sign-off on final results text and demo recording.

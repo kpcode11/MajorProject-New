@@ -27,7 +27,7 @@
 The system is a 7-part modular architecture implementing **defence in depth** (environment integrity rules + calibrated behavioural ML + accessible step-up challenge):
 
 1. **Browser Collector SDK (`sdk/`):**
-   - Zero-dependency TypeScript library built with Vite (`16.23 KB` ESM / `14.87 KB` UMD gzipped, under the `25 KB` budget).
+   - Zero-dependency TypeScript library built with Vite (`16.22 KB` ESM / `14.86 KB` UMD gzipped, under the `30 KB` budget).
    - Captures passive mouse kinematics, privacy-safe keystroke timing (`key_class` only — never characters), and ephemeral browser automation signals.
    - Supports **client-side local feature extraction (`sendRawTrace=false`)** computing the exact 120 mouse + 31 keyboard features in the browser (`< 1e-9` parity with Python server extraction) so raw trajectories never leave the device.
    - Uses a rotating ephemeral `X-Session-Id` (no cookies or persistent device fingerprints).

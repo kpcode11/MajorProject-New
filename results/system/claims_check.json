@@ -4,7 +4,7 @@
     "README.md",
     "docs/model_card.md"
   ],
-  "corpus_size": 3197,
+  "corpus_size": 3195,
   "claims_extracted": 400,
   "claim_failures_count": 0,
   "canonical_checks_total": 14,
@@ -146,8 +146,8 @@
     {
       "name": "system_sdk_esm_gzip_kb",
       "source": "results/system/sdk_size.json",
-      "expected": 16.23,
-      "formatted": "16.23",
+      "expected": 16.22,
+      "formatted": "16.22",
       "found_in": [
         "README.md"
       ],

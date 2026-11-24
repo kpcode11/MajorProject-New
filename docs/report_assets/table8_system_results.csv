@@ -12,6 +12,6 @@ simulator_passive,passive_tier1_caught_or_blocked_rate,1.0,ratio,1.0000 (tier1-3
 simulator_passive,passive_tier2_caught_or_blocked_rate,1.0,ratio,1.0000 (tier1-3 passive),"total=25, allowed=0, challenged=2, denied=23, blocked_api=0, p50=1.82 ms"
 simulator_passive,passive_tier3_caught_or_blocked_rate,1.0,ratio,1.0000 (tier1-3 passive),"total=25, allowed=0, challenged=2, denied=23, blocked_api=0, p50=4.37 ms"
 simulator_passive,passive_tier4_caught_or_blocked_rate,0.92,ratio,1.0000 (tier1-3 passive),"total=25, allowed=2, challenged=3, denied=20, blocked_api=0, p50=4.99 ms"
-sdk_bundle,sdk_esm_gzip_kb,16.23,KB,<= 30.0 KB,Zero runtime dependencies
-sdk_bundle,sdk_umd_gzip_kb,14.87,KB,<= 30.0 KB,Zero runtime dependencies
+sdk_bundle,sdk_esm_gzip_kb,16.22,KB,<= 30.0 KB,Zero runtime dependencies
+sdk_bundle,sdk_umd_gzip_kb,14.86,KB,<= 30.0 KB,Zero runtime dependencies
 accessibility,axe_core_total_violations,0.0,count,0 violations,Audited 11 portal & modal states
