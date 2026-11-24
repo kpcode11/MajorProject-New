@@ -146,7 +146,10 @@
 | P10-09 | 10 | Claims checker | DONE | HEAD | Added scripts/check_claims.py verifying 400 extracted numeric claims across README.md and docs/model_card.md against 3,195 results/ values plus 14/14 canonical headline checks; remediated stale keyboard hparams in docs/model_card.md and unbacked PR-AUC/Brier cells in README.md; wired into .github/workflows/ci.yml; saved results/system/claims_check.json; 3 tests in ml/tests/test_check_claims.py. |
 | P10-10 | 10 | Demo-video script | TODO | | |
 | P10-11 | 10 | Release metadata | DONE | HEAD | Added MIT LICENSE, CFF 1.2.0 CITATION.cff (v1.0.0), linked both in README.md, and tagged release v1.0.0. |
-| P10-12 | 10 | Portal UI design system | DONE | e3a70c4 | Applied portal/Design.md to the resident portal shell and landing flow with semantic CSS tokens, responsive layout, accessible focus states, reduced-motion support, and preserved navigation/test contracts. |
+| P10-12 | 10 | Portal UI design system | DONE | 03eae57 | Applied portal/Design.md to the resident portal shell and landing flow with semantic CSS tokens, responsive layout, accessible focus states, reduced-motion support, and preserved navigation/test contracts. Polished resident login, update details, and centre search with the same visual system; Impeccable detector reports 0 findings. |
+| P10-13 | 10 | Portal theme and console polish | DONE | ebfcba2 | Added a persisted light/dark toggle, normalized typography and line-height, and replaced the security console's near-black card treatment with warmer semantic surfaces and contrast-safe inspector colors. |
+| P10-14 | 10 | Impeccable doctor and navbar toggle | DONE | d761be5 | Ran the Impeccable doctor, minimized stale design documentation, moved the theme toggle to the top navbar, removed the landing eyebrow, and fixed dark-theme privacy copy contrast. |
+| P10-15 | 10 | Reproducible claims check | DONE | 0afa338 | Hardened canonical headline matching for exact text, comma formatting, and rounding across CI platforms; improved real-repository test diagnostics. Rebuilt SDK size artifacts now show ESM 16.22 KB / UMD 14.86 KB and synchronized documentation. |
 
 Status values: TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED (with reason in Notes).
 

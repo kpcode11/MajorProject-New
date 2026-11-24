@@ -23,7 +23,11 @@ def _load_check_claims() -> Any:
 def test_real_repo_claims_pass() -> None:
     mod = _load_check_claims()
     report = mod.run_claims_check(REPO_ROOT)
-    assert report["passed"] is True, report["claim_failures"]
+    canonical_failures = [check for check in report["canonical_checks"] if not check["passed"]]
+    assert report["passed"] is True, {
+        "claim_failures": report["claim_failures"],
+        "canonical_failures": canonical_failures,
+    }
     assert report["claims_extracted"] >= 100
     assert report["canonical_checks_failed"] == 0
     assert report["canonical_checks_total"] == 14
@@ -68,3 +72,10 @@ def test_percentage_and_scientific_matching() -> None:
     )
     assert mod.matches_corpus(pct_claim, corpus) is True
     assert mod.matches_corpus(sci_claim, corpus) is True
+
+
+def test_canonical_number_matching_handles_commas_and_rounding() -> None:
+    mod = _load_check_claims()
+    assert mod._doc_contains_number("Load throughput: 1155.420", 1155.42, "1,155.42") is True
+    assert mod._doc_contains_number("Security tests passed: 72", 72.0, "72") is True
+    assert mod._doc_contains_number("Mouse ROC-AUC: 0.9784", 0.9785, "0.9785") is False

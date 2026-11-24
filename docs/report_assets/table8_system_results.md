@@ -13,8 +13,8 @@
 | `server_scoring_p95_ms` | 15.1606 | ms | <= 200.0 ms | Passes p95 < 200 ms criterion |
 | `server_scoring_p99_ms` | 22.0690 | ms | <= 200.0 ms | min=1.4755 ms, max=36.7004 ms |
 | `single_worker_scoring_throughput_rps` | 325.5800 | requests/sec | >= 50.0 req/s | total_elapsed_s=3.0714 |
-| `sdk_esm_gzip_kb` | 16.2300 | KB | <= 30.0 KB | Zero runtime dependencies |
-| `sdk_umd_gzip_kb` | 14.8700 | KB | <= 30.0 KB | Zero runtime dependencies |
+| `sdk_esm_gzip_kb` | 16.2200 | KB | <= 30.0 KB | Zero runtime dependencies |
+| `sdk_umd_gzip_kb` | 14.8600 | KB | <= 30.0 KB | Zero runtime dependencies |
 | `axe_core_total_violations` | 0.0000 | count | 0 violations | Audited 11 portal & modal states |
 
 ## 2. Simulator Outcomes & Per-Tier Latency Distribution (`n = 200` sessions)

@@ -335,6 +335,11 @@ describe('Keyboard-only Portal Login/OTP E2E (P9-10)', () => {
       act(() => {
         pressTab(rootEl);
       });
+      expect(document.activeElement?.getAttribute('data-testid')).toBe('theme-toggle');
+
+      act(() => {
+        pressTab(rootEl);
+      });
       expect(document.activeElement?.getAttribute('data-testid')).toBe('nav-landing');
 
       act(() => {
@@ -488,8 +493,8 @@ describe('Keyboard-only Portal Login/OTP E2E (P9-10)', () => {
       });
       const rootEl = getContainer();
 
-      // Tab through skip link + 5 nav buttons to reach the first service card button (`goto-login`)
-      for (let i = 0; i < 7; i += 1) {
+      // Tab through skip link, theme toggle, and the 5 portal nav buttons.
+      for (let i = 0; i < 8; i += 1) {
         act(() => {
           pressTab(rootEl);
         });

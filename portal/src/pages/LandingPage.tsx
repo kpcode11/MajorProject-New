@@ -50,7 +50,6 @@ export function LandingPage({ onNavigate }: LandingPageProps): ReactNode {
   return (
     <div data-testid="page-landing">
       <section className="portal-hero" aria-labelledby="portal-welcome-heading">
-        <div className="portal-eyebrow">Passive verification enabled</div>
         <h2 id="portal-welcome-heading">Resident services, without the puzzle.</h2>
         <p>
           This local demonstration portal evaluates passive behavioural bot detection (SIH1672) as a

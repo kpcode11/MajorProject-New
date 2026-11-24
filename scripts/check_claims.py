@@ -201,9 +201,7 @@ def collect_result_numbers(
 
     if results_dir.exists():
         for csv_path in sorted(results_dir.rglob("*.csv")):
-            with csv_path.open(
-                "r", encoding="utf-8", errors="replace", newline=""
-            ) as fh:
+            with csv_path.open("r", encoding="utf-8", errors="replace", newline="") as fh:
                 reader = csv.reader(fh)
                 headers: list[str] = []
                 rows_raw: list[list[str]] = []
@@ -264,9 +262,7 @@ def matches_corpus(claim: ExtractedClaim, corpus: set[float]) -> bool:
     if claim.is_scientific:
         # Relative tolerance matching displayed significant digits (e.g. 7.52e-08 -> 1% rel).
         rel_tol = max(0.5 * (10.0 ** (-claim.decimals)) * 2.0, 1e-2)
-        return any(
-            math.isclose(claim.value, v, rel_tol=rel_tol, abs_tol=1e-12) for v in corpus
-        )
+        return any(math.isclose(claim.value, v, rel_tol=rel_tol, abs_tol=1e-12) for v in corpus)
 
     tol = 0.5 * (10.0 ** (-claim.decimals)) + 1e-9
     # Check direct match (corpus already includes v * 100 for proportions in [0, 1]).
@@ -330,9 +326,7 @@ def _extract_numbers_from_text(
     return claims
 
 
-def extract_markdown_claims(
-    md_path: Path, repo_root: Path = REPO_ROOT
-) -> list[ExtractedClaim]:
+def extract_markdown_claims(md_path: Path, repo_root: Path = REPO_ROOT) -> list[ExtractedClaim]:
     """Extract empirical numeric claims from result tables and backticked metrics."""
     rel = str(md_path.relative_to(repo_root)).replace("\\", "/")
     lines = md_path.read_text(encoding="utf-8").splitlines()
@@ -353,9 +347,7 @@ def extract_markdown_claims(
         if stripped.startswith("|") and stripped.endswith("|"):
             # Detect table header vs separator vs body.
             if not in_result_table:
-                if idx < len(lines) and re.match(
-                    r"^\|\s*[:\-| ]+\|$", lines[idx].strip()
-                ):
+                if idx < len(lines) and re.match(r"^\|\s*[:\-| ]+\|$", lines[idx].strip()):
                     in_result_table = _is_result_table_header(stripped)
                 continue
             # Skip separator row.
@@ -433,6 +425,26 @@ def _lookup_json_path(json_path: Path, keys: tuple[str, ...]) -> float:
     if val is None:
         raise ValueError(f"Non-numeric value at {keys} in {json_path}")
     return val
+
+
+def _doc_contains_number(text: str, expected: float, formatted: str) -> bool:
+    """Match a formatted headline number or its exact numeric representation."""
+    if formatted in text:
+        return True
+    if formatted.replace(",", "") in text:
+        return True
+
+    if "." in formatted.replace(",", ""):
+        decimals = len(formatted.replace(",", "").split(".", 1)[1])
+    else:
+        decimals = 0
+    tolerance = 0.5 * (10.0 ** (-decimals)) if decimals > 0 else 0.5
+
+    for match in NUMBER_RE.finditer(text):
+        val = _parse_float(match.group(1))
+        if val is not None and abs(val - expected) <= tolerance + 1e-9:
+            return True
+    return False
 
 
 def check_canonical_claims(
@@ -608,7 +620,7 @@ def check_canonical_claims(
         found_in = [
             doc_name
             for doc_name, text in doc_texts.items()
-            if formatted in text or alt_formatted in text
+            if alt_formatted in text or _doc_contains_number(text, expected, formatted)
         ]
         passed = len(found_in) > 0
         checks.append(
@@ -619,9 +631,7 @@ def check_canonical_claims(
                 formatted=formatted,
                 found_in=found_in,
                 passed=passed,
-                detail="ok"
-                if passed
-                else f"Expected {formatted!r} in at least one doc",
+                detail="ok" if passed else f"Expected {formatted!r} in at least one doc",
             )
         )
     return checks
@@ -673,9 +683,7 @@ def run_claims_check(
 
     return {
         "passed": len(failures) == 0 and len(canonical_failures) == 0,
-        "docs_checked": [
-            str(p.relative_to(repo_root)).replace("\\", "/") for p in doc_paths
-        ],
+        "docs_checked": [str(p.relative_to(repo_root)).replace("\\", "/") for p in doc_paths],
         "corpus_size": len(corpus),
         "claims_extracted": len(all_claims),
         "claim_failures_count": len(failures),
@@ -714,15 +722,11 @@ def main(argv: list[str] | None = None) -> int:
     if report["claim_failures"]:
         print("\nUNMATCHED NUMERIC CLAIMS:")
         for f in report["claim_failures"]:
-            print(
-                f"  - {f['file']}:{f['line']} raw={f['raw']!r} ({f['reason']}) | {f['context']}"
-            )
+            print(f"  - {f['file']}:{f['line']} raw={f['raw']!r} ({f['reason']}) | {f['context']}")
 
     for c in report["canonical_checks"]:
         if not c["passed"]:
-            print(
-                f"\nCANONICAL CHECK FAILED: {c['name']} ({c['source']}): {c['detail']}"
-            )
+            print(f"\nCANONICAL CHECK FAILED: {c['name']} ({c['source']}): {c['detail']}")
 
     return 0 if report["passed"] else 1
 

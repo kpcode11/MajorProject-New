@@ -298,7 +298,7 @@ export function BarChart({
                 style={{
                   width: '10px',
                   height: '10px',
-                  borderRadius: '2px',
+                  borderRadius: '6px',
                   backgroundColor: b.fill ?? SUPABASE_COLORS.primary,
                   display: 'inline-block',
                 }}

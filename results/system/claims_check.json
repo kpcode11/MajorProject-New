@@ -146,8 +146,8 @@
     {
       "name": "system_sdk_esm_gzip_kb",
       "source": "results/system/sdk_size.json",
-      "expected": 16.23,
-      "formatted": "16.23",
+      "expected": 16.22,
+      "formatted": "16.22",
       "found_in": [
         "README.md"
       ],
